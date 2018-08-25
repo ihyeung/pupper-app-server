@@ -19,7 +19,7 @@ public enum LifeStage {
                 //if units contains 'D', trim, replace to get ageInDays,
         //if units contains 'W', trim, replace to get ageInWeeks,
         //if units contains 'M', trim, replace to get ageInMonths,
-
+        return null;
     }
 
 }
