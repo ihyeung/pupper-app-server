@@ -4,6 +4,7 @@ import com.utahmsd.pupper.dto.PupperProfileRequest;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import com.utahmsd.pupper.service.PupperProfileService;
 import io.swagger.annotations.Api;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -19,10 +20,11 @@ public class PupperProfileController {
     @Inject
     PupperProfileService pupperProfileService;
 
+
     @Path("/{pupperId}")
     @GET
-    public PupperProfileResponse getPupperProfile(@Valid PupperProfileRequest request) {
-        return null;
+    public PupperProfileResponse getPupperProfile(@PathParam("pupperId") int pupperId) {
+        return pupperProfileService.findPupperProfile(pupperId);
     }
 
     @Path("/{pupperId}")
@@ -33,7 +35,7 @@ public class PupperProfileController {
 
     @Path("/{pupperId}")
     @DELETE
-    public PupperProfileResponse deletePupperProfile(@Valid PupperProfileRequest request) {
+    public PupperProfileResponse deletePupperProfile(@PathParam("pupperId") int pupperId) {
         return null;
     }
 

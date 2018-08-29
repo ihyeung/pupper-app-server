@@ -1,8 +1,6 @@
 package com.utahmsd.pupper.controller;
 
-import com.utahmsd.pupper.dto.User;
-import com.utahmsd.pupper.dto.UserProfileRequest;
-import com.utahmsd.pupper.dto.UserProfileResponse;
+import com.utahmsd.pupper.dto.*;
 import com.utahmsd.pupper.service.UserProfileService;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +16,16 @@ import javax.ws.rs.core.MediaType;
 @Api("UserProfile")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class UserProfileController {
+public class UserController {
 
     @Inject
     UserProfileService userProfileService;
+
+    @Path("/login")
+    @POST
+    public UserAuthenticationResponse login(@Valid UserAuthenticationRequest request) {
+        return null;
+    }
 
     @Path("/{userId}")
     @GET
