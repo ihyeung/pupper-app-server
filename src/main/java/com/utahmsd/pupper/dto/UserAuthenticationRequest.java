@@ -11,27 +11,27 @@ import javax.persistence.Id;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserAuthenticationRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("userId")
-    private Long userId;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @JsonProperty("userId")
+//    private Long userId;
 
     @JsonProperty("email")
     private String email;
 
     @JsonProperty("password")
-    private String pass;
+    private String password;
 
-    @JsonProperty("jwt")
-    private String authToken;
+    @JsonProperty("salt")
+    private String salt;
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+//    public Long getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(Long userId) {
+//        this.userId = userId;
+//    }
 
     public String getEmail() {
         return email;
@@ -41,19 +41,19 @@ public class UserAuthenticationRequest {
         this.email = email;
     }
 
-    public String getPass() {
-        return pass;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getAuthToken() {
-        return authToken;
+    public String getSalt() {
+        return salt;
     }
 
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }

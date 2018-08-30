@@ -1,10 +1,10 @@
 package com.utahmsd.pupper.dto;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.UUID;
+
+//Entity repesenting each individual pupper's separate info (
 
 @Entity
 @Table(name = "pupper")
@@ -12,6 +12,7 @@ public class Pupper {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "pupper_id", updatable = false, nullable = false)
     private Long id;
 
     @Column(name = "name")
@@ -29,20 +30,18 @@ public class Pupper {
     @Column(name = "breed")
     private String breed;
 
-    @JoinColumn(name = "user_id")
-    @ManyToOne
-    private User owner;
+    @ManyToOne //Multiple puppers can reference a single MatchProfile
+    @JoinColumn(name = "match_profile_id") //foreign key referencing 'id' column in MatchProfile entity
+    private Long matchProfileId;
 
-    @JoinColumn(name = "user_location")
-    private String location;
+    @ManyToOne //Many puppers can point to userid
+    @JoinColumn(name = "user_id") //foreign key that references 'id' column in User entity
+    private User userId;
 
-    @JoinColumn(name = "last_login")
-    private Timestamp lastLogin;
 
-    @Column(name = "about")
-    private String aboutMe;
+    //Access pupper location and last login by referencing user table
+    //Individual pupper doesnt store bio, this is stored in MatchProfile entity
 
-    @Column(name = "pupper_index")
-    private Double pupIndexScore;
+    //How to store pupper profile images?
 
 }

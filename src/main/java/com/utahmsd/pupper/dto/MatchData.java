@@ -3,9 +3,11 @@ package com.utahmsd.pupper.dto;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+//Entity representing all pairings of puppers who have swiped left or right on each other
+
 @Entity
 @Table(name = "match")
-public class Match {
+public class MatchData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,8 +20,5 @@ public class Match {
 
     @Column(name = "is_match")
     private boolean isMatch;
-
-    @Column(name = "timestamp")
-    private Timestamp timestamp;
 
 }

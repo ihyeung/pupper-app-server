@@ -12,36 +12,44 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+//Controller for user authentication, login, and user profile endpoints
+
 @Path("/user")
 @Api("UserProfile")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class UserController {
+public class UserController extends BaseController {
 
     @Inject
     UserProfileService userProfileService;
 
+    @Path("/join")
+    @POST
+    public UserAuthenticationResponse createAccount(UserAuthenticationRequest request) {
+        return userProfileService.createUser(request);
+    }
+
     @Path("/login")
     @POST
     public UserAuthenticationResponse login(@Valid UserAuthenticationRequest request) {
-        return null;
+        return userProfileService.authenticateUser(request);
     }
 
-    @Path("/{userId}")
+    @Path("/{id}")
     @GET
-    public UserProfileResponse getPupperProfile(@Valid UserProfileRequest request) {
-        return null;
+    public UserProfileResponse getUserProfile(@PathParam("id") int id) {
+        return userProfileService.findUserProfile(id);
     }
 
-    @Path("/{userId}")
+    @Path("/{id}")
     @POST
-    public UserProfileResponse updatePupperProfile(@Valid UserProfileRequest request) {
+    public UserProfileResponse updateUserProfile(@Valid UserProfileRequest request, @PathParam("id") int id) {
         return null;
     }
 
-    @Path("/{userId}")
+    @Path("/{id}")
     @DELETE
-    public UserProfileResponse deletePupperProfile(@Valid UserProfileRequest request) {
+    public UserProfileResponse deleteUserProfile(@PathParam("id") int userid) {
         return null;
     }
 

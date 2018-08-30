@@ -10,13 +10,14 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", updatable = false, nullable = false)
     private Long Id;
 
     @Column(name = "name")
-    private String name;
+    private String firstName;
 
-    @Column(name = "userId")
-    private Long accountId;
+    @Column(name = "sex")
+    private char sex;
 
     @Column(name = "dob")
     private Date dob; //For profile age
@@ -24,8 +25,6 @@ public class User {
     @Column(name = "location")
     private String location; //May change to zip?
 
-    @Column(name = "sex")
-    private char sex;
 
     @Column(name = "date_joined")
     private Date dateJoined;
@@ -33,8 +32,8 @@ public class User {
     @Column(name = "last_login")
     private Timestamp lastLogin;
 
-    @Column(name = "score")
-    private Float score;
+
+
 
     @Column(name = "profileId") //UserProfile object representing a user's bio?
     private Long profileId;

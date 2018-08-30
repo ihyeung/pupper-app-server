@@ -13,7 +13,7 @@ import java.util.List;
 @Singleton
 public class PupperProfileService implements ProfileService {
 
-    @Inject
+//    @Inject
     PupperProfileRepo pupperProfileRepo;
 
     public PupperProfileResponse findPupperProfile(int id) {
