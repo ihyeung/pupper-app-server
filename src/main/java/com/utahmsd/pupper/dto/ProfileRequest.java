@@ -1,29 +1,21 @@
 package com.utahmsd.pupper.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class ProfileRequest {
 
-    @JsonProperty("PupId")
-    private Long pupId;
+    @JsonProperty("id")
+    private Long id;
 
-    public Long getPupId() {
-        return pupId;
+    public Long getId() {
+        return id;
     }
 
-    public void setPupId(Long pupId) {
-        this.pupId = pupId;
+    public void setId(Long id) {
+        this.id = id;
     }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    @JsonProperty("UserId")
-    private Long userId;
-
 }

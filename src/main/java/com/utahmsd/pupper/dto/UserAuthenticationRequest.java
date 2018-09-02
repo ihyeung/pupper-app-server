@@ -11,27 +11,17 @@ import javax.persistence.Id;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserAuthenticationRequest {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @JsonProperty("userId")
-//    private Long userId;
-
     @JsonProperty("email")
     private String email;
 
     @JsonProperty("password")
     private String password;
 
-    @JsonProperty("salt")
-    private String salt;
+    @JsonProperty("signingString")
+    private String signingString;
 
-//    public Long getUserId() {
-//        return userId;
-//    }
-//
-//    public void setUserId(Long userId) {
-//        this.userId = userId;
-//    }
+    @JsonProperty("registerUser")
+    private boolean registerUser; //flag for requests to register new user account
 
     public String getEmail() {
         return email;
@@ -49,11 +39,19 @@ public class UserAuthenticationRequest {
         this.password = password;
     }
 
-    public String getSalt() {
-        return salt;
+    public String getSigningString() {
+        return signingString;
     }
 
-    public void setSalt(String salt) {
-        this.salt = salt;
+    public void setSigningString(String signingString) {
+        this.signingString = signingString;
+    }
+
+    public boolean isRegisterUser() {
+        return registerUser;
+    }
+
+    public void setRegisterUser(boolean registerUser) {
+        this.registerUser = registerUser;
     }
 }

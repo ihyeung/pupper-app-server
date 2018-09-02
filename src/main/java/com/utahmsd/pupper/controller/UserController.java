@@ -3,54 +3,39 @@ package com.utahmsd.pupper.controller;
 import com.utahmsd.pupper.dto.*;
 import com.utahmsd.pupper.service.UserProfileService;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 
 //Controller for user authentication, login, and user profile endpoints
+@RestController
+@Api(value = "UserProfile Controller For UserProfile Endpoints")
+@RequestMapping("/user")
+public class UserController {
 
-@Path("/user")
-@Api("UserProfile")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-public class UserController extends BaseController {
+    private final UserProfileService userProfileService;
 
     @Inject
-    UserProfileService userProfileService;
-
-    @Path("/join")
-    @POST
-    public UserAuthenticationResponse createAccount(UserAuthenticationRequest request) {
-        return userProfileService.createUser(request);
+    UserController(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
     }
 
-    @Path("/login")
-    @POST
-    public UserAuthenticationResponse login(@Valid UserAuthenticationRequest request) {
-        return userProfileService.authenticateUser(request);
-    }
-
-    @Path("/{id}")
-    @GET
-    public UserProfileResponse getUserProfile(@PathParam("id") int id) {
+    @RequestMapping(path ="/{id}", method= RequestMethod.GET)
+    public UserProfileResponse getUserProfile(@PathVariable("id") Long id) {
         return userProfileService.findUserProfile(id);
     }
 
-    @Path("/{id}")
-    @POST
-    public UserProfileResponse updateUserProfile(@Valid UserProfileRequest request, @PathParam("id") int id) {
-        return null;
+    @RequestMapping(path ="/{id}", method= RequestMethod.POST)
+    public UserProfileResponse updateUserProfile(@PathVariable("id") Long id, @RequestBody UserProfileRequest request) {
+        return userProfileService.updateProfile(request);
     }
 
-    @Path("/{id}")
-    @DELETE
-    public UserProfileResponse deleteUserProfile(@PathParam("id") int userid) {
-        return null;
+    @RequestMapping(path ="/{id}", method= RequestMethod.DELETE)
+    public UserProfileResponse deleteUserProfile(@PathVariable("id") Long id) {
+        return userProfileService.deleteProfile(id);
     }
 
 }

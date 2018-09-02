@@ -1,6 +1,9 @@
-package com.utahmsd.pupper.dto;
+package com.utahmsd.pupper.dao;
+
+import com.utahmsd.pupper.dto.LifeStage;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -8,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "pupper")
-public class Pupper {
+public class Pupper implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,13 +33,15 @@ public class Pupper {
     @Column(name = "breed")
     private String breed;
 
-    @ManyToOne //Multiple puppers can reference a single MatchProfile
-    @JoinColumn(name = "match_profile_id") //foreign key referencing 'id' column in MatchProfile entity
+//    @ManyToOne //Multiple puppers can reference a single MatchProfile
+//    @JoinColumn(name = "match_profile_id") //foreign key referencing 'id' column in MatchProfile entity
+    @Column(name = "match_profile_id")
     private Long matchProfileId;
 
-    @ManyToOne //Many puppers can point to userid
-    @JoinColumn(name = "user_id") //foreign key that references 'id' column in User entity
-    private User userId;
+//    @ManyToOne //Many puppers can point to userid
+//    @JoinColumn(name = "user_id") //foreign key that references 'id' column in UserProfile entity
+    @Column(name = "user_id")
+    private Long userId;
 
 
     //Access pupper location and last login by referencing user table

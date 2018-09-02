@@ -1,28 +1,20 @@
-package com.utahmsd.pupper.dao;
-
-import com.utahmsd.pupper.dto.UserProfileRequest;
-import jdk.nashorn.internal.runtime.options.Option;
-
-import java.util.List;
-
-public class UserProfileRepoImpl implements UserProfileRepo {
-    @Override
-    public Option<UserProfileRequest> find(Long aLong) {
-        return null;
-    }
-
-    @Override
-    public Option<List<UserProfileRequest>> findAll() {
-        return null;
-    }
-
-    @Override
-    public Option<UserProfileRequest> save(UserProfileRequest userProfileRequest) {
-        return null;
-    }
-
-    @Override
-    public Option<UserProfileRequest> delete(UserProfileRequest userProfileRequest) {
-        return null;
-    }
-}
+//package com.utahmsd.pupper.dao;
+//
+//import javax.inject.Inject;
+//import javax.inject.Named;
+//import javax.inject.Singleton;
+//
+//@Named
+//@Singleton
+//public class UserProfileRepoImpl extends RepositoryImpl<UserProfile, Long> implements UserProfileRepo {
+//
+//    UserProfileRepoImpl() {
+//        entityClass = UserProfile.class;
+//    }
+//
+//
+////        public UserProfileRepoImpl(UserProfile userProfileClass) {
+////        super(UserProfile.class);
+////    }
+//
+//}
