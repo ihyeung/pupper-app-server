@@ -3,30 +3,31 @@ package com.utahmsd.pupper.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.utahmsd.pupper.dao.UserProfile;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserProfileRequest extends ProfileRequest {
 
-    @JsonProperty("IsNewUser")
-    private boolean isNewUser;
+    @JsonProperty("requestFrom")
+    private Long requestingUserId;
 
-    public boolean isNewUser() {
-        return isNewUser;
+    @JsonProperty("userProfile")
+    private UserProfile userProfile;
+
+    public Long getRequestingUserId() {
+        return requestingUserId;
     }
 
-    public void setNewUser(boolean newUser) {
-        isNewUser = newUser;
+    public void setRequestingUserId(Long requestingUserId) {
+        this.requestingUserId = requestingUserId;
     }
 
-    public User getUser() {
-        return user;
+    public UserProfile getUserProfile() {
+        return userProfile;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
-
-    @JsonProperty("User")
-    private User user;
 }

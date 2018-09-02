@@ -1,16 +1,19 @@
 package com.utahmsd.pupper.dao;
 
-import jdk.nashorn.internal.runtime.options.Option;
-
+import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
-public interface Repository<T, ID> {
-    Option<T> find(ID id);
+public interface Repository<T, ID extends Serializable> {
 
-    Option<List<T>> findAll();
+    Optional<T> find(ID id);
 
-    Option<T> save(T t);
+    Optional<List<T>> findAll();
 
-    Option<T> delete(T t);
+    void save(T t);
+
+    Optional<T> update(T t);
+
+    void delete(T t);
 
 }

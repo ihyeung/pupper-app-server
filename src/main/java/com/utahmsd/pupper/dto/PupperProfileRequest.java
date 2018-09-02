@@ -9,6 +9,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PupperProfileRequest extends ProfileRequest {
 
-    @JsonProperty("matchProfile")
-    private MatchProfile matchProfile;
+    @JsonProperty("requestFrom")
+    private Long requestingPupperId;
+
+    public Long getRequestingUserId() {
+        return requestingPupperId;
+    }
+
+    public void setRequestingUserId(Long requestingPupperId) {
+        this.requestingPupperId = requestingPupperId;
+    }
 }

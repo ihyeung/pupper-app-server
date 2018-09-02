@@ -7,37 +7,53 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class UserAuthenticationResponse {
+public class UserAuthenticationResponse extends ProfileResponse {
 
-    @JsonProperty("userId")
-    private Long userId;
+    @JsonProperty("email")
+    private String email;
 
-    @JsonProperty("accountLogin")
-    private String accountLogin;
+    @JsonProperty("lastLogin")
+    private Timestamp lastLogin;
 
-    @JsonProperty("statusCode")
-    private int statusCode;
+    public String getEmail() {
+        return email;
+    }
 
-    @JsonProperty("joinDate")
-    private Date accountCreateDate;
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    @JsonProperty("jwt")
-    private String authToken;
+    public Timestamp getLastLogin() {
+        return lastLogin;
+    }
 
-    @JsonProperty("tokenIssued")
-    private Timestamp tokenIssued;
+    public void setLastLogin(Timestamp lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+//
+//    @JsonProperty("jwt")
+//    private String authToken;
+//
+//    @JsonProperty("tokenIssued")
+//    private Timestamp tokenIssued;
 
-    @JsonProperty("isValid")
-    private boolean validLogin;
+//    public UserAuthenticationResponse fromUserAccount (UserAccount userAccount) {
+//        UserAuthenticationResponse response = new UserAuthenticationResponse();
+//        response.userId = userAccount.getUserId();
+//        response.statusCode = 0;
+//        response.validLogin = true;
+//        response.accountCreateDate = userAccount.getAccountCreationDate();
+//        response.authToken = userAccount.getComputedHash();
+//        return response;
+//    }
 
-    public UserAuthenticationResponse fromUserAccount (UserAccount userAccount) {
-        UserAuthenticationResponse response = new UserAuthenticationResponse();
-        response.userId = userAccount.getUserId();
-        response.statusCode = 0;
-        response.validLogin = true;
-        response.accountCreateDate = userAccount.getAccountCreationDate();
-        response.authToken = userAccount.getComputedHash();
-        return response;
+    public UserAuthenticationResponse invalidProfileResponse(Long id, String error) {
+        UserAuthenticationResponse userAuthenticationResponse = new UserAuthenticationResponse();
+        userAuthenticationResponse.setId(id);
+//        userAuthenticationResponse.setLastLogin(null);
+        userAuthenticationResponse.setStatus(error);
+        userAuthenticationResponse.setSuccess(false);
+        return userAuthenticationResponse;
     }
 
 }

@@ -1,34 +1,82 @@
 package com.utahmsd.pupper.service;
 
-import com.utahmsd.pupper.dao.UserCredentialsRepo;
-import com.utahmsd.pupper.dao.UserProfileRepo;
+import com.utahmsd.pupper.dao.UserProfile;
+import com.utahmsd.pupper.dao.UserProfileRepoImpl;
 import com.utahmsd.pupper.dto.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Optional;
 
 @Named
 @Singleton
-public class UserProfileService implements ProfileService {
+public class UserProfileService {
 
-//    @Inject
-//    UserProfileRepo userProfileRepo;
+    @Inject
+    UserProfileRepoImpl userProfileRepo;
 
-//    @Inject
-    UserCredentialsRepo userCredentialsRepo;
+//    public UserProfileResponse createUserProfile (UserProfileRequest request) {
+//        UserProfile userProfile = new UserProfile(request);
+//        userProfileRepo.save(userProfile);
+//        return new UserProfileResponse(userProfile);
+//    }
+//
+//    public UserProfileResponse findUserProfile (UserProfileRequest request) {
+//        Optional<UserProfile> user = userProfileRepo.find(request.getId());
+//        return user.isPresent() ? new UserProfileResponse(user.get()) : null;
+//    }
+//
+//    public UserProfileResponse updateUserProfile (UserProfileRequest request) {
+//        Optional<UserProfile> userProfile = userProfileRepo.find(request.getId());
+//        //TODO
+//        return null;
+//    }
+//
+//    public UserProfileResponse deleteUserProfile (UserProfileRequest request) {
+//        Optional<UserProfile> userProfile = userProfileRepo.find(request.getId());
+//        //TODO
+//        return null;
+//    }
 
-    public UserAuthenticationResponse createUser (UserAuthenticationRequest request) {
-        UserAccount userAccount = userCredentialsRepo.createUserAccount(request);
-        return new UserAuthenticationResponse().fromUserAccount(userAccount);
+    public UserProfileResponse createProfile(UserProfileRequest request) {
+        userProfileRepo.save(request.getUserProfile());
+        return UserProfileResponse.fromUserProfileRequest(request);
     }
 
-    public UserAuthenticationResponse authenticateUser (UserAuthenticationRequest request) {
-        return null;
+    public UserProfileResponse findUserProfile(Long id) {
+        Optional<UserProfile> user = userProfileRepo.find(id);
+        if (user.isPresent()) {
+            UserProfileResponse response = new UserProfileResponse();
+            response.setId(id);
+            response.setUserProfile(user.get());
+            response.setSuccess(true);
+            response.setStatus("hello found");
+            return response;
+        }
+        return new UserProfileResponse(id, "error finding profile");
     }
 
-    public UserProfileResponse findUserProfile (int userId) {
-        return null;
+    public UserProfileResponse updateProfile(UserProfileRequest request) {
+        Optional<UserProfile> user = userProfileRepo.find(request.getId());
+        if (user.isPresent()) {
+            userProfileRepo.update(request.getUserProfile());
+            return UserProfileResponse.fromUserProfileRequest(request);
+        }
+        return createProfile(request);
     }
 
+    public UserProfileResponse deleteProfile(Long id) {
+        Optional<UserProfile> user = userProfileRepo.find(id);
+        if (user.isPresent()) {
+            userProfileRepo.delete(user.get());
+            UserProfileResponse response = new UserProfileResponse();
+            response.setId(id);
+            response.setUserProfile(user.get());
+            response.setSuccess(true);
+            response.setStatus("hello deleted");
+            return response;
+        }
+        return new UserProfileResponse(id, "profile does not exist and cannot be deleted");
+    }
 }
