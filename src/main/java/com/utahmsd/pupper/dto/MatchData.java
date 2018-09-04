@@ -1,7 +1,6 @@
 package com.utahmsd.pupper.dto;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 //Entity representing all pairings of puppers who have swiped left or right on each other
 

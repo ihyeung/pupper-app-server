@@ -3,7 +3,6 @@ package com.utahmsd.pupper.util;
 import io.vavr.control.Try;
 
 import java.security.SecureRandom;
-import java.util.List;
 
 public class Utils {
 

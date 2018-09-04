@@ -3,7 +3,6 @@ package com.utahmsd.pupper.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)

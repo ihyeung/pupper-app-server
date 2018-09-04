@@ -9,7 +9,7 @@ public enum LifeStage {
     PUPPY,
     YOUNG,
     ADULT,
-    SENIOR;
+    MATURE;
 
     LifeStage ageToStage(String age) throws ValidationException {
             CharSequence ageUnits = "DWMY";

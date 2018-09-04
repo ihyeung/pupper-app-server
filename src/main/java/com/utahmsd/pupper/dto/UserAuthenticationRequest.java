@@ -1,12 +1,7 @@
 package com.utahmsd.pupper.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserAuthenticationRequest {

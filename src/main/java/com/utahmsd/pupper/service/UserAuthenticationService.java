@@ -1,6 +1,6 @@
 package com.utahmsd.pupper.service;
 
-import com.utahmsd.pupper.dao.UserCredentialsRepoImpl;
+import com.utahmsd.pupper.dao.UserCredentialsRepo;
 import com.utahmsd.pupper.dto.UserAuthenticationRequest;
 import com.utahmsd.pupper.dto.UserAuthenticationResponse;
 
@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 @Singleton
 public class UserAuthenticationService {
     @Inject
-    UserCredentialsRepoImpl userCredentialsRepo;
+    UserCredentialsRepo userCredentialsRepo;
 
     public UserAuthenticationResponse authenticateUser (UserAuthenticationRequest request) {
         return null;

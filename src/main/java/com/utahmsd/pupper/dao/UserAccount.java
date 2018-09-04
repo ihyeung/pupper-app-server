@@ -1,15 +1,9 @@
 package com.utahmsd.pupper.dao;
 
 import com.utahmsd.pupper.dto.UserAuthenticationRequest;
-import com.utahmsd.pupper.util.Utils;
-import io.vavr.control.Try;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.Base64;
 
 //Entity representing a user's credential/account information
 

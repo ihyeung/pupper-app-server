@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface UserProfileRepo extends CrudRepository<UserProfile, Long> {
     Optional<UserProfile> findById (Long id);
     Optional<List<UserProfile>> findAllByLocation (String location);
-    Optional<List<UserProfile>> findAllByPupperScoreWithinRange (float min, float max);
+    Optional<List<UserProfile>> findAllByPupperScore (float score);
     Optional<List<UserProfile>> findAllByLastLoginBetween (Date start, Date end);
-    Optional<List<UserProfile>> findAllByImageExists (String imageLocation);
+    Optional<List<UserProfile>> findAllByImage (String imageLocation);
     Optional<List<UserProfile>> findAllByFirstNameContainingAndLastNameContaining(String firstName, String lastName);
 
 

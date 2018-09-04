@@ -4,7 +4,6 @@ import com.utahmsd.pupper.dto.UserProfileRequest;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -14,7 +13,7 @@ public class UserProfile implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", updatable = false, nullable = false)
-    private Long Id;
+    private Long id;
 
     @Column(name = "first_name")
     private String firstName;
@@ -55,11 +54,11 @@ public class UserProfile implements Serializable {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getFirstName() {

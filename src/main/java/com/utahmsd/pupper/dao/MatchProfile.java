@@ -23,7 +23,7 @@
 //
 //    // Up to 3 dogs can be added to a matching profile
 //    @OneToMany // One match profile can reference many puppers
-//    @JoinColumn(name = "pupper_id") //Pupper #1
+//    @JoinColumn(name = "pupper_id") //PupperProfile #1
 //    private Long pupId;
 //
 //    @OneToMany

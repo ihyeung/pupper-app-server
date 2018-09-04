@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.utahmsd</groupId>
-    <artifactId>pupper</artifactId>
+    <artifactId>pupperProfile</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>pupper</name>
+    <name>pupperProfile</name>
     <description>Server application for Pupper mobile app</description>
 
     <parent>
@@ -19,7 +19,7 @@
     </parent>
 
     <properties>
-        <mainClass>com.utahmsd.pupper.PupperApplication</mainClass>
+        <mainClass>com.utahmsd.pupperProfile.PupperApplication</mainClass>
         <rest-assured>3.0.6</rest-assured>
         <assertj>3.8.0</assertj>
         <spring>5.0.8.RELEASE</spring>
