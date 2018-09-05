@@ -2,7 +2,7 @@ package com.utahmsd.pupper.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.utahmsd.pupper.dao.UserProfile;
+import com.utahmsd.pupper.dao.entity.UserProfile;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserProfileResponse extends ProfileResponse {

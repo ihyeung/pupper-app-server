@@ -1,6 +1,6 @@
 package com.utahmsd.pupper.service;
 
-import com.utahmsd.pupper.dao.UserProfile;
+import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dto.UserProfileRequest;
 import com.utahmsd.pupper.dto.UserProfileResponse;

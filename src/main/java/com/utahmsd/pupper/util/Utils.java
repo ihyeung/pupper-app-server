@@ -3,6 +3,9 @@ package com.utahmsd.pupper.util;
 import io.vavr.control.Try;
 
 import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class Utils {
 
@@ -25,6 +28,13 @@ public class Utils {
         byte [] bytes = new byte[length];
         secureRandom.nextBytes(bytes);
         return bytes;
+    }
+
+    public static String getIsoFormatDate (final Date date) {
+        final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz";
+        final SimpleDateFormat formatter = new SimpleDateFormat(ISO_DATE_FORMAT);
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return formatter.format(date);
     }
 
 

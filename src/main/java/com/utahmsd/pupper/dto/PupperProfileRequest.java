@@ -3,7 +3,7 @@ package com.utahmsd.pupper.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.utahmsd.pupper.dao.PupperProfile;
+import com.utahmsd.pupper.dao.entity.PupperProfile;
 
 //PupperProfile profile request representing a json request for a given random matching profile displayed to user
 @JsonIgnoreProperties(ignoreUnknown = true)

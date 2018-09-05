@@ -7,7 +7,7 @@
 //
 //@Entity
 //@Table(name = "matcher_profile")
-//public class MatchProfile {
+//public class MatchProfile implements Serializable{
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    @Column(name = "match_profile_id", updatable = false, nullable = false)

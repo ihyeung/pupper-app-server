@@ -1,10 +1,13 @@
-package com.utahmsd.pupper.dao;
+package com.utahmsd.pupper.dao.entity;
+
+import com.utahmsd.pupper.dto.pup.Size;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "breed")
-public class Breed {
+public class Breed implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

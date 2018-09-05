@@ -5,6 +5,12 @@
 //
 //import javax.validation.Valid;
 //
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+//@Named
+//@Singleton
 //public class JwtAuthenticationService {
 //
 //    public UserAuthenticationResponse authenticateUser(@Valid UserAuthenticationRequest request) {

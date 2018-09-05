@@ -1,4 +1,4 @@
-package com.utahmsd.pupper.dao;
+package com.utahmsd.pupper.dao.entity;
 
 import com.utahmsd.pupper.dto.UserProfileRequest;
 

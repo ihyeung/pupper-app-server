@@ -1,6 +1,7 @@
-package com.utahmsd.pupper.dao;
+package com.utahmsd.pupper.dao.entity;
 
-import com.utahmsd.pupper.dto.LifeStage;
+import com.utahmsd.pupper.dto.pup.Energy;
+import com.utahmsd.pupper.dto.pup.LifeStage;
 
 import javax.persistence.*;
 import java.io.Serializable;

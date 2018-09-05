@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.dao;
 
+import com.utahmsd.pupper.dao.entity.UserProfile;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Date;
