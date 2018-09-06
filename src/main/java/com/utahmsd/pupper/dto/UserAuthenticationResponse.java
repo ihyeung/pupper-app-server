@@ -36,7 +36,7 @@ public class UserAuthenticationResponse extends ProfileResponse {
 //    @JsonProperty("tokenIssued")
 //    private Timestamp tokenIssued;
 
-//    public UserAuthenticationResponse fromUserAccount (UserAccount userAccount) {
+//    public UserAuthenticationResponse fromUserAccount (UserCredentials userAccount) {
 //        UserAuthenticationResponse response = new UserAuthenticationResponse();
 //        response.userId = userAccount.getUserId();
 //        response.statusCode = 0;

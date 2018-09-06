@@ -9,7 +9,7 @@ import java.io.Serializable;
 //Entity repesenting each individual pupper's separate info (
 
 @Entity
-@Table(name = "pupper")
+@Table(name = "Pupper")
 public class PupperProfile implements Serializable {
 
     @Id

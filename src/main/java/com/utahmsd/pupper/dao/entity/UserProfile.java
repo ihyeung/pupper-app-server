@@ -7,45 +7,34 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "user")
+@Table(schema="u0934995", name = "UserProfile")
 public class UserProfile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "first_name")
+    @Column(name = "account_id")
+    private Long accountId;
+
+    @Column(name = "name_first")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "name_last")
     private String lastName;
 
     @Column(name = "sex")
-    private char sex;
+    private boolean sex;
 
-    @Column(name = "dob")
-    private Date dob; //For profile age
+    @Column(name = "birthdate")
+    private Date birthdate; //For profile age
 
-    @Column(name = "location")
-    private String location; //May change to zip?
+    @Column(name = "zip")
+    private String zip;
 
-
-    @Column(name = "date_joined")
+    @Column(name = "date_join")
     private Date dateJoined;
-
-    @Column(name = "last_login")
-    private Date lastLogin;
-
-    @Column(name = "profileId") //UserProfile object representing a user's bio?
-    private Long profileId;
-
-    @Column(name = "image")
-    private String image; //String path to image location?
-    //How to handle user profile image?
-
-    @Column(name = "pupper_score")
-    private float pupperScore;
 
     public UserProfile(){}
 
@@ -61,6 +50,14 @@ public class UserProfile implements Serializable {
         this.id = id;
     }
 
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -69,28 +66,36 @@ public class UserProfile implements Serializable {
         this.firstName = firstName;
     }
 
-    public char getSex() {
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public boolean isSex() {
         return sex;
     }
 
-    public void setSex(char sex) {
+    public void setSex(boolean sex) {
         this.sex = sex;
     }
 
-    public Date getDob() {
-        return dob;
+    public Date getBirthdate() {
+        return birthdate;
     }
 
-    public void setDob(Date dob) {
-        this.dob = dob;
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
     }
 
-    public String getLocation() {
-        return location;
+    public String getZip() {
+        return zip;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 
     public Date getDateJoined() {
@@ -99,37 +104,5 @@ public class UserProfile implements Serializable {
 
     public void setDateJoined(Date dateJoined) {
         this.dateJoined = dateJoined;
-    }
-
-    public Date getLastLogin() {
-        return lastLogin;
-    }
-
-    public void setLastLogin(Date lastLogin) {
-        this.lastLogin = lastLogin;
-    }
-
-    public Long getProfileId() {
-        return profileId;
-    }
-
-    public void setProfileId(Long profileId) {
-        this.profileId = profileId;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Float getPupperScore() {
-        return pupperScore;
-    }
-
-    public void setPupperScore(float pupperScore) {
-        this.pupperScore = pupperScore;
     }
 }

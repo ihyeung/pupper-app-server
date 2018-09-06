@@ -10,8 +10,8 @@ import java.io.Serializable;
 //Keep only fields that will not be modified/updated frequently
 
 @Entity
-@Table(name = "user_credential")
-public class UserAccount implements Serializable {
+@Table(name = "UserCredentials")
+public class UserCredentials implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +27,9 @@ public class UserAccount implements Serializable {
     @Column(name = "salt")
     private String salt;
 
-    public UserAccount(){}
+    public UserCredentials(){}
 
-    public UserAccount(UserAuthenticationRequest request) {
+    public UserCredentials(UserAuthenticationRequest request) {
 //        email = request.getEmail();
 //        salt = request.getSalt();
 //        Try<byte[]> hash = Utils.computeHash(request.getPassword(), Try.of(()->salt.getBytes("UTF-8")).get());

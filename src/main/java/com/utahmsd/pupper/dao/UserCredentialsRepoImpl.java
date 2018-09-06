@@ -5,9 +5,9 @@
 //
 //@Named
 //@Singleton
-//public class UserCredentialsRepoImpl extends RepositoryImpl<UserAccount, Long> implements UserCredentialsRepo {
+//public class UserCredentialsRepoImpl extends RepositoryImpl<UserCredentials, Long> implements UserCredentialsRepo {
 //
 //    public UserCredentialsRepoImpl() {
-//        entityClass = UserAccount.class;
+//        entityClass = UserCredentials.class;
 //    }
 //}

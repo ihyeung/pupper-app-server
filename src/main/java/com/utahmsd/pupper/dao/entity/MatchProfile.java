@@ -6,7 +6,7 @@
 ////Entity representing each individual match profile that a given user has (for 1-3 dogs)
 //
 //@Entity
-//@Table(name = "matcher_profile")
+//@Table(name = "MatchingProfile")
 //public class MatchProfile implements Serializable{
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,21 +4,27 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserProfileResponse extends ProfileResponse {
 
     @JsonProperty("userProfile")
-    private UserProfile userProfile;
+    private List<UserProfile> userProfile;
 
 
     //Constructors--need to clean these up later
 
     public UserProfileResponse() {
+        userProfile = new ArrayList<>();
     }
 
     public UserProfileResponse(UserProfileRequest request){
         this.setId(request.getId());
-        this.setUserProfile(request.getUserProfile());  //may be null if not doing an update to an existing profile
+//        this.setUserProfile(request.getUserProfile());  //may be null if not doing an update to an existing profile
+        userProfile = new ArrayList<>();
+        userProfile.add(request.getUserProfile());
     }
 
 //    @Override
@@ -36,7 +42,6 @@ public class UserProfileResponse extends ProfileResponse {
         response.setId(request.getId());
         response.setSuccess(true);
         response.setStatus("fromUserProfileRequest success");
-        response.setUserProfile(null);
         return response;
     }
 
@@ -45,17 +50,15 @@ public class UserProfileResponse extends ProfileResponse {
         response.setId(userProfile.getId());
         response.setSuccess(true);
         response.setStatus("fromUserProfile success");
-        response.setUserProfile(userProfile);
+        response.userProfile.add(userProfile);
         return response;
     }
 
-
-    public UserProfile getUserProfile() {
+    public List<UserProfile> getUserProfile() {
         return userProfile;
     }
 
-    public void setUserProfile(UserProfile userProfile) {
+    public void setUserProfile(List<UserProfile> userProfile) {
         this.userProfile = userProfile;
     }
-
 }

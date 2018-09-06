@@ -9,10 +9,12 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.Arrays;
 
 @Configuration
+@EnableJpaRepositories("com.utahmsd.pupper.dao")
 public class PupperApplicationConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PupperApplicationConfig.class);
@@ -23,11 +25,11 @@ public class PupperApplicationConfig {
     @Value("${spring.datasource.url:}")
     private String dbUrl;
 
-    @Value("${db.username}")
-    private String dbUsername;
+    @Value("${db.name}")
+    private String dbName;
 
-    @Value("${db.password}")
-    private String dbPassword;
+//    @Value("${db.password}")
+//    private String dbPassword;
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -41,12 +43,5 @@ public class PupperApplicationConfig {
 
         return cacheManager;
     }
-
-
-//    @PersistenceUnit
-//    EntityManagerFactory entityManagerFactory;
-//
-//    @PersistenceContext
-//    EntityManager entityManager = entityManagerFactory.createEntityManager();
 
 }

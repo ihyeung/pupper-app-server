@@ -21,19 +21,24 @@ public class UserProfileController {
         this.userProfileService = userProfileService;
     }
 
-    @RequestMapping(path ="/{userId}", method= RequestMethod.GET)
-    public UserProfileResponse getUserProfile(@PathVariable("userId") Long userId, UserProfileRequest request) {
-           return userProfileService.findUserProfile(request);
+    @RequestMapping(path ="/all", method= RequestMethod.GET)
+    public UserProfileResponse getAllUserProfiles() {
+        return userProfileService.getAllUserProfiles();
     }
 
-    @RequestMapping(path ="/{userId}", method= RequestMethod.POST)
-    public UserProfileResponse updateUserProfile(@PathVariable("userId") Long userId, @RequestBody UserProfileRequest request) {
-        return userProfileService.createOrUpdateProfile(request);
-    }
-
-    @RequestMapping(path ="/{userId}", method= RequestMethod.DELETE)
-    public UserProfileResponse deleteUserProfile(@PathVariable("userId") Long userId, @RequestBody UserProfileRequest request) {
-        return userProfileService.deleteProfile(request);
-    }
+//    @RequestMapping(path ="/{userId}", method= RequestMethod.GET)
+//    public UserProfileResponse getUserProfile(@PathVariable("userId") Long userId, UserProfileRequest request) {
+//           return userProfileService.findUserProfile(userId);
+//    }
+//
+//    @RequestMapping(path ="/{userId}", method= RequestMethod.POST)
+//    public UserProfileResponse updateUserProfile(@PathVariable("userId") Long userId, @RequestBody UserProfileRequest request) {
+//        return userProfileService.createOrUpdateProfile(request);
+//    }
+//
+//    @RequestMapping(path ="/{userId}", method= RequestMethod.DELETE)
+//    public UserProfileResponse deleteUserProfile(@PathVariable("userId") Long userId, @RequestBody UserProfileRequest request) {
+//        return userProfileService.deleteProfile(request);
+//    }
 
 }
