@@ -46,13 +46,11 @@ public class UserAuthenticationResponse extends ProfileResponse {
 //        return response;
 //    }
 
-    public UserAuthenticationResponse invalidProfileResponse(Long id, String error) {
-        UserAuthenticationResponse userAuthenticationResponse = new UserAuthenticationResponse();
-        userAuthenticationResponse.setId(id);
-//        userAuthenticationResponse.setLastLogin(null);
-        userAuthenticationResponse.setStatus(error);
-        userAuthenticationResponse.setSuccess(false);
-        return userAuthenticationResponse;
-    }
+//    public UserAuthenticationResponse invalidProfileResponse(Long id, String error) {
+//        UserAuthenticationResponse userAuthenticationResponse = new UserAuthenticationResponse();
+////        userAuthenticationResponse.setLastLogin(null);
+//        userAuthenticationResponse.setSuccess(false);
+//        return userAuthenticationResponse;
+//    }
 
 }

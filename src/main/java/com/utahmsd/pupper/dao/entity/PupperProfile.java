@@ -1,7 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
-import com.utahmsd.pupper.dto.pup.Energy;
-import com.utahmsd.pupper.dto.pup.LifeStage;
+import com.utahmsd.pupper.dto.pupper.Energy;
+import com.utahmsd.pupper.dto.pupper.LifeStage;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 //Entity repesenting each individual pupper's separate info (
 
 @Entity
-@Table(name = "Pupper")
+@Table(schema="u0934995", name = "Pupper")
 public class PupperProfile implements Serializable {
 
     @Id

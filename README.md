@@ -1,2 +1,2 @@
 # pupper-app-server
-Back-end for pupper mobile app
+Back-end server application for Pupper mobile app

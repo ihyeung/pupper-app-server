@@ -25,8 +25,8 @@ public class PupperApplicationConfig {
     @Value("${spring.datasource.url:}")
     private String dbUrl;
 
-    @Value("${db.name}")
-    private String dbName;
+//    @Value("${db.name}")
+//    private String dbName;
 
 //    @Value("${db.password}")
 //    private String dbPassword;

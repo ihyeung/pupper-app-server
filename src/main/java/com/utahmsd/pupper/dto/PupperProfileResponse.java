@@ -21,40 +21,28 @@ public class PupperProfileResponse extends ProfileResponse {
     public PupperProfileResponse() {}
 
     public PupperProfileResponse(PupperProfileRequest request) {
-        this.setId(request.getId());
         this.setPupperProfile(request.getPupperProfile()); //may be null if not doing an update to an existing profile
-//        this.setUserId(request.getPupperUserId());
-
     }
-
-//    @Override
-//    public PupperProfileResponse responseErrorHandler (Long id, Exception ex, ProfileRequest request) throws Exception {
-//        ProfileResponse response = super.responseErrorHandler(id,ex,request);
-//        PupperProfileResponse pupperProfileResponse = (PupperProfileResponse) response;
-//        pupperProfileResponse.setPupperProfile(null);
-//        pupperProfileResponse.setUserId(((PupperProfileRequest)request).getPupperUserId());
-//        return pupperProfileResponse;
-//    }
 
     //Static methods
 
     public static PupperProfileResponse fromPupperProfileRequest (PupperProfileRequest request) {
         PupperProfileResponse response = new PupperProfileResponse();
-        response.setId(request.getId());
         response.setUserId(request.getPupperUserId());
         response.setSuccess(true);
-        response.setStatus("fromPupperProfileRequest success");
-        response.setPupperProfile(null);
+        response.setPupperProfile(request.getPupperProfile());
+        response.setDescription("fromPupperProfileRequest success");
+
         return response;
     }
 
     public static PupperProfileResponse fromPupperProfile (PupperProfile profile) {
         PupperProfileResponse response = new PupperProfileResponse();
-        response.setId(profile.getId());
         response.setUserId(profile.getUserId());
         response.setSuccess(true);
-        response.setStatus("fromUserProfile success");
         response.setPupperProfile(profile);
+        response.setDescription("fromPupperProfileRequest success");
+
         return response;
     }
 

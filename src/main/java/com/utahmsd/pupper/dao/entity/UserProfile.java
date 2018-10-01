@@ -7,12 +7,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(schema="u0934995", name = "UserProfile")
+@Table(schema="u0934995", name = "user_profile")
 public class UserProfile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "account_id")
@@ -25,7 +25,7 @@ public class UserProfile implements Serializable {
     private String lastName;
 
     @Column(name = "sex")
-    private boolean sex;
+    private char sex;
 
     @Column(name = "birthdate")
     private Date birthdate; //For profile age
@@ -36,10 +36,12 @@ public class UserProfile implements Serializable {
     @Column(name = "date_join")
     private Date dateJoined;
 
+    @Column(name = "last_login")
+    private Date lastLogin;
+
     public UserProfile(){}
 
     public UserProfile(UserProfileRequest request) {
-
     }
 
     public Long getId() {
@@ -74,11 +76,11 @@ public class UserProfile implements Serializable {
         this.lastName = lastName;
     }
 
-    public boolean isSex() {
+    public char getSex() {
         return sex;
     }
 
-    public void setSex(boolean sex) {
+    public void setSex(char sex) {
         this.sex = sex;
     }
 
@@ -105,4 +107,8 @@ public class UserProfile implements Serializable {
     public void setDateJoined(Date dateJoined) {
         this.dateJoined = dateJoined;
     }
+
+    public Date getLastLogin() { return lastLogin; }
+
+    public void setLastLogin(Date lastLogin) { this.lastLogin = lastLogin; }
 }

@@ -15,14 +15,8 @@ public abstract class ProfileResponse {
 
     public static PupperRestExceptionHandler handler;
 
-    @JsonProperty("id")
-    private Long id;
-
     @JsonProperty("isSuccess")
     private boolean success;
-
-    @JsonProperty("status")
-    private String status;
 
     @JsonProperty("statusCode")
     private HttpStatus statusCode;
@@ -33,28 +27,12 @@ public abstract class ProfileResponse {
     @JsonProperty("description")
     private String description;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public boolean isSuccess() {
         return success;
     }
 
     public void setSuccess(boolean success) {
         this.success = success;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getMessage() {
@@ -81,33 +59,11 @@ public abstract class ProfileResponse {
         this.statusCode = statusCode;
     }
 
-//    public ProfileResponse(){}
-//
+    public ProfileResponse(){}
+
 //    public ProfileResponse(ProfileRequest request){
-//        id = request.getId();
 //        success = true;
 //        statusCode = HttpStatus.OK;
 //        status = "success";
-//    }
-//
-//    public ProfileResponse responseErrorHandler (Long id, Exception ex, ProfileRequest request) throws Exception{
-//        ResponseEntity<Object> errorResponse;
-//        if (ex instanceof JsonParseException) {
-//            errorResponse = handler.handleJsonParsingViolation((JsonParseException) ex, (WebRequest) request);
-//        }
-//        else if (ex instanceof ConstraintViolationException) {
-//            errorResponse = handler.handleConstraintViolation((ConstraintViolationException) ex, (WebRequest) request);
-//
-//        } else {
-//            errorResponse = handler.handleException(ex, (WebRequest) request);
-//        }
-//
-//        this.id = id;
-//        this.statusCode = errorResponse.getStatusCode();
-//        this.success = errorResponse.getStatusCode().isError();
-//        this.status = errorResponse.getStatusCode().getReasonPhrase();
-//        this.message = ex.getMessage();
-//        this.description = errorResponse.getBody().toString();
-//        return this;
 //    }
 }

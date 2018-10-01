@@ -10,7 +10,7 @@ import java.io.Serializable;
 //Keep only fields that will not be modified/updated frequently
 
 @Entity
-@Table(name = "UserCredentials")
+@Table(schema="u0934995", name = "UserCredentials")
 public class UserCredentials implements Serializable {
 
     @Id

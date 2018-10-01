@@ -8,21 +8,18 @@ import com.utahmsd.pupper.dao.entity.PupperProfile;
 //PupperProfile profile request representing a json request for a given random matching profile displayed to user
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class PupperProfileRequest extends ProfileRequest {
+public class PupperProfileRequest {
 
-    @JsonProperty("requestingUser")
+    @JsonProperty("requestingUserId")
     private Long requestingUserId;
 
     @JsonProperty("requestingPupperId")
     private Long requestingPupperId;
 
-    @JsonProperty("requestingPupper")
-    private PupperProfile requestingPupperProfile;
-
-    @JsonProperty("pupperProfile") //PupperProfile that was requested, corresponds to id field
+    @JsonProperty("pupper") //PupperProfile that was requested, corresponds to id field
     private PupperProfile pupperProfile;
 
-    @JsonProperty("pupperUserId") //Id of the user that this pupperProfile belongs to
+    @JsonProperty("userId") //Id of the user that this pupperProfile belongs to
     private Long pupperUserId;
 
     public Long getRequestingUserId() {
@@ -39,14 +36,6 @@ public class PupperProfileRequest extends ProfileRequest {
 
     public void setRequestingPupperId(Long requestingPupperId) {
         this.requestingPupperId = requestingPupperId;
-    }
-
-    public PupperProfile getRequestingPupperProfile() {
-        return requestingPupperProfile;
-    }
-
-    public void setRequestingPupperProfile(PupperProfile requestingPupperProfile) {
-        this.requestingPupperProfile = requestingPupperProfile;
     }
 
     public PupperProfile getPupperProfile() {

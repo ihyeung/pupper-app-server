@@ -1,4 +1,4 @@
-package com.utahmsd.pupper.dto.pup;
+package com.utahmsd.pupper.dto.pupper;
 
 
 import org.apache.commons.lang3.StringUtils;

@@ -7,16 +7,12 @@ import com.utahmsd.pupper.dao.entity.UserProfile;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class UserProfileRequest extends ProfileRequest {
+public class UserProfileRequest {
 
-    //Requests for a userProfile will always be made from a given UserProfile and not a PupperProfile
+    //Reminder to self: Requests for a userProfile will always be made from a given UserProfile and not a PupperProfile
 
-
-    @JsonProperty("requestingUser")
+    @JsonProperty("requestingUserId")
     private Long requestingUserId;
-
-    @JsonProperty("requestingUserProfile") //UserProfile of user making request
-    private UserProfile requestingUserProfile; //Probably will remove this once things are up and running
 
     @JsonProperty("userProfile") //UserProfile that was requested
     private UserProfile userProfile;
@@ -35,13 +31,5 @@ public class UserProfileRequest extends ProfileRequest {
 
     public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
-    }
-
-    public UserProfile getRequestingUserProfile() {
-        return requestingUserProfile;
-    }
-
-    public void setRequestingUserProfile(UserProfile requestingUserProfile) {
-        this.requestingUserProfile = requestingUserProfile;
     }
 }

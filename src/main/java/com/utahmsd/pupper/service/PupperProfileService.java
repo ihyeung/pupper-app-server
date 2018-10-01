@@ -5,6 +5,8 @@ import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dto.PupperProfileRequest;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,35 +18,35 @@ import java.util.Optional;
 @Singleton
 public class PupperProfileService {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
+
     @Inject
     PupperProfileRepo pupperProfileRepo;
 
     @Inject
     UserProfileRepo userProfileRepo;
 
-    //Basic methods
-
-    public PupperProfileResponse findPupperProfile(Long id) {
-        Optional<PupperProfile> pupperProfile = pupperProfileRepo.findById(id);
+    public PupperProfileResponse getAllPupperProfiles() {
         return null;
     }
 
-    public PupperProfileResponse createOrUpdatePupperProfile(PupperProfileRequest request) {
+    public PupperProfileResponse findAllPupperProfilesByUserId(Long userId) {
         return null;
     }
 
-    //Methods for filtering by criteria
-
-    public PupperProfileResponse filterPupperProfileById (Long matchProfileId, Long userId) {
-        if (matchProfileId == null && userId == null) {
-            Iterable<PupperProfile> pupperProfileList = pupperProfileRepo.findAll();
-//            pupperProfileList.forEach();
-        }
+    public PupperProfileResponse findPupperProfile(Long pupperId, Long userId) {
         return null;
     }
 
-    public List<PupperProfileResponse> findAllByUserId(Long id) {
-        Optional<List<PupperProfile>> pupperProfileList = pupperProfileRepo.findAllByUserId(id);
+    public PupperProfileResponse createNewPupperProfile(PupperProfileRequest request) {
+        return null;
+    }
+
+    public PupperProfileResponse updatePupperProfile(PupperProfileRequest request) {
+        return null;
+    }
+
+    public PupperProfileResponse deletePupperProfile(Long userId, Long pupperId) {
         return null;
     }
 

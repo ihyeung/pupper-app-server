@@ -1,4 +1,4 @@
-package com.utahmsd.pupper.dto.pup;
+package com.utahmsd.pupper.dto.pupper;
 
 public enum Size {
     TOY,

@@ -1,6 +1,6 @@
 package com.utahmsd.pupper.dao.entity;
 
-import com.utahmsd.pupper.dto.pup.Size;
+import com.utahmsd.pupper.dto.pupper.Size;
 
 import javax.persistence.*;
 import java.io.Serializable;
