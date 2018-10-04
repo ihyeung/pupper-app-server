@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.acceptance;
 
+import com.utahmsd.pupper.dao.entity.UserCredentials;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserProfileRequest;
 import io.restassured.RestAssured;
@@ -83,8 +84,12 @@ public class UserProfileControllerAT {
     }
 
     private UserProfile createUserProfile() {
+        UserCredentials credentials = new UserCredentials();
+        credentials.setEmail("test@test.com");
+        credentials.setComputedHash("TEST");
+        credentials.setSalt("SALT");
         UserProfile user = new UserProfile();
-        user.setAccountId(Long.parseLong("3"));
+        user.setUserCredentials(credentials);
         user.setFirstName("Carmen");
         user.setLastName("San Diego");
         user.setDateJoined(Date.from(Instant.now()));

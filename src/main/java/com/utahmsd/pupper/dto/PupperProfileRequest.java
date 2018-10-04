@@ -10,17 +10,17 @@ import com.utahmsd.pupper.dao.entity.PupperProfile;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PupperProfileRequest {
 
-    @JsonProperty("requestingUserId")
+    @JsonProperty("requestFrom")
     private Long requestingUserId;
 
     @JsonProperty("requestingPupperId")
     private Long requestingPupperId;
 
-    @JsonProperty("pupper") //PupperProfile that was requested, corresponds to id field
+    @JsonProperty("pupperProfile") //PupperProfile that was requested, corresponds to id field
     private PupperProfile pupperProfile;
-
-    @JsonProperty("userId") //Id of the user that this pupperProfile belongs to
-    private Long pupperUserId;
+//
+//    @JsonProperty("userId") //Id of the user that this pupperProfile belongs to
+//    private Long pupperUserId;
 
     public Long getRequestingUserId() {
         return requestingPupperId;
@@ -46,11 +46,11 @@ public class PupperProfileRequest {
         this.pupperProfile = pupperProfile;
     }
 
-    public Long getPupperUserId() {
-        return pupperUserId;
-    }
-
-    public void setPupperUserId(Long pupperUserId) {
-        this.pupperUserId = pupperUserId;
-    }
+//    public Long getPupperUserId() {
+//        return pupperUserId;
+//    }
+//
+//    public void setPupperUserId(Long pupperUserId) {
+//        this.pupperUserId = pupperUserId;
+//    }
 }

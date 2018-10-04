@@ -5,6 +5,7 @@ import com.utahmsd.pupper.dto.pupper.LifeStage;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 //Entity repesenting each individual pupper's separate info (
 
@@ -20,31 +21,26 @@ public class PupperProfile implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "is_male")
-    private boolean isMale; //Male or female
+    @Column(name = "sex")
+    private char sex; //Male or female
 
-    @Column(name = "birth_month")
-    private int month;
+    @Column(name = "birth_date")
+    private Date birthdate;
 
-    @Column(name = "birth_year")
-    private int year;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "life_stage")
     private LifeStage lifeStage;
 
-    @Column(name = "breed")
-    private Breed breed;
+    @ManyToOne
+    @JoinColumn(name = "breed_id")
+    private Breed breedId;
 
     @Column(name = "is_neutered")
     private boolean isNeutered;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "energy")
     private Energy energy;
-
-//    @ManyToOne //Multiple puppers can reference a single MatchProfile
-//    @JoinColumn(name = "match_profile_id") //foreign key referencing 'id' column in MatchProfile entity
-    @Column(name = "match_profile_id")
-    private Long matchProfileId;
 
 //    @ManyToOne //Many puppers can point to userid
 //    @JoinColumn(name = "user_id") //foreign key that references 'id' column in UserProfile entity
@@ -67,28 +63,20 @@ public class PupperProfile implements Serializable {
         this.name = name;
     }
 
-    public boolean isMale() {
-        return isMale;
+    public char getSex() {
+        return sex;
     }
 
-    public void setMale(boolean male) {
-        isMale = male;
+    public void setSex(char sex) {
+        this.sex = sex;
     }
 
-    public int getMonth() {
-        return month;
+    public Date getBirthdate() {
+        return birthdate;
     }
 
-    public void setMonth(int month) {
-        this.month = month;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
     }
 
     public LifeStage getLifeStage() {
@@ -99,12 +87,20 @@ public class PupperProfile implements Serializable {
         this.lifeStage = lifeStage;
     }
 
-    public Breed getBreed() {
-        return breed;
+//    public Long getBreedId() {
+//        return breedId;
+//    }
+//
+//    public void setBreedId(Long breedId) {
+//        this.breedId = breedId;
+//    }
+
+    public Breed getBreedId() {
+        return breedId;
     }
 
-    public void setBreed(Breed breed) {
-        this.breed = breed;
+    public void setBreedId(Breed breedId) {
+        this.breedId = breedId;
     }
 
     public boolean isNeutered() {
@@ -121,14 +117,6 @@ public class PupperProfile implements Serializable {
 
     public void setEnergy(Energy energy) {
         this.energy = energy;
-    }
-
-    public Long getMatchProfileId() {
-        return matchProfileId;
-    }
-
-    public void setMatchProfileId(Long matchProfileId) {
-        this.matchProfileId = matchProfileId;
     }
 
     public Long getUserId() {

@@ -61,9 +61,4 @@ public abstract class ProfileResponse {
 
     public ProfileResponse(){}
 
-//    public ProfileResponse(ProfileRequest request){
-//        success = true;
-//        statusCode = HttpStatus.OK;
-//        status = "success";
-//    }
 }

@@ -11,12 +11,16 @@ public class Breed implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "breed_id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false)
     private int id;
 
-    @Column(name = "breed")
+    @Column(name = "name")
     private String breed;
 
+    @Column(name = "alt_name")
+    private String altName;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "size")
     private Size size;
 
@@ -28,12 +32,20 @@ public class Breed implements Serializable {
         this.id = id;
     }
 
-    public String getBreed() {
+    public String getBreedName() {
         return breed;
     }
 
-    public void setBreed(String breed) {
-        this.breed = breed;
+    public void setBreedName(String breedName) {
+        this.breed = breedName;
+    }
+
+    public String getAltName() {
+        return altName;
+    }
+
+    public void setAltName(String altName) {
+        this.altName = altName;
     }
 
     public Size getSize() {

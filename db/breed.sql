@@ -1,11 +1,9 @@
-create table DATABASENAME.breed
+CREATE TABLE u0934995.breed
 (
-	id int auto_increment
-		primary key,
-	breed varchar(50) null,
-	size enum('toy', 'small', 'mid', 'large', 'xlarge') null,
-	constraint breed_breed_uindex
-		unique (breed)
-)
-;
-
+  id INT AUTO_INCREMENT,
+  name VARCHAR(50),
+  alt_name VARCHAR(50),
+  size ENUM ('TOY', 'SMALL', 'MID', 'LARGE', 'XLARGE'),
+  PRIMARY KEY(id),
+  UNIQUE(name)
+);

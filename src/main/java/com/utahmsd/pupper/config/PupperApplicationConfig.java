@@ -10,6 +10,9 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 
@@ -26,10 +29,16 @@ public class PupperApplicationConfig {
     private String dbUrl;
 
 //    @Value("${db.name}")
-//    private String dbName;
+    private String dbName = System.getProperty("db.name", "u0934995");
 
 //    @Value("${db.password}")
-//    private String dbPassword;
+    private String dbPassword = System.getProperty("db.password", "1234!Abcd&E");
+
+    @Value("${spring.datasource.username:}")
+    private String dbUsername;
+
+    @Value("${spring.datasource.password:}")
+    private String getDbPassword;
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -42,6 +51,12 @@ public class PupperApplicationConfig {
         cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("pupper")));
 
         return cacheManager;
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(4);
+        return encoder;
     }
 
 }

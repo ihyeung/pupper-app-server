@@ -1,9 +1,9 @@
 package com.utahmsd.pupper.dto.pupper;
 
 public enum Energy {
-    MINIMAL,
+    MIN,
     LOW,
-    MODERATE,
+    MED,
     HIGH,
     EXTREME;
 

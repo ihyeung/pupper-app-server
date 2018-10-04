@@ -6,8 +6,4 @@ public enum Size {
     MID,
     LARGE,
     XLARGE;
-
-    private Size breedSizeMapper (String breed) {
-        return null;
-    }
 }

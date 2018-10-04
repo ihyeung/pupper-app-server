@@ -15,8 +15,9 @@ public class UserProfile implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "account_id")
-    private Long accountId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="account_id_fk")
+    private UserCredentials userCredentials;
 
     @Column(name = "name_first")
     private String firstName;
@@ -52,12 +53,12 @@ public class UserProfile implements Serializable {
         this.id = id;
     }
 
-    public Long getAccountId() {
-        return accountId;
+    public UserCredentials getUserCredentials() {
+        return userCredentials;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public void setUserCredentials(UserCredentials userCredentialsId) {
+        this.userCredentials = userCredentialsId;
     }
 
     public String getFirstName() {

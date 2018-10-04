@@ -15,7 +15,7 @@ public class UserCredentials implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", updatable = false, nullable = false)
+    @Column(name = "user_credentials_id", updatable = false, nullable = false)
     private Long id;
 
     @Column(name = "email")

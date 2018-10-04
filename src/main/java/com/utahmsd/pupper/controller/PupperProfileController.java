@@ -26,7 +26,7 @@ public class PupperProfileController {
         this.pupperSearchFilterService = filterService;
     }
 
-    @RequestMapping(method= RequestMethod.POST)
+    @RequestMapping(path="/pupper", method= RequestMethod.POST)
     public PupperProfileResponse createPupperProfile(@RequestBody PupperProfileRequest request) {
 
         return pupperProfileService.createNewPupperProfile(request);
@@ -36,6 +36,12 @@ public class PupperProfileController {
     public PupperProfileResponse getAllPupperProfiles() {
 
         return pupperProfileService.getAllPupperProfiles();
+    }
+
+    @RequestMapping(path ="/pupper/api/breed", method= RequestMethod.GET)
+    public PupperProfileResponse getAllPupperBreeds() {
+
+        return pupperProfileService.getBreeds();
     }
 
     @RequestMapping(path ="/user/{userId}/pupper/", method= RequestMethod.GET)

@@ -3,62 +3,67 @@ package com.utahmsd.pupper.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
+import com.utahmsd.pupper.dao.entity.UserProfile;
+import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PupperProfileResponse extends ProfileResponse {
 
     //inherited ProfileResponse id field corresponds to pupperId
 
-    @JsonProperty("pupperProfile")
-    private PupperProfile pupperProfile;
+    @JsonProperty("pupperProfiles")
+    private List<PupperProfile> pupperProfiles;
 
-    @JsonProperty("userId")
-    private Long userId;  //UserId of the User that this PupperProfile
-    // belongs to
+    public PupperProfileResponse() {
+    }
 
-    //Constructors--need to clean these up later
-
-    public PupperProfileResponse() {}
-
-    public PupperProfileResponse(PupperProfileRequest request) {
-        this.setPupperProfile(request.getPupperProfile()); //may be null if not doing an update to an existing profile
+    public static PupperProfileResponse createPupperProfileResponse(
+            boolean success, List<PupperProfile> puppers, HttpStatus code) {
+        PupperProfileResponse response = new PupperProfileResponse();
+        response.setSuccess(success);
+        response.setPupperProfiles(puppers);
+        response.setStatusCode(code);
+        return response;
     }
 
     //Static methods
 
-    public static PupperProfileResponse fromPupperProfileRequest (PupperProfileRequest request) {
+    public static PupperProfileResponse fromPupperProfileRequest(PupperProfileRequest request) {
         PupperProfileResponse response = new PupperProfileResponse();
-        response.setUserId(request.getPupperUserId());
+        if (request.getPupperProfile() == null) {
+            response.setSuccess(false);
+            response.setStatusCode(HttpStatus.NOT_FOUND);
+            response.setDescription("fromPupperProfileRequest failure: request contains null pupper profile.");
+            return response;
+        }
+        List<PupperProfile> data = new ArrayList<>();
+        data.add(request.getPupperProfile());
+        response.setPupperProfiles(data);
         response.setSuccess(true);
-        response.setPupperProfile(request.getPupperProfile());
         response.setDescription("fromPupperProfileRequest success");
 
         return response;
     }
 
-    public static PupperProfileResponse fromPupperProfile (PupperProfile profile) {
+    public static PupperProfileResponse fromPupperProfile(PupperProfile profile) {
         PupperProfileResponse response = new PupperProfileResponse();
-        response.setUserId(profile.getUserId());
         response.setSuccess(true);
-        response.setPupperProfile(profile);
+        List<PupperProfile> data = new ArrayList<>();
+        data.add(profile);
+        response.setPupperProfiles(data);
         response.setDescription("fromPupperProfileRequest success");
 
         return response;
     }
 
-    public PupperProfile getPupperProfile() {
-        return pupperProfile;
+    public List<PupperProfile> getPupperProfiles() {
+        return pupperProfiles;
     }
 
-    public void setPupperProfile(PupperProfile pupperProfile) {
-        this.pupperProfile = pupperProfile;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setPupperProfiles(List<PupperProfile> pupperProfile) {
+        this.pupperProfiles = pupperProfile;
     }
 }
