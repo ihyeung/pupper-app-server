@@ -5,6 +5,7 @@ import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
+import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.PupperProfileRequest;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import org.slf4j.Logger;
@@ -20,9 +21,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.utahmsd.pupper.dto.PupperProfileResponse.*;
+
 @Named
 @Singleton
 public class PupperProfileService {
+
+    private final String DEFAULT_SORT_BY_CRITERIA = "breed_id";
+    private final String INVALID_USER_ID = "No user profile with user profile id %s exists.";
+    private final String EMPTY_PUPPER_PROFILE_LIST = "No pupper profiles belonging to user profile id %s were found.";
+    private final String INVALID_PUPPER_ID = "No pupper profile with profile id %s exists";
+    private final String INVALID_REQUEST = "Invalid request.";
+
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
@@ -36,27 +46,94 @@ public class PupperProfileService {
     BreedRepo breedRepo;
 
     public PupperProfileResponse getAllPupperProfiles() {
-        return null;
+        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_BY_CRITERIA));
+        Iterable<PupperProfile> puppers = pupperProfileRepo.findAll(sortCriteria);
+        List<PupperProfile> pupperProfileList = new ArrayList<>();
+        if (puppers.iterator().hasNext()) {
+            puppers.forEach(pupperProfileList::add);
+        }
+        return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK);
     }
 
     public PupperProfileResponse findAllPupperProfilesByUserId(Long userId) {
-        return null;
+        Optional<UserProfile> user = userProfileRepo.findById(userId);
+        if (!user.isPresent()) {
+            PupperProfileResponse response = createPupperProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST);
+            response.setDescription(String.format(INVALID_USER_ID, userId));
+            return response;
+        }
+        Optional<List<PupperProfile>> pupperProfileList = pupperProfileRepo.findAllByUserProfile(user.get());
+        if (!pupperProfileList.isPresent() || pupperProfileList.get().isEmpty()) {
+            PupperProfileResponse response = createPupperProfileResponse(false, pupperProfileList.get(), HttpStatus.NO_CONTENT);
+            response.setDescription(String.format(EMPTY_PUPPER_PROFILE_LIST, userId));
+            return response;
+        }
+        return createPupperProfileResponse(true, pupperProfileList.get(), HttpStatus.OK);
+
     }
 
-    public PupperProfileResponse findPupperProfile(Long pupperId, Long userId) {
-        return null;
+    public PupperProfileResponse findPupperProfile(Long userId, Long pupperId) {
+        PupperProfileResponse response = findAllPupperProfilesByUserId(userId);
+        List<PupperProfile> pupperProfiles = response.getPupperProfiles();
+        if (pupperProfiles == null || pupperProfiles.isEmpty()) {
+            return  response;
+        }
+        List<PupperProfile> pupperProfile = new ArrayList<>();
+        for (PupperProfile p : pupperProfiles) {
+            if (p.getId() == pupperId) {
+                pupperProfile.add(p);
+                return createPupperProfileResponse(true, pupperProfile, HttpStatus.OK);
+            }
+        }
+        PupperProfileResponse invalidPupperIdResponse =
+                createPupperProfileResponse(false, pupperProfile, HttpStatus.NO_CONTENT);
+        invalidPupperIdResponse.setDescription(String.format(INVALID_PUPPER_ID, pupperId));
+        return invalidPupperIdResponse;
     }
 
     public PupperProfileResponse createNewPupperProfile(PupperProfileRequest request) {
-        return null;
+        PupperProfile profile = pupperProfileRepo.save(request.getPupperProfile());
+        List<PupperProfile> pupperProfile = new ArrayList<>();
+        pupperProfile.add(profile);
+        return createPupperProfileResponse(true, pupperProfile, HttpStatus.CREATED);
     }
 
-    public PupperProfileResponse updatePupperProfile(PupperProfileRequest request) {
-        return null;
+    public PupperProfileResponse updatePupperProfile(Long userId, Long pupId, PupperProfileRequest request) {
+        if (!validateUserIdAndPupperIdMatchesRequest(userId, pupId, request)) {
+            PupperProfileResponse invalidRequestResponse =
+                    createPupperProfileResponse(false, Collections.emptyList(), HttpStatus.UNAUTHORIZED);
+            invalidRequestResponse.setDescription(INVALID_REQUEST);
+            return invalidRequestResponse;
+        }
+        PupperProfile profile = pupperProfileRepo.save(request.getPupperProfile());
+        List<PupperProfile> pupperProfile = new ArrayList<>();
+        pupperProfile.add(profile);
+        return createPupperProfileResponse(true, pupperProfile, HttpStatus.OK);
+
     }
 
     public PupperProfileResponse deletePupperProfile(Long userId, Long pupperId) {
-        return null;
+        PupperProfileResponse response = findPupperProfile(userId, pupperId);
+        if (response.getPupperProfiles() != null && !response.getPupperProfiles().isEmpty()) {
+            PupperProfile profileToDelete = response.getPupperProfiles().get(0);
+            pupperProfileRepo.deleteById(profileToDelete.getId());
+            List<PupperProfile> deletedProfile = new ArrayList<>();
+            deletedProfile.add(profileToDelete);
+            return createPupperProfileResponse(true, deletedProfile, HttpStatus.OK);
+        }
+        return createPupperProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST);
+    }
+
+    private boolean validateUserIdAndPupperIdMatchesRequest(Long userId, Long pupId, PupperProfileRequest request) {
+        if (request == null || request.getPupperProfile() == null) {
+            return false;
+        }
+        PupperProfile pupperProfile = request.getPupperProfile();
+        if (pupperProfile.getId() == null || pupperProfile.getUserProfile() == null ||
+                pupperProfile.getUserProfile().getId() == null) {
+            return false;
+        }
+        return pupperProfile.getId() == pupId && pupperProfile.getUserProfile().getId() == userId;
     }
 
 
@@ -69,7 +146,8 @@ public class PupperProfileService {
             breeds.forEach(breedList::add);
         }
         breedList.forEach(e->System.out.println(e.getBreedName()));
-        PupperProfileResponse response = PupperProfileResponse.createPupperProfileResponse(true, Collections.emptyList(), HttpStatus.OK);
+
+        PupperProfileResponse response = createPupperProfileResponse(true, Collections.emptyList(), HttpStatus.OK);
         response.setDescription(breedList.toString());
         return response;
     }

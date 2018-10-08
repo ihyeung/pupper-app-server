@@ -16,7 +16,7 @@ public class UserProfile implements Serializable {
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="account_id_fk")
+    @JoinColumn(name="user_credentials_id")
     private UserCredentials userCredentials;
 
     @Column(name = "name_first")

@@ -50,17 +50,16 @@ public class PupperProfileController {
         return pupperProfileService.findAllPupperProfilesByUserId(userId);
     }
     @RequestMapping(path ="/user/{userId}/pupper/{pupperId}", method= RequestMethod.GET)
-    public PupperProfileResponse getPupperProfile(@PathVariable("pupperId") Long pupId, @PathVariable("userId") Long userId) {
+    public PupperProfileResponse getPupperProfile(@PathVariable("userId") Long userId, @PathVariable("pupperId") Long pupId) {
 
-        return pupperProfileService.findPupperProfile(pupId, userId);
+        return pupperProfileService.findPupperProfile(userId, pupId);
     }
 
     @RequestMapping(path ="/user/{userId}/pupper/{pupperId}", method= RequestMethod.PUT)
     public PupperProfileResponse updatePupperProfile(@PathVariable("userId") Long userId,
                                                      @PathVariable("pupperId") Long pupId,
                                                      @RequestBody PupperProfileRequest request) {
-
-        return pupperProfileService.updatePupperProfile(request);
+        return pupperProfileService.updatePupperProfile(userId, pupId, request);
     }
 
     @RequestMapping(path ="/user/{userId}/pupper/{pupperId}", method= RequestMethod.DELETE)

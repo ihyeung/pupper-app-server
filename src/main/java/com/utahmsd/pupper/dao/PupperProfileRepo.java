@@ -1,6 +1,8 @@
 package com.utahmsd.pupper.dao;
 
+import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
+import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,9 @@ public interface PupperProfileRepo extends PagingAndSortingRepository<PupperProf
     Iterable<PupperProfile> findAll(Sort sort);
     Page<PupperProfile> findAll(Pageable pageable);
     Optional<PupperProfile> findById (Long id);
-    PupperProfile save(PupperProfile userProfile);
+    PupperProfile save(PupperProfile pupperProfile);
+    Optional<List<PupperProfile>> findAllByUserProfile (UserProfile userProfile);
+    Optional<List<PupperProfile>> findAllByMatchProfile (MatchProfile matchProfile);
     void deleteById(Long id);
+    void deleteAllByUserProfile(UserProfile userProfile);
 }

@@ -10,12 +10,12 @@ import java.io.Serializable;
 //Keep only fields that will not be modified/updated frequently
 
 @Entity
-@Table(schema="u0934995", name = "UserCredentials")
+@Table(schema="u0934995", name = "user_credentials")
 public class UserCredentials implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_credentials_id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @Column(name = "email")

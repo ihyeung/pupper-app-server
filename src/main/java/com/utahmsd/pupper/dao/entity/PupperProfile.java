@@ -33,7 +33,7 @@ public class PupperProfile implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "breed_id")
-    private Breed breedId;
+    private Breed breed;
 
     @Column(name = "is_neutered")
     private boolean isNeutered;
@@ -42,10 +42,13 @@ public class PupperProfile implements Serializable {
     @Column(name = "energy")
     private Energy energy;
 
-//    @ManyToOne //Many puppers can point to userid
-//    @JoinColumn(name = "user_id") //foreign key that references 'id' column in UserProfile entity
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne //A user can have multiple puppers, but a pupper can only belong to one user
+    @JoinColumn(name = "user_profile_id") //foreign key that references 'id' column in UserProfile entity
+    private UserProfile userProfile;
+
+    @ManyToOne //A match profile can have multiple puppers, but a pupper can only belong to one match profile
+    @JoinColumn(name = "match_profile_id")
+    private MatchProfile matchProfile;
 
     public Long getId() {
         return id;
@@ -87,20 +90,12 @@ public class PupperProfile implements Serializable {
         this.lifeStage = lifeStage;
     }
 
-//    public Long getBreedId() {
-//        return breedId;
-//    }
-//
-//    public void setBreedId(Long breedId) {
-//        this.breedId = breedId;
-//    }
-
     public Breed getBreedId() {
-        return breedId;
+        return breed;
     }
 
-    public void setBreedId(Breed breedId) {
-        this.breedId = breedId;
+    public void setBreedId(Breed breed) {
+        this.breed = breed;
     }
 
     public boolean isNeutered() {
@@ -119,11 +114,15 @@ public class PupperProfile implements Serializable {
         this.energy = energy;
     }
 
-    public Long getUserId() {
-        return userId;
+    public UserProfile getUserProfile() {
+        return userProfile;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
+
+    public MatchProfile getMatchProfile() { return matchProfile; }
+
+    public void setMatchProfile(MatchProfile matchProfile) { this.matchProfile = matchProfile; }
 }
