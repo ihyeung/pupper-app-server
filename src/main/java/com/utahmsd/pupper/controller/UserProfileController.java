@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 
-//Controller for user profile endpoints
 @RestController
 @Api(value = "UserProfile Controller For User Endpoints")
 @RequestMapping("/user")

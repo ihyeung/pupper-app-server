@@ -88,15 +88,17 @@ public class UserProfileControllerAT {
         credentials.setEmail("test@test.com");
         credentials.setComputedHash("TEST");
         credentials.setSalt("SALT");
+        credentials.setDateJoined(Date.from(Instant.now()));
+
         UserProfile user = new UserProfile();
         user.setUserCredentials(credentials);
         user.setFirstName("Carmen");
         user.setLastName("San Diego");
-        user.setDateJoined(Date.from(Instant.now()));
         user.setBirthdate(Date.from(Instant.parse("2004-12-03T10:15:30.00Z")));
         user.setZip("84095");
         user.setSex('F');
         user.setLastLogin(Date.from(Instant.now()));
+
         return user;
     }
 

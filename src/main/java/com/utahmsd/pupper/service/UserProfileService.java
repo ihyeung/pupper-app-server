@@ -23,7 +23,7 @@ public class UserProfileService {
 
     private final String DEFAULT_SORT_BY_CRITERIA = "lastName";
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
     @Inject
     UserProfileRepo userProfileRepo;

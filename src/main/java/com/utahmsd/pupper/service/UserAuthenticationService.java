@@ -16,10 +16,24 @@ public class UserAuthenticationService {
     @Inject
     UserCredentialsRepo userCredentialsRepo;
 
-    @Inject
-    BCryptPasswordEncoder encoder;
 
-    public UserAuthenticationResponse authenticateUser (UserAuthenticationRequest request) {
+    public UserAuthenticationResponse authenticateUserCredentials (UserAuthenticationRequest request) {
+        return null;
+    }
+
+    public UserAuthenticationResponse createUserCredentials (UserAuthenticationRequest request) {
+        return null;
+    }
+
+    public UserAuthenticationResponse updateUserCredentials (Long credentialsId, UserAuthenticationRequest request) {
+        return null;
+    }
+
+    public UserAuthenticationResponse deleteUserCredentials (Long credentialsId) {
+        return null;
+    }
+
+    public UserAuthenticationResponse getAuthToken() {
         return null;
     }
 }

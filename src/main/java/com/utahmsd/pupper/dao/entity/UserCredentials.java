@@ -4,6 +4,7 @@ import com.utahmsd.pupper.dto.UserAuthenticationRequest;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 //Entity representing a user's credential/account information
 
@@ -26,6 +27,9 @@ public class UserCredentials implements Serializable {
 
     @Column(name = "salt")
     private String salt;
+
+    @Column(name = "date_joined")
+    private Date dateJoined;
 
     public UserCredentials(){}
 
@@ -68,5 +72,13 @@ public class UserCredentials implements Serializable {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public Date getDateJoined() {
+        return dateJoined;
+    }
+
+    public void setDateJoined(Date dateJoined) {
+        this.dateJoined = dateJoined;
     }
 }

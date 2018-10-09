@@ -11,10 +11,8 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 
-//Controller class for viewing/modifying a pupper profile
-
 @RestController
-@Api(value = "PupperProfile Controller For Pupper Endpoints")
+@Api(value = "PupperProfile Controller For PupperProfile Endpoints")
 public class PupperProfileController {
 
     private final PupperProfileService pupperProfileService;

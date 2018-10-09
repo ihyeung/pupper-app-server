@@ -31,11 +31,11 @@ public class UserProfile implements Serializable {
     @Column(name = "birthdate")
     private Date birthdate; //For profile age
 
+    @Column(name = "marital_status")
+    private String maritalStatus;
+
     @Column(name = "zip")
     private String zip;
-
-    @Column(name = "date_join")
-    private Date dateJoined;
 
     @Column(name = "last_login")
     private Date lastLogin;
@@ -99,14 +99,6 @@ public class UserProfile implements Serializable {
 
     public void setZip(String zip) {
         this.zip = zip;
-    }
-
-    public Date getDateJoined() {
-        return dateJoined;
-    }
-
-    public void setDateJoined(Date dateJoined) {
-        this.dateJoined = dateJoined;
     }
 
     public Date getLastLogin() { return lastLogin; }

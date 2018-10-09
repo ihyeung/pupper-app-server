@@ -1,0 +1,35 @@
+package com.utahmsd.pupper.dao.entity;
+
+import com.utahmsd.pupper.dao.entity.MatchProfile;
+
+import javax.persistence.*;
+import java.util.Date;
+
+/**
+ * Entity containing all PupperMatcherService data
+ */
+//Entity representing all pairings of puppers who have swiped left or right on each other
+
+@Entity
+@Table(name = "match_result")
+public class MatchResult {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "match_profile_1")
+    private MatchProfile matchProfileOne;
+
+    @Column(name = "match_profile_1_result")
+    private boolean isMatchForProfileOne; //Match profile 1's decision on match profile 2
+
+    @Column(name = "match_profile_2")
+    private MatchProfile matchProfileTwo;
+
+    @Column(name = "match_profile_2_result")
+    private boolean isMatchForProfileTwo; //Match profile 2's decision on match profile 1
+
+    @Column(name = "last_update_match_result")
+    private Date lastUpdateToMatchResult; //Date that match result was last updated
+
+}

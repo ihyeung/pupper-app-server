@@ -10,7 +10,7 @@ import java.util.Date;
 //Entity repesenting each individual pupper's separate info (
 
 @Entity
-@Table(schema="u0934995", name = "Pupper")
+@Table(schema="u0934995", name = "pupper_profile")
 public class PupperProfile implements Serializable {
 
     @Id
@@ -22,7 +22,7 @@ public class PupperProfile implements Serializable {
     private String name;
 
     @Column(name = "sex")
-    private char sex; //Male or female
+    private char sex; //M or F
 
     @Column(name = "birth_date")
     private Date birthdate;
