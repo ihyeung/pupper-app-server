@@ -1,8 +1,12 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.utahmsd.pupper.dto.UserProfileRequest;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
+import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,18 +23,22 @@ public class UserProfile implements Serializable {
     @JoinColumn(name="user_credentials_id")
     private UserCredentials userCredentials;
 
+    @Size(min = 2, max = 30)
     @Column(name = "name_first")
     private String firstName;
 
+    @Size(min = 1, max = 30)
     @Column(name = "name_last")
     private String lastName;
 
+    @Max(1)
     @Column(name = "sex")
-    private char sex;
+    private char sex; //M or F
 
     @Column(name = "birthdate")
     private Date birthdate; //For profile age
 
+    @DefaultValue("Single")
     @Column(name = "marital_status")
     private String maritalStatus;
 
@@ -91,6 +99,14 @@ public class UserProfile implements Serializable {
 
     public void setBirthdate(Date birthdate) {
         this.birthdate = birthdate;
+    }
+
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
     }
 
     public String getZip() {

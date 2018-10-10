@@ -2,8 +2,13 @@ package com.utahmsd.pupper.dao.entity;
 
 import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,9 +23,11 @@ public class PupperProfile implements Serializable {
     @Column(name = "pupper_id", updatable = false, nullable = false)
     private Long id;
 
+    @Size(min = 2, max = 30)
     @Column(name = "name")
     private String name;
 
+    @Max(1)
     @Column(name = "sex")
     private char sex; //M or F
 
@@ -42,10 +49,12 @@ public class PupperProfile implements Serializable {
     @Column(name = "energy")
     private Energy energy;
 
+    @Valid
     @ManyToOne //A user can have multiple puppers, but a pupper can only belong to one user
     @JoinColumn(name = "user_profile_id") //foreign key that references 'id' column in UserProfile entity
     private UserProfile userProfile;
 
+    @Valid
     @ManyToOne //A match profile can have multiple puppers, but a pupper can only belong to one match profile
     @JoinColumn(name = "match_profile_id")
     private MatchProfile matchProfile;

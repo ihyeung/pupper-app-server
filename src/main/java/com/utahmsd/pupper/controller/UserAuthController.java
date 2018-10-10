@@ -2,8 +2,6 @@ package com.utahmsd.pupper.controller;
 
 import com.utahmsd.pupper.dto.UserAuthenticationRequest;
 import com.utahmsd.pupper.dto.UserAuthenticationResponse;
-import com.utahmsd.pupper.dto.UserProfileRequest;
-import com.utahmsd.pupper.dto.UserProfileResponse;
 import com.utahmsd.pupper.service.UserAuthenticationService;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;

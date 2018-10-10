@@ -1,7 +1,7 @@
 package com.utahmsd.pupper.controller;
 
-import com.utahmsd.pupper.dto.UserProfileRequest;
 import com.utahmsd.pupper.dto.UserProfileResponse;
+import com.utahmsd.pupper.dto.UserProfileRequest;
 import com.utahmsd.pupper.service.UserProfileService;
 import com.utahmsd.pupper.service.filter.UserSearchFilterService;
 import io.swagger.annotations.Api;

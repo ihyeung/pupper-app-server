@@ -3,7 +3,7 @@ package com.utahmsd.pupper.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 
-public class PupperMatcherResponse extends ProfileResponse {
+public class PupperMatcherResponse extends BaseResponse {
 
     @JsonProperty("isMatch")
     private boolean isMatch; //Whether profile is a mutual match

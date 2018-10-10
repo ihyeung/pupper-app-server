@@ -6,8 +6,8 @@ import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.UserProfile;
-import com.utahmsd.pupper.dto.PupperProfileRequest;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
+import com.utahmsd.pupper.dto.PupperProfileRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -58,13 +58,15 @@ public class PupperProfileService {
     public PupperProfileResponse findAllPupperProfilesByUserId(Long userId) {
         Optional<UserProfile> user = userProfileRepo.findById(userId);
         if (!user.isPresent()) {
-            PupperProfileResponse response = createPupperProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST);
+            PupperProfileResponse response =
+                    createPupperProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST);
             response.setDescription(String.format(INVALID_USER_ID, userId));
             return response;
         }
         Optional<List<PupperProfile>> pupperProfileList = pupperProfileRepo.findAllByUserProfile(user.get());
         if (!pupperProfileList.isPresent() || pupperProfileList.get().isEmpty()) {
-            PupperProfileResponse response = createPupperProfileResponse(false, pupperProfileList.get(), HttpStatus.NO_CONTENT);
+            PupperProfileResponse response =
+                    createPupperProfileResponse(false, Collections.emptyList(), HttpStatus.NO_CONTENT);
             response.setDescription(String.format(EMPTY_PUPPER_PROFILE_LIST, userId));
             return response;
         }

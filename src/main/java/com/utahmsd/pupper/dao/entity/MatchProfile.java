@@ -1,10 +1,14 @@
 package com.utahmsd.pupper.dao.entity;
 
+import com.utahmsd.pupper.dto.PupperProfileRequest;
 import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
 import com.utahmsd.pupper.dto.pupper.Size;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 
 /**
@@ -25,10 +29,12 @@ public class MatchProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @NotNull
     @ManyToOne //A user can have multiple match profiles
     @JoinColumn(name = "user_profile_id")
     private UserProfile userProfile;
 
+    @DefaultValue("1")
     @Column(name = "num_dogs")
     private int numDogs;
 
@@ -51,6 +57,7 @@ public class MatchProfile implements Serializable {
     @Column(name = "pupper_score")
     private float score;
 
+    @Max(150)
     @Column(name = "about")
     private String aboutMe;
 
@@ -63,6 +70,29 @@ public class MatchProfile implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * This method will be called when the user with no existing pupper profiles
+     * chooses to create a new match profile and is prompted to enter data to create a new pupper profile.
+     *
+     * A match profile will ONLY be created when the user clicks "Create Pupper Profile", generating a
+     * PupperProfileRequest. This will be used not only to create a new PupperProfile, but to auto-populate
+     * the fields of a newly created MatchProfile.
+     * @param request
+     * @return
+     */
+
+    public static MatchProfile createMatchProfileFromPupperProfile(PupperProfileRequest request) {
+        MatchProfile profile = new MatchProfile();
+        profile.setUserProfile(request.getPupperProfile().getUserProfile());
+        profile.setBreed(request.getPupperProfile().getBreedId());
+        profile.setLifeStage(request.getPupperProfile().getLifeStage());
+        profile.setEnergyLevel(request.getPupperProfile().getEnergy());
+        profile.setNumDogs(1);
+        profile.setScore(Float.MAX_VALUE);
+
+        return profile;
     }
 
     public UserProfile getUserProfile() {

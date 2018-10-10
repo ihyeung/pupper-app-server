@@ -11,7 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import javax.validation.ConstraintViolationException;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public abstract class ProfileResponse {
+public abstract class BaseResponse {
 
     public static PupperRestExceptionHandler handler;
 
@@ -59,6 +59,6 @@ public abstract class ProfileResponse {
         this.statusCode = statusCode;
     }
 
-    public ProfileResponse(){}
+    public BaseResponse(){}
 
 }

@@ -17,13 +17,15 @@ public class MatchResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "match_profile_1")
+    @ManyToOne //A match result corresponds to multiple (2) match profiles, and a match profile has many match results
+    @JoinColumn(name = "match_profile_id", insertable = false, updatable = false)
     private MatchProfile matchProfileOne;
 
     @Column(name = "match_profile_1_result")
     private boolean isMatchForProfileOne; //Match profile 1's decision on match profile 2
 
-    @Column(name = "match_profile_2")
+    @ManyToOne
+    @JoinColumn(name = "match_profile_id", insertable = false, updatable = false)
     private MatchProfile matchProfileTwo;
 
     @Column(name = "match_profile_2_result")

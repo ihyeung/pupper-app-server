@@ -1,8 +1,11 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.utahmsd.pupper.dto.UserAuthenticationRequest;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,6 +22,8 @@ public class UserCredentials implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @NotNull
+    @Size(min = 10, max = 40)
     @Column(name = "email")
     private String email;
 

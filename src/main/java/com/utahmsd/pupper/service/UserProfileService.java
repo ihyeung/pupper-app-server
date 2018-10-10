@@ -2,8 +2,8 @@ package com.utahmsd.pupper.service;
 
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.UserProfile;
-import com.utahmsd.pupper.dto.UserProfileRequest;
 import com.utahmsd.pupper.dto.UserProfileResponse;
+import com.utahmsd.pupper.dto.UserProfileRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;

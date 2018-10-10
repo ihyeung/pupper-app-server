@@ -1,5 +1,7 @@
 package com.utahmsd.pupper.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 
@@ -10,6 +12,8 @@ import java.util.Date;
  * matching profile and clicks either yes or no button
  * for another matching profile.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PupperMatcherRequest {
 
     @JsonProperty("matchingProfile")

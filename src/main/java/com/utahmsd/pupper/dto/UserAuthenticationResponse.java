@@ -1,12 +1,10 @@
 package com.utahmsd.pupper.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Timestamp;
 
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class UserAuthenticationResponse extends ProfileResponse {
+public class UserAuthenticationResponse extends BaseResponse {
 
     @JsonProperty("email")
     private String email;
