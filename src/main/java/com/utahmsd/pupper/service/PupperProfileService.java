@@ -6,6 +6,7 @@ import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.UserProfile;
+import com.utahmsd.pupper.dto.PupperMatcherResponse;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import com.utahmsd.pupper.dto.PupperProfileRequest;
 import org.slf4j.Logger;
@@ -29,9 +30,11 @@ public class PupperProfileService {
 
     private final String DEFAULT_SORT_BY_CRITERIA = "breed_id";
     private final String INVALID_USER_ID = "No user profile with user profile id %s exists.";
-    private final String EMPTY_PUPPER_PROFILE_LIST = "No pupper profiles belonging to user profile id %s were found.";
     private final String INVALID_PUPPER_ID = "No pupper profile with profile id %s exists";
     private final String INVALID_REQUEST = "Invalid request.";
+    private final String EMPTY_PUPPER_LIST_FOR_USER = "No pupper profiles belonging to user profile id %s were found.";
+    private final String EMPTY_PUPPER_LIST_FOR_MATCH_PROFILE_AND_USER_ID =
+            "No pupper profiles belonging to user profile id %s and match profile %s were found.";
 
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
@@ -67,7 +70,7 @@ public class PupperProfileService {
         if (!pupperProfileList.isPresent() || pupperProfileList.get().isEmpty()) {
             PupperProfileResponse response =
                     createPupperProfileResponse(false, Collections.emptyList(), HttpStatus.NO_CONTENT);
-            response.setDescription(String.format(EMPTY_PUPPER_PROFILE_LIST, userId));
+            response.setDescription(String.format(EMPTY_PUPPER_LIST_FOR_USER, userId));
             return response;
         }
         return createPupperProfileResponse(true, pupperProfileList.get(), HttpStatus.OK);
@@ -152,6 +155,33 @@ public class PupperProfileService {
         PupperProfileResponse response = createPupperProfileResponse(true, Collections.emptyList(), HttpStatus.OK);
         response.setDescription(breedList.toString());
         return response;
+    }
+
+    public PupperProfileResponse getAllPuppersInMatchProfile(Long userId, Long matchProfileId) {
+        PupperProfileResponse response = findAllPupperProfilesByUserId(userId);
+        if (!response.isSuccess() || response.getPupperProfiles() == null || response.getPupperProfiles().isEmpty()) {
+            response.setDescription(String.format(EMPTY_PUPPER_LIST_FOR_USER, userId));
+            return response;
+        }
+        List<PupperProfile> puppersWithMatchProfileId = new ArrayList<>();
+        response.getPupperProfiles().forEach(pup -> {
+            if (pup.getMatchProfile() != null && pup.getMatchProfile().getId() == matchProfileId) {
+                puppersWithMatchProfileId.add(pup);
+            }
+        });
+        PupperProfileResponse pupperProfileResponse =
+                createPupperProfileResponse(true, puppersWithMatchProfileId, HttpStatus.OK);
+
+        if (puppersWithMatchProfileId.isEmpty()) {
+            LOGGER.error(EMPTY_PUPPER_LIST_FOR_MATCH_PROFILE_AND_USER_ID, matchProfileId, userId);
+
+            pupperProfileResponse.setDescription(
+                    String.format(EMPTY_PUPPER_LIST_FOR_MATCH_PROFILE_AND_USER_ID, matchProfileId, userId));
+            pupperProfileResponse.setSuccess(false);
+            pupperProfileResponse.setStatusCode(HttpStatus.NOT_FOUND);
+        }
+
+        return pupperProfileResponse;
     }
 
 }

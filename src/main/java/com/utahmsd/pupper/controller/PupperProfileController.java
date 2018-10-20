@@ -40,7 +40,7 @@ public class PupperProfileController {
         return pupperProfileService.getBreeds();
     }
 
-    @RequestMapping(path ="/user/{userId}/pupper/", method= RequestMethod.GET)
+    @RequestMapping(path ="/user/{userId}/pupper", method= RequestMethod.GET)
     public PupperProfileResponse getAllPupperProfilesForUser(@PathVariable("userId") Long userId) {
 
         return pupperProfileService.findAllPupperProfilesByUserId(userId);
@@ -63,6 +63,12 @@ public class PupperProfileController {
                                                      @PathVariable("pupperId") Long pupperId) {
 
         return pupperProfileService.deletePupperProfile(userId, pupperId);
+    }
+
+    @RequestMapping(path ="/user/{userId}/matchProfile/{matchProfileId}/pupper", method= RequestMethod.GET)
+    public PupperProfileResponse getAllPuppersInMatchProfile(@PathVariable("userId") Long userId,
+                                                     @PathVariable("matchProfileId") Long matchProfileId) {
+        return pupperProfileService.getAllPuppersInMatchProfile(userId, matchProfileId);
     }
 
 }

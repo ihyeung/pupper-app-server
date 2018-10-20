@@ -28,6 +28,8 @@ import java.util.Date;
 @Singleton
 public class AmazonAwsClient {
 
+    private static final String AWS_REGION = "us-east-2";
+
     private AmazonS3 s3client;
 
     @Value("${amazonProperties.endpointUrl}")
@@ -56,7 +58,7 @@ public class AmazonAwsClient {
             uploadFileToS3bucket(fileName, file);
             file.delete();
             response.setSuccess(true);
-            response.setImageUrl(fileUrl.replace("us-east-2.", ""));
+            response.setImageUrl(fileUrl.replace(AWS_REGION + ".", ""));
         } catch (Exception e) {
             response.setSuccess(false);
             e.printStackTrace();

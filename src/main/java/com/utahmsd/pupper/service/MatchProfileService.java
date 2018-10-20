@@ -5,12 +5,14 @@ import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.UserProfile;
+import com.utahmsd.pupper.dto.MatchProfileRequest;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -32,10 +34,13 @@ public class MatchProfileService {
     private final String INVALID_MATCH_PROFILE_ID = "No match profile with match profile id %s exists";
     private final String INVALID_REQUEST = "Invalid request.";
 
+    @Inject
     private MatchProfileRepo matchProfileRepo;
 
+    @Inject
     private UserProfileRepo userProfileRepo;
 
+    @Inject
     private PupperProfileRepo pupperProfileRepo;
 
 
@@ -69,5 +74,9 @@ public class MatchProfileService {
         response.setDescription(String.format(INVALID_USER_ID));
 
         return response;
+    }
+
+    public MatchProfileResponse createMatchProfileForUser(Long userId, MatchProfileRequest request) {
+        return null;
     }
 }

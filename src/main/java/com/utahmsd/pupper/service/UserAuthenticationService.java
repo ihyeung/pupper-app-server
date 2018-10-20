@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.validation.Valid;
 
 @Named
 @Singleton
@@ -17,7 +18,7 @@ public class UserAuthenticationService {
     UserCredentialsRepo userCredentialsRepo;
 
 
-    public UserAuthenticationResponse authenticateUserCredentials (UserAuthenticationRequest request) {
+    public UserAuthenticationResponse authenticateUserCredentials (@Valid UserAuthenticationRequest request) {
         return null;
     }
 
