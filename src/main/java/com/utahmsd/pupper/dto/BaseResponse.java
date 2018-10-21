@@ -9,20 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public abstract class BaseResponse {
-
-    public static PupperRestExceptionHandler handler;
+public class BaseResponse {
 
     @JsonProperty("isSuccess")
     private boolean success;
 
     @JsonProperty("statusCode")
     private HttpStatus statusCode;
-
-    @JsonProperty("message")
-    private String message;
 
     @JsonProperty("description")
     private String description;
@@ -35,12 +31,12 @@ public abstract class BaseResponse {
         this.success = success;
     }
 
-    public String getMessage() {
-        return message;
+    public HttpStatus getStatusCode() {
+        return statusCode;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setStatusCode(HttpStatus statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getDescription() {
@@ -51,14 +47,14 @@ public abstract class BaseResponse {
         this.description = description;
     }
 
-    public HttpStatus getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(HttpStatus statusCode) {
-        this.statusCode = statusCode;
-    }
-
     public BaseResponse(){}
+
+    protected <T extends BaseResponse> T createResponse(boolean isSuccess, List<?> dataList, HttpStatus status, String description) {
+        this.success = isSuccess;
+        this.statusCode = status;
+        this.description = description;
+
+        return (T) this;
+    }
 
 }

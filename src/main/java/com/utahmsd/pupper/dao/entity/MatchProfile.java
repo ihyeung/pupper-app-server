@@ -19,11 +19,14 @@ import java.io.Serializable;
  *
  * Note that multiple dogs can be added to a shared MatchProfile only if they are the same breed/size,
  * energy level, and lifestage.
+ *
+ *  * All match profiles are associated with a user profile.
  */
 
 @Entity
 @Table(name = "match_profile")
 public class MatchProfile implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
@@ -31,7 +34,7 @@ public class MatchProfile implements Serializable {
 
     @NotNull
     @ManyToOne //A user can have multiple match profiles
-    @JoinColumn(name = "user_profile_id")
+    @JoinColumn(name = "user_profile_id_fk")
     private UserProfile userProfile;
 
     @DefaultValue("1")
@@ -39,7 +42,7 @@ public class MatchProfile implements Serializable {
     private int numDogs;
 
     @ManyToOne //Many match profiles can be of a certain breed, but a match profile can only be one breed
-    @JoinColumn(name = "breed_id")
+    @JoinColumn(name = "breed_id_fk")
     private Breed breed;
 
     @Enumerated(EnumType.STRING)
@@ -54,7 +57,7 @@ public class MatchProfile implements Serializable {
     @Column(name = "life_stage")
     private LifeStage lifeStage;
 
-    @Column(name = "pupper_score")
+    @Column(name = "score")
     private float score;
 
     @Max(150)
@@ -86,7 +89,7 @@ public class MatchProfile implements Serializable {
     public static MatchProfile createMatchProfileFromPupperProfile(PupperProfileRequest request) {
         MatchProfile profile = new MatchProfile();
         profile.setUserProfile(request.getPupperProfile().getUserProfile());
-        profile.setBreed(request.getPupperProfile().getBreedId());
+        profile.setBreed(request.getPupperProfile().getBreed());
         profile.setLifeStage(request.getPupperProfile().getLifeStage());
         profile.setEnergyLevel(request.getPupperProfile().getEnergy());
         profile.setNumDogs(1);
@@ -118,6 +121,10 @@ public class MatchProfile implements Serializable {
     public void setBreed(Breed breed) {
         this.breed = breed;
     }
+
+    public Size getSize() { return size; }
+
+    public void setSize(Size size) { this.size = size; }
 
     public Energy getEnergyLevel() {
         return energyLevel;

@@ -9,7 +9,7 @@ import java.util.List;
 public class UserProfileResponse extends BaseResponse {
 
     @JsonProperty("userProfiles")
-    private List<UserProfile> userProfile;
+    private List<UserProfile> userProfileList;
 
 
     //Constructors--need to clean these up later
@@ -17,19 +17,24 @@ public class UserProfileResponse extends BaseResponse {
     public UserProfileResponse() {
     }
 
-    public static UserProfileResponse createUserProfileResponse(boolean success, List<UserProfile> users, HttpStatus code) {
+    public static UserProfileResponse createUserProfileResponse(boolean success,
+                                                                List<UserProfile> users,
+                                                                HttpStatus code,
+                                                                String description) {
+
         UserProfileResponse response = new UserProfileResponse();
         response.setSuccess(success);
-        response.setUserProfile(users);
+        response.setUserProfileList(users);
         response.setStatusCode(code);
+        response.setDescription(description);
         return response;
     }
 
-    public List<UserProfile> getUserProfile() {
-        return userProfile;
+    public List<UserProfile> getUserProfileList() {
+        return userProfileList;
     }
 
-    public void setUserProfile(List<UserProfile> userProfile) {
-        this.userProfile = userProfile;
+    public void setUserProfileList(List<UserProfile> userProfileList) {
+        this.userProfileList = userProfileList;
     }
 }

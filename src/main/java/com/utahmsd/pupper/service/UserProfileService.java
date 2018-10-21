@@ -17,6 +17,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
+import static com.utahmsd.pupper.util.Constants.USER_NOT_FOUND;
+import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
+
+
 @Named
 @Singleton
 public class UserProfileService {
@@ -36,7 +41,7 @@ public class UserProfileService {
             users.forEach(userProfileList::add);
         }
 
-        return UserProfileResponse.createUserProfileResponse(true, userProfileList, HttpStatus.OK);
+        return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserProfileResponse findUserProfile(Long id) {
@@ -44,11 +49,11 @@ public class UserProfileService {
         List<UserProfile> userProfileList = new ArrayList<>();
         if (user.isPresent()) {
             userProfileList.add(user.get());
-            return UserProfileResponse.createUserProfileResponse(true, userProfileList, HttpStatus.OK);
+            return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-        LOGGER.info("User profile with id {} not found", id);
+        LOGGER.error("User profile with id {} not found", id);
 
-        return UserProfileResponse.createUserProfileResponse(false, userProfileList, HttpStatus.NOT_FOUND);
+        return createUserProfileResponse(false, userProfileList, HttpStatus.NOT_FOUND, String.format(USER_NOT_FOUND, id));
     }
 
     public UserProfileResponse createNewUserProfile(UserProfileRequest request) {
@@ -56,34 +61,34 @@ public class UserProfileService {
         List<UserProfile> userProfileList = new ArrayList<>();
         userProfileList.add(profile);
 
-        return UserProfileResponse.createUserProfileResponse(true, userProfileList, HttpStatus.OK);
+        return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserProfileResponse updateUserProfile(UserProfileRequest request) {
-        UserProfileResponse userProfileResponse = findUserProfile(request.getUserProfile().getId());
+        final Long userId = request.getUserProfile().getId();
+        UserProfileResponse userProfileResponse = findUserProfile(userId);
         if (!userProfileResponse.isSuccess()) {
-            LOGGER.info("Error updating user profile: user profile with id {} was not found", request.getUserProfile().getId());
-            return UserProfileResponse.createUserProfileResponse(false,
-                    Collections.emptyList(), HttpStatus.NOT_FOUND);
+            LOGGER.error("Error updating user profile: user profile with id {} was not found", userId);
+            return createUserProfileResponse(false, Collections.emptyList(), HttpStatus.NOT_FOUND, String.format(USER_NOT_FOUND, userId));
         }
         userProfileRepo.save(request.getUserProfile());
         List<UserProfile> userProfileList = new ArrayList<>();
         userProfileList.add(request.getUserProfile());
-        LOGGER.info("User profile with id {} was found, updating existing profile", request.getUserProfile().getId());
+        LOGGER.error("User profile with id {} was found, updating existing profile", userId);
 
-        return UserProfileResponse.createUserProfileResponse(true, userProfileList, HttpStatus.OK);
+        return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserProfileResponse deleteProfile(Long id) {
         UserProfileResponse userProfileResponse = findUserProfile(id);
         if (!userProfileResponse.isSuccess()) {
-            LOGGER.info("Error deleting user profile: user profile with id {} not found", id);
-            return UserProfileResponse.createUserProfileResponse( false, Collections.emptyList(), HttpStatus.NOT_FOUND);
+            LOGGER.error("Error deleting user profile: user profile with id {} not found", id);
+            return createUserProfileResponse( false, Collections.emptyList(), HttpStatus.NOT_FOUND,  String.format(USER_NOT_FOUND, id));
         }
         userProfileRepo.deleteById(id);
-        LOGGER.info("User profile with id {} was deleted successfully", id);
+        LOGGER.error("User profile with id {} was deleted successfully", id);
 
-        return UserProfileResponse.createUserProfileResponse(true, Collections.emptyList(), HttpStatus.OK);
+        return createUserProfileResponse(true, Collections.emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
 

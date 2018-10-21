@@ -11,18 +11,21 @@ public class PupperProfileResponse extends BaseResponse {
 
     //inherited BaseResponse id field corresponds to pupperId
 
-    @JsonProperty("pupperProfiles")
-    private List<PupperProfile> pupperProfiles;
+    @JsonProperty("pupperProfileList")
+    private List<PupperProfile> pupperProfileList;
 
     public PupperProfileResponse() {
     }
 
-    public static PupperProfileResponse createPupperProfileResponse(
-            boolean success, List<PupperProfile> puppers, HttpStatus code) {
+    public static PupperProfileResponse createPupperProfileResponse(boolean success,
+                                                                    List<PupperProfile> puppers,
+                                                                    HttpStatus code,
+                                                                    String description) {
         PupperProfileResponse response = new PupperProfileResponse();
         response.setSuccess(success);
-        response.setPupperProfiles(puppers);
+        response.setPupperProfileList(puppers);
         response.setStatusCode(code);
+        response.setDescription(description);
         return response;
     }
 
@@ -38,7 +41,7 @@ public class PupperProfileResponse extends BaseResponse {
         }
         List<PupperProfile> data = new ArrayList<>();
         data.add(request.getPupperProfile());
-        response.setPupperProfiles(data);
+        response.setPupperProfileList(data);
         response.setSuccess(true);
         response.setDescription("fromPupperProfileRequest success");
 
@@ -50,17 +53,17 @@ public class PupperProfileResponse extends BaseResponse {
         response.setSuccess(true);
         List<PupperProfile> data = new ArrayList<>();
         data.add(profile);
-        response.setPupperProfiles(data);
+        response.setPupperProfileList(data);
         response.setDescription("fromPupperProfileRequest success");
 
         return response;
     }
 
-    public List<PupperProfile> getPupperProfiles() {
-        return pupperProfiles;
+    public List<PupperProfile> getPupperProfileList() {
+        return pupperProfileList;
     }
 
-    public void setPupperProfiles(List<PupperProfile> pupperProfile) {
-        this.pupperProfiles = pupperProfile;
+    public void setPupperProfileList(List<PupperProfile> pupperProfile) {
+        this.pupperProfileList = pupperProfile;
     }
 }

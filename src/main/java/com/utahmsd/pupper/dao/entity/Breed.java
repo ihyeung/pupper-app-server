@@ -12,7 +12,7 @@ public class Breed implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private int id;
+    private Long id;
 
     @Column(name = "name")
     private String breed;
@@ -24,20 +24,20 @@ public class Breed implements Serializable {
     @Column(name = "size")
     private Size size;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getBreedName() {
+    public String getBreed() {
         return breed;
     }
 
-    public void setBreedName(String breedName) {
-        this.breed = breedName;
+    public void setBreed(String breed) {
+        this.breed = breed;
     }
 
     public String getAltName() {

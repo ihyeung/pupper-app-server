@@ -25,11 +25,6 @@ public class UserProfileController {
         this.userSearchFilterService = userSearchFilterService;
     }
 
-    @RequestMapping(method= RequestMethod.POST)
-    public UserProfileResponse createUserProfile(@RequestBody UserProfileRequest request) {
-        return userProfileService.createNewUserProfile(request);
-    }
-
     @RequestMapping(path="/", method= RequestMethod.GET)
     public UserProfileResponse getAllUserProfiles() {
         return userProfileService.getAllUserProfiles();
@@ -39,6 +34,11 @@ public class UserProfileController {
     public UserProfileResponse getUserProfile(@PathVariable("userId") Long userId) {
 
         return userProfileService.findUserProfile(userId);
+    }
+
+    @RequestMapping(method= RequestMethod.POST)
+    public UserProfileResponse createUserProfile(@RequestBody UserProfileRequest request) {
+        return userProfileService.createNewUserProfile(request);
     }
 
     @RequestMapping(path ="/{userId}", method= RequestMethod.PUT)

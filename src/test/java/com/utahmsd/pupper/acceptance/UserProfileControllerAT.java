@@ -85,8 +85,8 @@ public class UserProfileControllerAT {
 
     private UserProfile createUserProfile() {
         UserCredentials credentials = new UserCredentials();
-        credentials.setEmail("test@test.com");
-        credentials.setComputedHash("TEST");
+        credentials.setEmail("createUserProfileTest@test.com");
+        credentials.setPassword("TEST");
         credentials.setSalt("SALT");
         credentials.setDateJoined(Date.from(Instant.now()));
 

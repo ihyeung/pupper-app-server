@@ -9,12 +9,14 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
-//Entity representing a user's credential/account information
+/**
+ * Entity representing a user's credential/account information.
+ * Only stores user data that will be modified infrequently.
+ */
 
-//Keep only fields that will not be modified/updated frequently
 
 @Entity
-@Table(schema="u0934995", name = "user_credentials")
+@Table(name = "user_credentials")
 public class UserCredentials implements Serializable {
 
     @Id
@@ -27,8 +29,11 @@ public class UserCredentials implements Serializable {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "computed_hash")
-    private String computedHash; //store hash(password + salt)
+    @Column(name = "password")
+    private String password;
+
+//    @Column(name = "computed_hash")
+//    private String computedHash; //store hash(password + salt)
 
     @Column(name = "salt")
     private String salt;
@@ -63,13 +68,22 @@ public class UserCredentials implements Serializable {
         this.email = email;
     }
 
-    public String getComputedHash() {
-        return computedHash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setComputedHash(String computedHash) {
-        this.computedHash = computedHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
+
+    //
+//    public String getComputedHash() {
+//        return computedHash;
+//    }
+//
+//    public void setComputedHash(String computedHash) {
+//        this.computedHash = computedHash;
+//    }
 
     public String getSalt() {
         return salt;

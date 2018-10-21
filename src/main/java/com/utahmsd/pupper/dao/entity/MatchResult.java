@@ -8,13 +8,13 @@ import java.util.Date;
 /**
  * Entity containing all PupperMatcherService data
  */
-//Entity representing all pairings of puppers who have swiped left or right on each other
 
 @Entity
 @Table(name = "match_result")
 public class MatchResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @ManyToOne //A match result corresponds to multiple (2) match profiles, and a match profile has many match results

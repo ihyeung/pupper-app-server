@@ -2,7 +2,6 @@ package com.utahmsd.pupper.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
-import com.utahmsd.pupper.dao.entity.PupperProfile;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -10,22 +9,25 @@ import java.util.List;
 public class MatchProfileResponse extends BaseResponse {
 
     @JsonProperty("match_profile")
-    private List<MatchProfile> matchProfiles;
+    private List<MatchProfile> matchProfileList;
 
-    public static MatchProfileResponse createMatchProfileResponse(
-            boolean success, List<MatchProfile> matchProfiles, HttpStatus code) {
+    public static MatchProfileResponse createMatchProfileResponse(boolean success,
+                                                                  List<MatchProfile> matchProfiles,
+                                                                  HttpStatus code,
+                                                                  String description) {
         MatchProfileResponse response = new MatchProfileResponse();
         response.setSuccess(success);
-        response.setMatchProfiles(matchProfiles);
+        response.setMatchProfileList(matchProfiles);
         response.setStatusCode(code);
+        response.setDescription(description);
         return response;
     }
 
-    public List<MatchProfile> getMatchProfiles() {
-        return matchProfiles;
+    public List<MatchProfile> getMatchProfileList() {
+        return matchProfileList;
     }
 
-    public void setMatchProfiles(List<MatchProfile> matchProfiles) {
-        this.matchProfiles = matchProfiles;
+    public void setMatchProfileList(List<MatchProfile> matchProfileList) {
+        this.matchProfileList = matchProfileList;
     }
 }

@@ -11,16 +11,16 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(schema="u0934995", name = "user_profile")
+@Table(name = "user_profile")
 public class UserProfile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="user_credentials_id")
+    @JoinColumn(name = "user_credentials_id_fk")
     private UserCredentials userCredentials;
 
     @Size(min = 2, max = 30)
@@ -38,8 +38,9 @@ public class UserProfile implements Serializable {
     @Column(name = "birthdate")
     private Date birthdate; //For profile age
 
-    @DefaultValue("Single")
+    @DefaultValue("single")
     @Column(name = "marital_status")
+    @Max(20)
     private String maritalStatus;
 
     @Column(name = "zip")
