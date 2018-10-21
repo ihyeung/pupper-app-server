@@ -1,6 +1,6 @@
 package com.utahmsd.pupper.dao.entity;
 
-import com.utahmsd.pupper.dao.entity.MatchProfile;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -31,6 +31,7 @@ public class MatchResult {
     @Column(name = "match_profile_2_result")
     private boolean isMatchForProfileTwo; //Match profile 2's decision on match profile 1
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "last_update_match_result")
     private Date lastUpdateToMatchResult; //Date that match result was last updated
 

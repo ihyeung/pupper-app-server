@@ -33,15 +33,12 @@ public class UserCredentialsService {
     private UserProfileRepo userProfileRepo;
 
     public UserCredentialsResponse getAllUserCredentials() {
-//        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, "dateJoined"));
-//        Iterable<UserCredentials> resultList = userCredentialsRepo.findAll(sortCriteria);
         Iterable<UserCredentials> resultList = userCredentialsRepo.findAll();
-
         List<UserCredentials> userCredentialsList = new ArrayList<>();
         if (resultList.iterator().hasNext()) {
             resultList.forEach(userCredentialsList::add);
-            return createUserCredentialsResponse(true, userCredentialsList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
+            return createUserCredentialsResponse(true, userCredentialsList, HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
 
         return createUserCredentialsResponse(

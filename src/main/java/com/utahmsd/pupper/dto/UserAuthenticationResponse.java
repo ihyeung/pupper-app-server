@@ -3,14 +3,18 @@ package com.utahmsd.pupper.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class UserAuthenticationResponse extends BaseResponse {
 
     @JsonProperty("email")
     private String email;
 
-    @JsonProperty("lastLogin")
-    private Timestamp lastLogin;
+    @JsonProperty("token")
+    private String authToken;
+
+    @JsonProperty("expiresIn")
+    private long secondsToExpiration;
 
     public String getEmail() {
         return email;
@@ -20,35 +24,20 @@ public class UserAuthenticationResponse extends BaseResponse {
         this.email = email;
     }
 
-    public Timestamp getLastLogin() {
-        return lastLogin;
+    public String getAuthToken() {
+        return authToken;
     }
 
-    public void setLastLogin(Timestamp lastLogin) {
-        this.lastLogin = lastLogin;
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
-//
-//    @JsonProperty("jwt")
-//    private String authToken;
-//
-//    @JsonProperty("tokenIssued")
-//    private Timestamp tokenIssued;
 
-//    public UserAuthenticationResponse fromUserAccount (UserCredentials userAccount) {
-//        UserAuthenticationResponse response = new UserAuthenticationResponse();
-//        response.userId = userAccount.getUserId();
-//        response.statusCode = 0;
-//        response.validLogin = true;
-//        response.accountCreateDate = userAccount.getAccountCreationDate();
-//        response.authToken = userAccount.getComputedHash();
-//        return response;
-//    }
+    public long getSecondsToExpiration() {
+        return secondsToExpiration;
+    }
 
-//    public UserAuthenticationResponse invalidProfileResponse(Long id, String error) {
-//        UserAuthenticationResponse userAuthenticationResponse = new UserAuthenticationResponse();
-////        userAuthenticationResponse.setLastLogin(null);
-//        userAuthenticationResponse.setSuccess(false);
-//        return userAuthenticationResponse;
-//    }
+    public void setSecondsToExpiration(long secondsToExpiration) {
+        this.secondsToExpiration = secondsToExpiration;
+    }
 
 }

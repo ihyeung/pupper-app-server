@@ -1,7 +1,6 @@
 package com.utahmsd.pupper.dao.entity;
 
-import com.utahmsd.pupper.dto.UserProfileRequest;
-import org.hibernate.validator.constraints.Length;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -35,6 +34,7 @@ public class UserProfile implements Serializable {
     @Column(name = "sex")
     private char sex; //M or F
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "birthdate")
     private Date birthdate; //For profile age
 
@@ -46,13 +46,14 @@ public class UserProfile implements Serializable {
     @Column(name = "zip")
     private String zip;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z")
     @Column(name = "last_login")
     private Date lastLogin;
 
     public UserProfile(){}
 
-    public UserProfile(UserProfileRequest request) {
-    }
+//    public UserProfile(UserProfileRequest request) {
+//    }
 
     public Long getId() {
         return id;

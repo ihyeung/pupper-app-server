@@ -20,10 +20,10 @@ public class UserAuthController {
         this.userAuthenticationService = userAuthenticationService;
     }
 
-    @RequestMapping(path = "/", method = RequestMethod.GET)
-    public UserAuthenticationResponse getAuthToken() {
-        return userAuthenticationService.getAuthToken();
-    }
+//    @RequestMapping(path = "/", method = RequestMethod.GET)
+//    public UserAuthenticationResponse getAuthToken() {
+//        return userAuthenticationService.getAuthToken();
+//    }
 
     @RequestMapping(method = RequestMethod.POST)
     public UserAuthenticationResponse createUserAccount(@RequestBody UserAuthenticationRequest request) {

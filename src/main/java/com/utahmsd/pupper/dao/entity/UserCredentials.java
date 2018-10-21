@@ -1,7 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.utahmsd.pupper.dto.UserAuthenticationRequest;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -32,12 +32,13 @@ public class UserCredentials implements Serializable {
     @Column(name = "password")
     private String password;
 
-//    @Column(name = "computed_hash")
-//    private String computedHash; //store hash(password + salt)
+    @Column(name = "hash")
+    private String computedHash; //store hash(password + salt)
 
     @Column(name = "salt")
     private String salt;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "date_joined")
     private Date dateJoined;
 
@@ -76,14 +77,13 @@ public class UserCredentials implements Serializable {
         this.password = password;
     }
 
-    //
-//    public String getComputedHash() {
-//        return computedHash;
-//    }
-//
-//    public void setComputedHash(String computedHash) {
-//        this.computedHash = computedHash;
-//    }
+    public String getComputedHash() {
+        return computedHash;
+    }
+
+    public void setComputedHash(String computedHash) {
+        this.computedHash = computedHash;
+    }
 
     public String getSalt() {
         return salt;

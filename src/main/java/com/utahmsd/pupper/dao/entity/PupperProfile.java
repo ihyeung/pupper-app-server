@@ -1,13 +1,12 @@
 package com.utahmsd.pupper.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -46,12 +45,17 @@ public class PupperProfile implements Serializable {
     @Column(name = "sex")
     private char sex; //M or F
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "birthdate")
     private Date birthdate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "lifestage")
     private LifeStage lifeStage;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "energy")
+    private Energy energy;
 
     @ManyToOne
     @JoinColumn(name = "breed_id_fk")
@@ -60,9 +64,7 @@ public class PupperProfile implements Serializable {
     @Column(name = "is_neutered")
     private boolean isNeutered;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "energy")
-    private Energy energy;
+
 
     public Long getId() {
         return id;
@@ -116,6 +118,14 @@ public class PupperProfile implements Serializable {
         this.lifeStage = lifeStage;
     }
 
+    public Energy getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(Energy energy) {
+        this.energy = energy;
+    }
+
     public Breed getBreed() {
         return breed;
     }
@@ -130,14 +140,6 @@ public class PupperProfile implements Serializable {
 
     public void setNeutered(boolean neutered) {
         isNeutered = neutered;
-    }
-
-    public Energy getEnergy() {
-        return energy;
-    }
-
-    public void setEnergy(Energy energy) {
-        this.energy = energy;
     }
 
 }
