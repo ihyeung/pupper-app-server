@@ -1,9 +1,12 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.utahmsd.pupper.dto.User;
 import com.utahmsd.pupper.dto.UserAuthenticationRequest;
+import org.hibernate.annotations.Columns;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -24,13 +27,17 @@ public class UserCredentials implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @NotNull
-    @Size(min = 10, max = 40)
-    @Column(name = "email")
+//    @NotNull
+//    @Size(min = 10, max = 40)
+//    @Column(name = "email")
     private String email;
-
-    @Column(name = "password")
+//
+//    @Column(name = "password")
     private String password;
+
+    @Valid
+    @Transient
+    private User user;
 
     @Column(name = "hash")
     private String computedHash; //store hash(password + salt)
@@ -61,21 +68,35 @@ public class UserCredentials implements Serializable {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public User getUser() {
+        if (user == null) {
+            user = new User(email, password);
+        }
+        return user;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUser(User user) {
+        this.user = user;
+        this.email = user.getEmail();
+        this.password = user.getPassword();
     }
 
-    public String getPassword() {
-        return password;
-    }
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getComputedHash() {
         return computedHash;

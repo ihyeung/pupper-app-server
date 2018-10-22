@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import static com.utahmsd.pupper.util.PupperUtils.calculateAge;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class PupperUtilsUnitTest {
 

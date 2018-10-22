@@ -14,27 +14,28 @@ import javax.validation.Valid;
 @Singleton
 public class UserAuthenticationService {
 
-    @Inject
-    UserCredentialsRepo userCredentialsRepo;
-
-
-    public UserAuthenticationResponse authenticateUserCredentials (@Valid UserAuthenticationRequest request) {
-        return null;
-    }
-
-    public UserAuthenticationResponse createUserCredentials (UserAuthenticationRequest request) {
-        return null;
-    }
-
-    public UserAuthenticationResponse updateUserCredentials (Long credentialsId, UserAuthenticationRequest request) {
-        return null;
-    }
-
-    public UserAuthenticationResponse deleteUserCredentials (Long credentialsId) {
-        return null;
-    }
-
     public UserAuthenticationResponse getAuthToken() {
         return null;
     }
+
+//    @Inject
+//    UserCredentialsRepo userCredentialsRepo;
+//
+//
+//    public UserAuthenticationResponse authenticateUserCredentials (@Valid UserAuthenticationRequest request) {
+//        return null;
+//    }
+//
+//    public UserAuthenticationResponse createUserCredentials (UserAuthenticationRequest request) {
+//        return null;
+//    }
+//
+//    public UserAuthenticationResponse updateUserCredentials (Long credentialsId, UserAuthenticationRequest request) {
+//        return null;
+//    }
+//
+//    public UserAuthenticationResponse deleteUserCredentials (Long credentialsId) {
+//        return null;
+//    }
+
 }

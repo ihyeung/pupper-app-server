@@ -2,6 +2,7 @@ package com.utahmsd.pupper.acceptance;
 
 import com.utahmsd.pupper.dao.entity.UserCredentials;
 import com.utahmsd.pupper.dao.entity.UserProfile;
+import com.utahmsd.pupper.dto.User;
 import com.utahmsd.pupper.dto.UserProfileRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -85,8 +86,8 @@ public class UserProfileControllerAT {
 
     private UserProfile createUserProfile() {
         UserCredentials credentials = new UserCredentials();
-        credentials.setEmail("createUserProfileTest@test.com");
-        credentials.setPassword("TEST");
+        User userLogin = new User("createUserProfileTest@test.com", "TEST");
+        credentials.setUser(userLogin);
         credentials.setSalt("SALT");
         credentials.setDateJoined(Date.from(Instant.now()));
 
