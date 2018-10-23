@@ -7,4 +7,8 @@ public enum Energy {
     HIGH,
     EXTREME;
 
+    public String value() { return name(); }
+
+    public static Energy fromValue(String v) { return valueOf(v); }
+
 }

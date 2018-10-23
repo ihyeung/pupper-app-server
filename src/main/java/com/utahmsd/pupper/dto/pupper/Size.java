@@ -6,4 +6,8 @@ public enum Size {
     MID,
     LARGE,
     XLARGE;
+
+    public String value() { return name(); }
+
+    public static Size fromValue(String v) { return valueOf(v); }
 }
