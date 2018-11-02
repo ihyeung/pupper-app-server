@@ -1,8 +1,7 @@
 package com.utahmsd.pupper.acceptance;
 
-import com.utahmsd.pupper.dao.entity.UserCredentials;
+import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
-import com.utahmsd.pupper.dto.User;
 import com.utahmsd.pupper.dto.UserProfileRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -10,14 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Instant;
 import java.util.Date;
 
-import static io.restassured.RestAssured.config;
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.port;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -85,20 +83,25 @@ public class UserProfileControllerAT {
     }
 
     private UserProfile createUserProfile() {
-        UserCredentials credentials = new UserCredentials();
-        User userLogin = new User("createUserProfileTest@test.com", "TEST");
-        credentials.setUser(userLogin);
-        credentials.setSalt("SALT");
-        credentials.setDateJoined(Date.from(Instant.now()));
+//        UserCredentials credentials = new UserCredentials();
+//        User userLogin = new User("createUserProfileTest@test.com", "TEST");
+//        credentials.setUser(userLogin);
+//        credentials.setSalt("SALT");
+//        credentials.setDateJoined(Date.from(Instant.now()));
 
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUsername("createUserProfileTest@test.com");
+        userAccount.setPassword(new BCryptPasswordEncoder(4).encode("TESTPASSWORD"));
+//
         UserProfile user = new UserProfile();
-        user.setUserCredentials(credentials);
+        user.setUserAccount(userAccount);
         user.setFirstName("Carmen");
         user.setLastName("San Diego");
         user.setBirthdate(Date.from(Instant.parse("2004-12-03T10:15:30.00Z")));
         user.setZip("84095");
         user.setSex('F');
         user.setLastLogin(Date.from(Instant.now()));
+
 
         return user;
     }

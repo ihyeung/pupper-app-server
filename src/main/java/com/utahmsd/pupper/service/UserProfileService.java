@@ -26,14 +26,13 @@ import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 @Singleton
 public class UserProfileService {
 
-    private final String DEFAULT_SORT_BY_CRITERIA = "lastName";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
     @Inject
     UserProfileRepo userProfileRepo;
 
     public UserProfileResponse getAllUserProfiles() {
+        String DEFAULT_SORT_BY_CRITERIA = "lastName";
         Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_BY_CRITERIA));
         Iterable<UserProfile> users = userProfileRepo.findAll(sortCriteria);
         List<UserProfile> userProfileList = new ArrayList<>();

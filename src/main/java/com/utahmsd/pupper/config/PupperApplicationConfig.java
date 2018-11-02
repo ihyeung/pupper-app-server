@@ -29,10 +29,10 @@ public class PupperApplicationConfig {
     private String dbUrl;
 
 //    @Value("${db.name}")
-    private String dbName = System.getProperty("db.name", "u0934995");
+    private String dbName = System.getProperty("db.name");
 
 //    @Value("${db.password}")
-    private String dbPassword = System.getProperty("db.password", "1234!Abcd&E");
+    private String dbPassword = System.getProperty("db.password");
 
     @Value("${spring.datasource.username:}")
     private String dbUsername;
@@ -55,8 +55,7 @@ public class PupperApplicationConfig {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(4);
-        return encoder;
+        return new BCryptPasswordEncoder(4);
     }
 
 }

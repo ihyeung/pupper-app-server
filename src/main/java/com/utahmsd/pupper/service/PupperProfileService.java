@@ -29,16 +29,14 @@ import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
 @Singleton
 public class PupperProfileService {
 
-    private final String DEFAULT_SORT_BY_CRITERIA = "breed";
+    public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
+    private final String DEFAULT_SORT_BY_CRITERIA = "breed";
     private final String INVALID_USER_ID = "No user profile with user profile id %s exists.";
     private final String INVALID_PUPPER_ID = "No pupper profile with profile id %s exists";
     private final String EMPTY_PUPPER_LIST_FOR_USER = "No pupper profiles belonging to user profile id %s were found.";
     private final String EMPTY_PUPPER_LIST_FOR_MATCH_PROFILE_AND_USER_ID =
             "No pupper profiles belonging to user profile id %s and match profile %s were found.";
-
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
     @Inject
     PupperProfileRepo pupperProfileRepo;

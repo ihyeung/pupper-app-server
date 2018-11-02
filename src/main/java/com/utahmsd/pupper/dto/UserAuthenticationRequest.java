@@ -3,31 +3,20 @@ package com.utahmsd.pupper.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.utahmsd.pupper.dao.entity.UserAccount;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserAuthenticationRequest {
 
-    @JsonProperty("email")
-    private String email;
+    @JsonProperty("user")
+    private UserAccount userAccount;
 
-    @JsonProperty("password")
-    private String password;
-
-    public String getEmail() {
-        return email;
+    public UserAccount getUser() {
+        return userAccount;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUser(UserAccount userAccount) {
+        this.userAccount = userAccount;
     }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
 }

@@ -1,7 +1,6 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -20,8 +19,8 @@ public class UserProfile implements Serializable {
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_credentials_id_fk")
-    private UserCredentials userCredentials;
+    @JoinColumn(name = "user_account_id_fk")
+    private UserAccount userAccount;
 
     @Size(min = 2, max = 30)
     @Column(name = "name_first")
@@ -53,9 +52,6 @@ public class UserProfile implements Serializable {
 
     public UserProfile(){}
 
-//    public UserProfile(UserProfileRequest request) {
-//    }
-
     public Long getId() {
         return id;
     }
@@ -64,12 +60,12 @@ public class UserProfile implements Serializable {
         this.id = id;
     }
 
-    public UserCredentials getUserCredentials() {
-        return userCredentials;
+    public UserAccount getUserAccount() {
+        return userAccount;
     }
 
-    public void setUserCredentials(UserCredentials userCredentialsId) {
-        this.userCredentials = userCredentialsId;
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
     }
 
     public String getFirstName() {
