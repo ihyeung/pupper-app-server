@@ -2,51 +2,10 @@
 [[_paths]]
 == Paths
 
-[[_registeruserusingpost]]
-=== registerUser
-....
-POST /auth/register
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Body**|**request** +
-__required__|request|<<_userauthenticationrequest,UserAuthenticationRequest>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
-|===
-
-
-==== Consumes
-
-* `application/json`
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* auth-controller
-
-
 [[_getallcredentialsusingget]]
 === getAllCredentials
 ....
-GET /auth/userAccount
+GET /account
 ....
 
 
@@ -69,10 +28,10 @@ GET /auth/userAccount
 * auth-controller
 
 
-[[_getcredentialsusingget]]
-=== getCredentials
+[[_getcredentialsbyaccountidusingget]]
+=== getCredentialsByAccountId
 ....
-GET /auth/{credentialsId}
+GET /account/{accountId}
 ....
 
 
@@ -81,8 +40,8 @@ GET /auth/{credentialsId}
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Path**|**credentialsId** +
-__required__|credentialsId|integer (int64)
+|**Path**|**accountId** +
+__required__|accountId|integer (int64)
 |===
 
 
@@ -299,6 +258,47 @@ GET /pupper/api/breed
 ==== Tags
 
 * pupper-profile-controller
+
+
+[[_registeruserusingpost]]
+=== registerUser
+....
+POST /register
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**request** +
+__required__|request|<<_userauthenticationrequest,UserAuthenticationRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* auth-controller
 
 
 [[_uploadfileusingpost]]

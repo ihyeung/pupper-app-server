@@ -1,9 +1,9 @@
-= PupperProfile API
+= Pupper API
 
 
 [[_overview]]
 == Overview
-PupperProfile Mobile App
+RESTful Web Application For Pupper Mobile App
 
 
 === Version information
@@ -13,8 +13,8 @@ __Version__ : 0.1.0
 
 === License information
 [%hardbreaks]
-__License__ : (C) Copyright Kayla/Irene
-__Terms of service__ : null
+__License__ : Copyright (C) 2018 Irene Yeung
+__Terms of service__ : Pending Publication
 
 
 === URI scheme

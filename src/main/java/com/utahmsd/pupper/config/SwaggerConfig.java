@@ -49,7 +49,7 @@ public class SwaggerConfig {
                 .title("Pupper API")
                 .license("Copyright (C) 2018 Irene Yeung")
                 .termsOfServiceUrl("Pending Publication")
-                .description("Pupper Mobile App")
+                .description("RESTful Web Application For Pupper Mobile App")
                 .version("0.1.0")
                 .build();
     }
