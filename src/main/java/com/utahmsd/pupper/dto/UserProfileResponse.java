@@ -25,7 +25,8 @@ public class UserProfileResponse extends BaseResponse {
         UserProfileResponse response = new UserProfileResponse();
         response.setSuccess(success);
         response.setUserProfileList(users);
-        response.setStatusCode(code);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
         response.setDescription(description);
         return response;
     }

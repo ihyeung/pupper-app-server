@@ -68,7 +68,7 @@ public class UserProfileControllerAT {
                 contentType(ContentType.JSON).
                 body(request).
         when().
-                post("/users/").
+                post("/user").
         then().
                 log().all().
                 statusCode(200).

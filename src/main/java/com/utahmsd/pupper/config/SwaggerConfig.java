@@ -46,9 +46,10 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("PupperProfile API")
-                .license("(C) Copyright Kayla/Irene")
-                .description("PupperProfile Mobile App")
+                .title("Pupper API")
+                .license("Copyright (C) 2018 Irene Yeung")
+                .termsOfServiceUrl("Pending Publication")
+                .description("Pupper Mobile App")
                 .version("0.1.0")
                 .build();
     }

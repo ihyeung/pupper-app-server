@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
  * Entity containing user credentials/account information.
  */
 @Entity // reference to table defaults to table_name (i.e., reference database table MyTable using my_table)
+@Table (indexes = @Index(columnList = "username", name = "user_account_username_uindex"))
 public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

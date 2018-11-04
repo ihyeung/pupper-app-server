@@ -1,0 +1,313 @@
+
+[[_definitions]]
+== Definitions
+
+[[_breed]]
+=== Breed
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**altName** +
+__optional__|string
+|**id** +
+__optional__|integer (int64)
+|**name** +
+__optional__|string
+|**size** +
+__optional__|enum (TOY, SMALL, MID, LARGE, XLARGE)
+|===
+
+
+[[_imageuploadrequest]]
+=== ImageUploadRequest
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**match_profile** +
+__optional__|<<_matchprofile,MatchProfile>>
+|===
+
+
+[[_imageuploadresponse]]
+=== ImageUploadResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**imageUrl** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|===
+
+
+[[_inputstream]]
+=== InputStream
+__Type__ : object
+
+
+[[_matchprofile]]
+=== MatchProfile
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**aboutMe** +
+__optional__|string
+|**breed** +
+__optional__|<<_breed,Breed>>
+|**energyLevel** +
+__optional__|enum (MIN, LOW, MED, HIGH, EXTREME)
+|**id** +
+__optional__|integer (int64)
+|**lifeStage** +
+__optional__|enum (PUPPY, YOUNG, ADULT, MATURE)
+|**numDogs** +
+__optional__|integer (int32)
+|**profileImage** +
+__optional__|string
+|**score** +
+__optional__|number (float)
+|**size** +
+__optional__|enum (TOY, SMALL, MID, LARGE, XLARGE)
+|**userProfile** +
+__optional__|<<_userprofile,UserProfile>>
+|===
+
+
+[[_matchprofilerequest]]
+=== MatchProfileRequest
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**match_profile** +
+__optional__|<<_matchprofile,MatchProfile>>
+|===
+
+
+[[_matchprofileresponse]]
+=== MatchProfileResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**match_profile** +
+__optional__|< <<_matchprofile,MatchProfile>> > array
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|===
+
+
+[[_matchresult]]
+=== MatchResult
+
+[options="header", cols=".^3a,.^11a,.^4a"]
+|===
+|Name|Description|Schema
+|**lastUpdateToMatchResult** +
+__optional__|**Example** : `"yyyy-MM-dd"`|string
+|===
+
+
+[[_puppermatcherresponse]]
+=== PupperMatcherResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**matchResults** +
+__optional__|< <<_matchresult,MatchResult>> > array
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|===
+
+
+[[_pupperprofile]]
+=== PupperProfile
+
+[options="header", cols=".^3a,.^11a,.^4a"]
+|===
+|Name|Description|Schema
+|**birthdate** +
+__optional__|**Example** : `"yyyy-MM-dd"`|string
+|**breed** +
+__optional__||<<_breed,Breed>>
+|**energy** +
+__optional__||enum (MIN, LOW, MED, HIGH, EXTREME)
+|**id** +
+__optional__||integer (int64)
+|**lifeStage** +
+__optional__||enum (PUPPY, YOUNG, ADULT, MATURE)
+|**matchProfile** +
+__optional__||<<_matchprofile,MatchProfile>>
+|**name** +
+__optional__||string
+|**neutered** +
+__optional__||boolean
+|**sex** +
+__optional__||string
+|**userProfile** +
+__optional__||<<_userprofile,UserProfile>>
+|===
+
+
+[[_pupperprofilerequest]]
+=== PupperProfileRequest
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**pupperProfile** +
+__optional__|<<_pupperprofile,PupperProfile>>
+|**requestFrom** +
+__optional__|integer (int64)
+|**requestingPupperId** +
+__optional__|integer (int64)
+|===
+
+
+[[_pupperprofileresponse]]
+=== PupperProfileResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**pupperProfileList** +
+__optional__|< <<_pupperprofile,PupperProfile>> > array
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|===
+
+
+[[_useraccount]]
+=== UserAccount
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**id** +
+__optional__|integer (int64)
+|**password** +
+__optional__|string
+|**username** +
+__optional__|string
+|===
+
+
+[[_userauthenticationrequest]]
+=== UserAuthenticationRequest
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**user** +
+__optional__|<<_useraccount,UserAccount>>
+|===
+
+
+[[_userauthenticationresponse]]
+=== UserAuthenticationResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|**users** +
+__optional__|< <<_useraccount,UserAccount>> > array
+|===
+
+
+[[_userprofile]]
+=== UserProfile
+
+[options="header", cols=".^3a,.^11a,.^4a"]
+|===
+|Name|Description|Schema
+|**birthdate** +
+__optional__|**Example** : `"yyyy-MM-dd"`|string
+|**firstName** +
+__optional__||string
+|**id** +
+__optional__||integer (int64)
+|**lastLogin** +
+__optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
+|**lastName** +
+__optional__||string
+|**maritalStatus** +
+__optional__||string
+|**sex** +
+__optional__||string
+|**userAccount** +
+__optional__||<<_useraccount,UserAccount>>
+|**zip** +
+__optional__||string
+|===
+
+
+[[_userprofilerequest]]
+=== UserProfileRequest
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**requestingUserId** +
+__optional__|integer (int64)
+|**userProfile** +
+__optional__|<<_userprofile,UserProfile>>
+|===
+
+
+[[_userprofileresponse]]
+=== UserProfileResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|**userProfiles** +
+__optional__|< <<_userprofile,UserProfile>> > array
+|===
+
+
+

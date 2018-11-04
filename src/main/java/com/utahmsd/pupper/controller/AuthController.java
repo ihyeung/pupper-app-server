@@ -1,37 +1,34 @@
 package com.utahmsd.pupper.controller;
 
-import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dto.UserAuthenticationRequest;
 import com.utahmsd.pupper.dto.UserAuthenticationResponse;
 import com.utahmsd.pupper.service.UserAccountService;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
-import java.util.List;
-
 @RestController
-@Api(value = "UserCredentials Controller For Testing UserCredential Table (Remove this later!)")
+@Api(value = "UserAccount Controller For Testing UserAccount")
 public class AuthController {
 
     private final UserAccountService userAccountService;
 
-    @Inject
+    @Autowired
     AuthController(UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
     }
 
-    @GetMapping(path="/auth")
-    public List<UserAccount> getAllCredentials() {
+    @GetMapping(path="/account")
+    public UserAuthenticationResponse getAllCredentials() {
         return userAccountService.getAllUserCredentials();
     }
 
-    @GetMapping(path="/auth/{credentialsId}")
-    public UserAccount getCredentials(@PathVariable("credentialsId") Long userCredentialsId) {
-        return userAccountService.findUserCredentials(userCredentialsId);
+    @GetMapping(path="/account/{accountId}")
+    public UserAuthenticationResponse getCredentialsByAccountId(@PathVariable("accountId") Long accountId) {
+        return userAccountService.findUserCredentialsById(accountId);
     }
 
-    @PostMapping(path = "auth/register")
+    @PostMapping(path = "/register")
     public UserAuthenticationResponse registerUser(@RequestBody UserAuthenticationRequest request) {
         return userAccountService.createUserCredentials(request);
     }

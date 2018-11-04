@@ -5,6 +5,7 @@ import com.utahmsd.pupper.dto.PupperProfileRequest;
 import com.utahmsd.pupper.service.PupperProfileService;
 import com.utahmsd.pupper.service.filter.PupperSearchFilterService;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -16,7 +17,7 @@ public class PupperProfileController {
     private final PupperProfileService pupperProfileService;
     private final PupperSearchFilterService pupperSearchFilterService;
 
-    @Inject
+    @Autowired
     PupperProfileController(PupperProfileService pupperProfileService, PupperSearchFilterService filterService) {
         this.pupperProfileService = pupperProfileService;
         this.pupperSearchFilterService = filterService;

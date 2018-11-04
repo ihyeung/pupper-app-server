@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "breed")
+@Table(name = "name")
 public class Breed implements Serializable {
 
     @Id
@@ -15,7 +15,7 @@ public class Breed implements Serializable {
     private Long id;
 
     @Column(name = "name")
-    private String breed;
+    private String name;
 
     @Column(name = "alt_name")
     private String altName;
@@ -32,12 +32,12 @@ public class Breed implements Serializable {
         this.id = id;
     }
 
-    public String getBreed() {
-        return breed;
+    public String getName() {
+        return name;
     }
 
-    public void setBreed(String breed) {
-        this.breed = breed;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAltName() {

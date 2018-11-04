@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static com.utahmsd.pupper.security.SecurityConstants.AUTH_HEADER_KEY;
-import static com.utahmsd.pupper.security.SecurityConstants.ACCESS_TOKEN_TYPE;
-import static com.utahmsd.pupper.security.SecurityConstants.SECRET;
+import static com.utahmsd.pupper.security.SecurityConstants.*;
 
 public class UserAuthorizationFilter extends BasicAuthenticationFilter {
 

@@ -10,10 +10,10 @@ import com.utahmsd.pupper.dto.PupperProfileResponse;
 import com.utahmsd.pupper.dto.PupperProfileRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -38,14 +38,16 @@ public class PupperProfileService {
     private final String EMPTY_PUPPER_LIST_FOR_MATCH_PROFILE_AND_USER_ID =
             "No pupper profiles belonging to user profile id %s and match profile %s were found.";
 
-    @Inject
-    PupperProfileRepo pupperProfileRepo;
+    private final PupperProfileRepo pupperProfileRepo;
+    private final UserProfileRepo userProfileRepo;
+    private final BreedRepo breedRepo;
 
-    @Inject
-    UserProfileRepo userProfileRepo;
-
-    @Inject
-    BreedRepo breedRepo;
+    @Autowired
+    PupperProfileService (PupperProfileRepo pupperProfileRepo, UserProfileRepo userProfileRepo, BreedRepo breedRepo) {
+        this.pupperProfileRepo = pupperProfileRepo;
+        this.userProfileRepo = userProfileRepo;
+        this.breedRepo = breedRepo;
+    }
 
     public PupperProfileResponse getAllPupperProfiles() {
         Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_BY_CRITERIA));
@@ -147,7 +149,7 @@ public class PupperProfileService {
             breeds.forEach(breedList::add);
         }
         breedList.forEach(e->{
-            System.out.println(e.getBreed());
+            System.out.println(e.getName());
         });
 
         return createPupperProfileResponse(true, Collections.emptyList(), HttpStatus.OK, breedList.toString());

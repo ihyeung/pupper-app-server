@@ -20,15 +20,11 @@ import javax.inject.Inject;
 @RequestMapping("/matcher")
 public class PupperMatcherController {
 
-    private final PupperMatcherService pupperMatcherService;
-
     @Inject
-    PupperMatcherController(PupperMatcherService pupperMatcherService) {
-        this.pupperMatcherService = pupperMatcherService;
-    }
+    private PupperMatcherService pupperMatcherService;
 
     @RequestMapping(path="/{matchProfileId}", method= RequestMethod.GET)
     public PupperMatcherResponse getMatches(@PathVariable("matchProfileId") Long matchProfileId) {
-        return pupperMatcherService.getMatches(matchProfileId);
+        return pupperMatcherService.getSuccessPupperMatchResults(matchProfileId);
     }
 }

@@ -46,7 +46,7 @@ public class UserProfile implements Serializable {
     @Column(name = "zip")
     private String zip;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
     @Column(name = "last_login")
     private Date lastLogin;
 

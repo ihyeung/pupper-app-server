@@ -12,12 +12,8 @@ import javax.inject.Inject;
 @Api(value = "MatchProfile Controller for MatchProfile endpoints")
 public class MatchProfileController {
 
-    private final MatchProfileService matchProfileService;
-
     @Inject
-    MatchProfileController(MatchProfileService matchProfileService) {
-        this.matchProfileService = matchProfileService;
-    }
+    private MatchProfileService matchProfileService;
 
     @RequestMapping(path="/matchProfile", method= RequestMethod.GET)
     public MatchProfileResponse getAllMatchProfiles() {

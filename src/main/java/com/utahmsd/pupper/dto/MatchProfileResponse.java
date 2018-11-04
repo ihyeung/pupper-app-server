@@ -18,7 +18,8 @@ public class MatchProfileResponse extends BaseResponse {
         MatchProfileResponse response = new MatchProfileResponse();
         response.setSuccess(success);
         response.setMatchProfileList(matchProfiles);
-        response.setStatusCode(code);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
         response.setDescription(description);
         return response;
     }

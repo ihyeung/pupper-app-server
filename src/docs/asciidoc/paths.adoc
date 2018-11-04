@@ -1,0 +1,884 @@
+
+[[_paths]]
+== Paths
+
+[[_registeruserusingpost]]
+=== registerUser
+....
+POST /auth/register
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**request** +
+__required__|request|<<_userauthenticationrequest,UserAuthenticationRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* auth-controller
+
+
+[[_getallcredentialsusingget]]
+=== getAllCredentials
+....
+GET /auth/userAccount
+....
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* auth-controller
+
+
+[[_getcredentialsusingget]]
+=== getCredentials
+....
+GET /auth/{credentialsId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**credentialsId** +
+__required__|credentialsId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* auth-controller
+
+
+[[_deletefileusingpost]]
+=== deleteFile
+....
+POST /delete
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**imageUploadRequest** +
+__required__|imageUploadRequest|<<_imageuploadrequest,ImageUploadRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_imageuploadresponse,ImageUploadResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* image-controller
+
+
+[[_getallmatchprofilesusingget]]
+=== getAllMatchProfiles
+....
+GET /matchProfile
+....
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_matchprofileresponse,MatchProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* match-profile-controller
+
+
+[[_getmatchesusingget]]
+=== getMatches
+....
+GET /matcher/{matchProfileId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_puppermatcherresponse,PupperMatcherResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-matcher-controller
+
+
+[[_createpupperprofileusingpost]]
+=== createPupperProfile
+....
+POST /pupper
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**request** +
+__required__|request|<<_pupperprofilerequest,PupperProfileRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_getallpupperprofilesusingget]]
+=== getAllPupperProfiles
+....
+GET /pupper
+....
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_getallpupperbreedsusingget]]
+=== getAllPupperBreeds
+....
+GET /pupper/api/breed
+....
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_uploadfileusingpost]]
+=== uploadFile
+....
+POST /upload
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**FormData**|**profilePic** +
+__required__|profilePic|file
+|**Body**|**requestBody** +
+__required__|requestBody|<<_imageuploadrequest,ImageUploadRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_imageuploadresponse,ImageUploadResponse>>
+|===
+
+
+==== Consumes
+
+* `multipart/form-data`
+
+
+==== Produces
+
+* `application/json`
+
+
+==== Tags
+
+* image-controller
+
+
+[[_createuserprofileusingpost]]
+=== createUserProfile
+....
+POST /user
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**request** +
+__required__|request|<<_userprofilerequest,UserProfileRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* user-profile-controller
+
+
+[[_getuserprofileswithzipusingget]]
+=== getUserProfilesWithZip
+....
+GET /user
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**zip** +
+__required__|zip|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* user-profile-controller
+
+
+[[_getalluserprofilesusingget]]
+=== getAllUserProfiles
+....
+GET /user/
+....
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* user-profile-controller
+
+
+[[_getuserprofileusingget]]
+=== getUserProfile
+....
+GET /user/{userId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* user-profile-controller
+
+
+[[_updateuserprofileusingput]]
+=== updateUserProfile
+....
+PUT /user/{userId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|**Body**|**request** +
+__required__|request|<<_userprofilerequest,UserProfileRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* user-profile-controller
+
+
+[[_deleteuserprofileusingdelete]]
+=== deleteUserProfile
+....
+DELETE /user/{userId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* user-profile-controller
+
+
+[[_creatematchprofileusingpost]]
+=== createMatchProfile
+....
+POST /user/{userId}/matchProfile
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|**Body**|**request** +
+__required__|request|<<_matchprofilerequest,MatchProfileRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_matchprofileresponse,MatchProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* match-profile-controller
+
+
+[[_getallmatchprofilesbyuseridusingget]]
+=== getAllMatchProfilesByUserId
+....
+GET /user/{userId}/matchProfile
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_matchprofileresponse,MatchProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* match-profile-controller
+
+
+[[_getallpuppersinmatchprofileusingget]]
+=== getAllPuppersInMatchProfile
+....
+GET /user/{userId}/matchProfile/{matchProfileId}/pupper
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_uploadfileformatchprofileusingpost]]
+=== uploadFileForMatchProfile
+....
+POST /user/{userId}/matchProfile/{matchProfileId}/upload
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|**FormData**|**profilePic** +
+__required__|profilePic|file
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_imageuploadresponse,ImageUploadResponse>>
+|===
+
+
+==== Consumes
+
+* `multipart/form-data`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* image-controller
+
+
+[[_getallpupperprofilesforuserusingget]]
+=== getAllPupperProfilesForUser
+....
+GET /user/{userId}/pupper
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_getpupperprofileusingget]]
+=== getPupperProfile
+....
+GET /user/{userId}/pupper/{pupperId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**pupperId** +
+__required__|pupperId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_updatepupperprofileusingput]]
+=== updatePupperProfile
+....
+PUT /user/{userId}/pupper/{pupperId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**pupperId** +
+__required__|pupperId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|**Body**|**request** +
+__required__|request|<<_pupperprofilerequest,PupperProfileRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_deletepupperprofileusingdelete]]
+=== deletePupperProfile
+....
+DELETE /user/{userId}/pupper/{pupperId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**pupperId** +
+__required__|pupperId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+

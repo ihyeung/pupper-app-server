@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.service;
 
+import com.utahmsd.pupper.client.AmazonAwsClient;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
@@ -9,6 +10,7 @@ import com.utahmsd.pupper.dto.MatchProfileRequest;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
@@ -34,15 +36,19 @@ public class MatchProfileService {
     private final String EMPTY_MATCH_PROFILE_LIST = "No match profiles belonging to user profile id %s were found.";
     private final String INVALID_MATCH_PROFILE_ID = "No match profile with match profile id %s exists";
 
-    @Inject
-    private MatchProfileRepo matchProfileRepo;
+    private final MatchProfileRepo matchProfileRepo;
+    private final UserProfileRepo userProfileRepo;
+    private final PupperProfileRepo pupperProfileRepo;
+    private final AmazonAwsClient amazonAwsClient;
 
-    @Inject
-    private UserProfileRepo userProfileRepo;
-
-    @Inject
-    private PupperProfileRepo pupperProfileRepo;
-
+    @Autowired
+    public MatchProfileService(UserProfileRepo userProfileRepo, PupperProfileRepo pupperProfileRepo,
+                               MatchProfileRepo matchProfileRepo, AmazonAwsClient amazonAwsClient) {
+        this.matchProfileRepo = matchProfileRepo;
+        this.pupperProfileRepo = pupperProfileRepo;
+        this.userProfileRepo = userProfileRepo;
+        this.amazonAwsClient = amazonAwsClient;
+    }
 
     public MatchProfileResponse getAllMatchProfiles() {
         Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_BY_CRITERIA));
@@ -78,4 +84,23 @@ public class MatchProfileService {
     public MatchProfileResponse createMatchProfileForUser(Long userId, MatchProfileRequest request) {
         return null;
     }
+
+    public MatchProfileResponse updateMatchprofile(MatchProfileRequest request) {
+        return null;
+    }
+
+    public void addPhotoToMatchProfile(Long userId, MatchProfileRequest request) {
+        //TODO: upload photo to s3
+        String profilePhoto = uploadProfilePhoto();
+        //Set photo url field in match profile to uploaded filepath
+        //Update in database
+    }
+
+    private String uploadProfilePhoto() {
+        //Upload photo
+        //Return filepath/filename
+        return null;
+    }
+
+
 }

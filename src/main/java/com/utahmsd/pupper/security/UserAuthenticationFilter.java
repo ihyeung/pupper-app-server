@@ -23,11 +23,12 @@ import static com.utahmsd.pupper.security.SecurityConstants.*;
 /**
  * Filter class for authenticating users that generates a JWT upon success.
  */
+
 public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
 
-    public UserAuthenticationFilter(AuthenticationManager authenticationManager) {
+    UserAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 

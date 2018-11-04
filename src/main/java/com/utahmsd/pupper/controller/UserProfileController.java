@@ -5,6 +5,7 @@ import com.utahmsd.pupper.dto.UserProfileRequest;
 import com.utahmsd.pupper.service.UserProfileService;
 import com.utahmsd.pupper.service.filter.UserSearchFilterService;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -17,9 +18,7 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
     private final UserSearchFilterService userSearchFilterService;
 
-    //CRUD endpoints
-
-    @Inject
+    @Autowired
     UserProfileController(UserProfileService userProfileService, UserSearchFilterService userSearchFilterService) {
         this.userProfileService = userProfileService;
         this.userSearchFilterService = userSearchFilterService;
@@ -32,7 +31,6 @@ public class UserProfileController {
 
     @RequestMapping(path ="/{userId}", method= RequestMethod.GET)
     public UserProfileResponse getUserProfile(@PathVariable("userId") Long userId) {
-
         return userProfileService.findUserProfile(userId);
     }
 

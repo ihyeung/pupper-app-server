@@ -13,20 +13,13 @@ public class UserAuthenticationResponse extends BaseResponse {
     @JsonProperty("users")
     private List<UserAccount> users;
 
-    @JsonProperty("token")
-    private String authToken;
-
-    @JsonProperty("expiresIn")
-    private long secondsToExpiration;
-
-    public static UserAuthenticationResponse createUserAuthResponse(boolean success,
-                                                                        List<UserAccount> users,
-                                                                        HttpStatus code,
+    public static UserAuthenticationResponse createUserAuthResponse(boolean success, List<UserAccount> users, HttpStatus code,
                                                                         String description) {
         UserAuthenticationResponse response = new UserAuthenticationResponse();
         response.setSuccess(success);
         response.setUsers(users);
-        response.setStatusCode(code);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
         response.setDescription(description);
         return response;
     }
@@ -39,19 +32,4 @@ public class UserAuthenticationResponse extends BaseResponse {
         this.users = users;
     }
 
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
-    }
-
-    public long getSecondsToExpiration() {
-        return secondsToExpiration;
-    }
-
-    public void setSecondsToExpiration(long secondsToExpiration) {
-        this.secondsToExpiration = secondsToExpiration;
-    }
 }

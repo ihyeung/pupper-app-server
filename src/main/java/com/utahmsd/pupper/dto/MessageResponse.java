@@ -1,26 +1,34 @@
 package com.utahmsd.pupper.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.joda.time.DateTime;
+import com.utahmsd.pupper.dao.entity.PupperMessage;
 import org.springframework.http.HttpStatus;
 
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class MessageResponse {
+import java.util.List;
 
-    @JsonProperty("id")
-    private Long messageId;
+public class MessageResponse extends BaseResponse {
 
-    @JsonProperty("isSuccess")
-    private boolean success;
+    @JsonProperty("messages")
+    private List<PupperMessage> messages;
 
-    @JsonProperty("statusCode")
-    private HttpStatus statusCode;
+    public static MessageResponse createMessageResponse(boolean success,
+                                                                  List<PupperMessage> messages,
+                                                                  HttpStatus code,
+                                                                  String description) {
+        MessageResponse response = new MessageResponse();
+        response.setSuccess(success);
+        response.setMessages(messages);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
+        response.setDescription(description);
+        return response;
+    }
 
-    @JsonProperty("description")
-    private String description;
+    public List<PupperMessage> getMessages() {
+        return messages;
+    }
 
-    @JsonProperty("timestamp")
-    private DateTime timestamp;
-
+    public void setMessages(List<PupperMessage> messages) {
+        this.messages = messages;
+    }
 }

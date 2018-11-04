@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.inject.Named;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.utahmsd.pupper.dto.UserAuthenticationResponse.createUserAuthResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static java.util.Collections.emptyList;
 
@@ -32,12 +32,8 @@ public class UserAccountService implements UserDetailsService {
     private static final String INVALID_EMAIL = "User credentials with email %s not found";
     private static final String INVALID_LOGIN = "Invalid login credentials were entered.";
 
-    private static final int NUM_SALT_BYTES = 32;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     private final UserAccountRepo userAccountRepo;
-
     private final UserProfileRepo userProfileRepo;
 
     @Autowired
@@ -47,44 +43,36 @@ public class UserAccountService implements UserDetailsService {
         this.userProfileRepo = userProfileRepo;
     }
 
-    public List<UserAccount> getAllUserCredentials() {
+    public UserAuthenticationResponse getAllUserCredentials() {
         Iterable<UserAccount> resultList = userAccountRepo.findAll();
         List<UserAccount> userList = new ArrayList<>();
         if (resultList.iterator().hasNext()) {
-            resultList.forEach(each -> userList.add(
-                    new UserAccount(each.getUsername(), null))); //Hide sensitive data field
+            resultList.forEach(each -> userList.add(new UserAccount(each.getUsername(),
+                                          null))); //Hide sensitive data field
         }
-//
-//            return createUserCredentialsResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
-            return userList;
-//        }
-//
-//        return createUserCredentialsResponse(
-//                false, userList, HttpStatus.NO_CONTENT, "No user credentials were found.");
+        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAccount findUserCredentials(Long userId) {
-        Optional<UserAccount> result = userAccountRepo.findById(userId);
-//        List<User> userList = new ArrayList<>();
-        if (result.isPresent()) {
-            LOGGER.error("User credentials with id {} not found", userId);
-
-            return result.get();
-
+    public UserAuthenticationResponse findUserCredentialsById(Long userAccountId) {
+        Optional<UserAccount> result = userAccountRepo.findById(userAccountId);
+        if (!result.isPresent()) {
+            LOGGER.error("User credentials with id {} not found", userAccountId);
+            return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_LOGIN);
         }
-//            userList.add(new User(result.get().getUser().getUsername(), null)); //Hide sensitive data field
-//            return createUserCredentialsResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
-//        }
-//        LOGGER.error("User credentials with id {} not found", userId);
-//
-//        return createUserCredentialsResponse(
-//                false, userList, HttpStatus.NOT_FOUND, String.format(INVALID_CREDENTIALS_ID, userId));
-        return null;
+        List<UserAccount> userList = new ArrayList<>();
+        userList.add(new UserAccount(result.get().getUsername(), null)); //Hide sensitive data field
+        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
+
+
 
     public UserAuthenticationResponse createUserCredentials(UserAuthenticationRequest request) {
         UserAccount userAccount = request.getUser();
+        if (loadUserByUsername(userAccount.getUsername()) != null) {
+            return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+                    "An account with that username already exists.");
+        }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         System.out.println(userAccount.getPassword());
         userAccountRepo.save(userAccount);
@@ -102,7 +90,7 @@ public class UserAccountService implements UserDetailsService {
         ArrayList<UserAccount> userList = new ArrayList<>();
         userList.add(
                 new UserAccount(userAccount.getUsername(), null)); //Hide sensitive data field
-        return UserAuthenticationResponse.createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
 //    public UserAuthenticationResponse authenticateUser(UserCredentialsRequest request) {
@@ -130,10 +118,11 @@ public class UserAccountService implements UserDetailsService {
 //    }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         UserAccount userResult = userAccountRepo.findByUsername(username);
         if (userResult == null) {
-            throw new UsernameNotFoundException(username);
+            LOGGER.error(INVALID_LOGIN);
+            return null;
         }
         return new org.springframework.security.core.userdetails.User(
                 userResult.getUsername(),

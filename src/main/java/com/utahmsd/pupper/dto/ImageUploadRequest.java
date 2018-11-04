@@ -12,9 +12,14 @@ import javax.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ImageUploadRequest {
 
-    @NotNull
     @JsonProperty("match_profile")
     private MatchProfile matchProfile;
+
+    public ImageUploadRequest(){}
+
+    public ImageUploadRequest(MatchProfile matchProfile) {
+        this.matchProfile = matchProfile;
+    }
 
     public MatchProfile getMatchProfile() {
         return matchProfile;

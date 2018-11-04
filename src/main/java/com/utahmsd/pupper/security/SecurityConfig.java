@@ -1,6 +1,7 @@
 package com.utahmsd.pupper.security;
 
 import com.utahmsd.pupper.service.UserAccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,6 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserAccountService userAccountService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
     public SecurityConfig(UserAccountService userAccountService,
                           BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userAccountService = userAccountService;

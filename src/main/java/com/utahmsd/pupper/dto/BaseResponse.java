@@ -2,14 +2,7 @@ package com.utahmsd.pupper.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.utahmsd.pupper.exception.PupperRestExceptionHandler;
-import org.springframework.boot.json.JsonParseException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.context.request.WebRequest;
-
-import javax.validation.ConstraintViolationException;
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BaseResponse {
@@ -17,11 +10,33 @@ public class BaseResponse {
     @JsonProperty("isSuccess")
     private boolean success;
 
-    @JsonProperty("statusCode")
-    private HttpStatus statusCode;
+    @JsonProperty("status")
+    private HttpStatus status;
+
+    @JsonProperty("responseCode")
+    private int responseCode;
 
     @JsonProperty("description")
     private String description;
+
+    public static BaseResponse successResponse() {
+        BaseResponse response = new BaseResponse();
+        response.setSuccess(true);
+        response.setStatus(HttpStatus.OK);
+        response.setResponseCode(HttpStatus.OK.value());
+        response.setDescription("Success");
+        return response;
+    }
+
+    public static BaseResponse errorResponse(HttpStatus error, String description) {
+        BaseResponse response = new BaseResponse();
+        response.setSuccess(false);
+        response.setResponseCode(error.value());
+        response.setStatus(error);
+        response.setDescription(description);
+        return response;
+
+    }
 
     public boolean isSuccess() {
         return success;
@@ -31,12 +46,12 @@ public class BaseResponse {
         this.success = success;
     }
 
-    public HttpStatus getStatusCode() {
-        return statusCode;
+    public HttpStatus getStatus() {
+        return status;
     }
 
-    public void setStatusCode(HttpStatus statusCode) {
-        this.statusCode = statusCode;
+    public void setStatus(HttpStatus status) {
+        this.status = status;
     }
 
     public String getDescription() {
@@ -47,14 +62,12 @@ public class BaseResponse {
         this.description = description;
     }
 
-    public BaseResponse(){}
 
-    protected <T extends BaseResponse> T createResponse(boolean isSuccess, List<?> dataList, HttpStatus status, String description) {
-        this.success = isSuccess;
-        this.statusCode = status;
-        this.description = description;
-
-        return (T) this;
+    public int getResponseCode() {
+        return responseCode;
     }
 
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
+    }
 }

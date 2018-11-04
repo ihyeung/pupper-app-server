@@ -14,8 +14,8 @@ public interface BreedRepo extends PagingAndSortingRepository<Breed, Long> {
     Page<Breed> findAll(Pageable pageable);
     Page<Breed> findAllBySize(Size size, Pageable pageable);
     Optional<Breed> findById(Long id);
-    Page<Breed> findAllByBreed(Breed breed, Pageable pageable);
-    Iterable<Breed> findAllByBreed(Breed breed, Sort sort);
+    Page<Breed> findAllByName(String breed, Pageable pageable);
+    Iterable<Breed> findAllByName(String breed, Sort sort);
     Breed save(Breed breed);
     void deleteAll(Iterable<? extends Breed> iterable);
     void deleteAll();

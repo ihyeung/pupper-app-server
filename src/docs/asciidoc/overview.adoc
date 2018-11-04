@@ -1,0 +1,36 @@
+= PupperProfile API
+
+
+[[_overview]]
+== Overview
+PupperProfile Mobile App
+
+
+=== Version information
+[%hardbreaks]
+__Version__ : 0.1.0
+
+
+=== License information
+[%hardbreaks]
+__License__ : (C) Copyright Kayla/Irene
+__Terms of service__ : null
+
+
+=== URI scheme
+[%hardbreaks]
+__Host__ : localhost:9000
+__BasePath__ : /
+
+
+=== Tags
+
+* auth-controller : Auth Controller
+* image-controller : Image Controller
+* match-profile-controller : Match Profile Controller
+* pupper-matcher-controller : Pupper Matcher Controller
+* pupper-profile-controller : Pupper Profile Controller
+* user-profile-controller : User Profile Controller
+
+
+

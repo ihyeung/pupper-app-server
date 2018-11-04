@@ -1,40 +1,32 @@
 package com.utahmsd.pupper.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.utahmsd.pupper.dao.entity.MatchProfile;
+import com.utahmsd.pupper.dao.entity.MatchResult;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 public class PupperMatcherResponse extends BaseResponse {
 
-    @JsonProperty("isMatch")
-    private boolean isMatch; //Whether profile is a mutual match
+    @JsonProperty("matchResults")
+    private List<MatchResult> matchResults;
 
-    @JsonProperty("matchingProfile")
-    private MatchProfile matchProfile; //The match profile of the user who is doing the swiping/clicking
-
-    @JsonProperty("pupperMatch")
-    private MatchProfile pupperMatch; //The match profile being shown to the user - will be null if not a two-way match
-
-    public boolean isMatch() {
-        return isMatch;
+    public static PupperMatcherResponse createPupperMatcherResponse(boolean success, List<MatchResult> matchResults, HttpStatus code,
+                                                                    String description) {
+        PupperMatcherResponse response = new PupperMatcherResponse();
+        response.setSuccess(success);
+        response.setMatchResults(matchResults);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
+        response.setDescription(description);
+        return response;
     }
 
-    public void setMatch(boolean match) {
-        isMatch = match;
+    public List<MatchResult> getMatchResults() {
+        return matchResults;
     }
 
-    public MatchProfile getMatchProfile() {
-        return matchProfile;
-    }
-
-    public void setMatchProfile(MatchProfile matchProfile) {
-        this.matchProfile = matchProfile;
-    }
-
-    public MatchProfile getPupperMatch() {
-        return pupperMatch;
-    }
-
-    public void setPupperMatch(MatchProfile pupperMatch) {
-        this.pupperMatch = pupperMatch;
+    public void setMatchResults(List<MatchResult> matchResults) {
+        this.matchResults = matchResults;
     }
 }
