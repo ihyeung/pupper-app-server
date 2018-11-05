@@ -1,34 +1,39 @@
 package com.utahmsd.pupper.controller;
 
-import com.utahmsd.pupper.dto.MatchProfileRequest;
+import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import com.utahmsd.pupper.service.MatchProfileService;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
+import javax.validation.Valid;
 
 @RestController
 @Api(value = "MatchProfile Controller for MatchProfile endpoints")
 public class MatchProfileController {
 
-    @Inject
-    private MatchProfileService matchProfileService;
+    private final MatchProfileService matchProfileService;
 
-    @RequestMapping(path="/matchProfile", method= RequestMethod.GET)
+    @Autowired
+    MatchProfileController(MatchProfileService matchProfileService) {
+        this.matchProfileService = matchProfileService;
+    }
+
+    @GetMapping(path="/matchProfile")
     public MatchProfileResponse getAllMatchProfiles() {
         return matchProfileService.getAllMatchProfiles();
     }
 
-    @RequestMapping(path="/user/{userId}/matchProfile", method= RequestMethod.GET)
+    @GetMapping(path="/user/{userId}/matchProfile")
     public MatchProfileResponse getAllMatchProfilesByUserId(@PathVariable("userId") Long userId) {
-        return matchProfileService.getMatchProfilesByUser(userId);
+        return matchProfileService.getAllMatchProfilesByUserId(userId);
     }
 
-    @RequestMapping(path="/user/{userId}/matchProfile", method= RequestMethod.POST)
+    @PostMapping(path="/user/{userId}/matchProfile")
     public MatchProfileResponse createMatchProfile(@PathVariable("userId") Long userId,
-                                                   @RequestBody MatchProfileRequest request) {
+                                                   @RequestBody @Valid final MatchProfile matchProfile) {
 
-        return matchProfileService.createMatchProfileForUser(userId, request);
+        return matchProfileService.createMatchProfileForUser(userId, matchProfile);
     }
 }

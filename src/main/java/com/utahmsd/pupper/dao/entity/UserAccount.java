@@ -1,6 +1,8 @@
 package com.utahmsd.pupper.dao.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,12 +16,12 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
     @Size(max = 50)
+    @Email(message = "Username should be a valid email")
     private String username;
 
-    @NotNull
     @Size(max = 100)
+    @NotBlank
     private String password;
 
     public UserAccount(){}

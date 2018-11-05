@@ -28,6 +28,47 @@ GET /account
 * auth-controller
 
 
+[[_registeruserusingpost]]
+=== registerUser
+....
+POST /account/register
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**userAccount** +
+__required__|userAccount|<<_useraccount,UserAccount>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* auth-controller
+
+
 [[_getcredentialsbyaccountidusingget]]
 === getCredentialsByAccountId
 ....
@@ -62,6 +103,111 @@ __required__|accountId|integer (int64)
 ==== Tags
 
 * auth-controller
+
+
+[[_updateusercredentialsusingput]]
+=== updateUserCredentials
+....
+PUT /account/{accountId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**accountId** +
+__required__|accountId|integer (int64)
+|**Body**|**userAccount** +
+__required__|userAccount|<<_useraccount,UserAccount>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* auth-controller
+
+
+[[_deleteusercredentialsbyidusingdelete]]
+=== deleteUserCredentialsById
+....
+DELETE /account/{accountId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**accountId** +
+__required__|accountId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* auth-controller
+
+
+[[_getallpupperbreedsusingget]]
+=== getAllPupperBreeds
+....
+GET /breed
+....
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
 
 
 [[_deletefileusingpost]]
@@ -167,47 +313,6 @@ __required__|matchProfileId|integer (int64)
 * pupper-matcher-controller
 
 
-[[_createpupperprofileusingpost]]
-=== createPupperProfile
-....
-POST /pupper
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Body**|**request** +
-__required__|request|<<_pupperprofilerequest,PupperProfileRequest>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
-|===
-
-
-==== Consumes
-
-* `application/json`
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* pupper-profile-controller
-
-
 [[_getallpupperprofilesusingget]]
 === getAllPupperProfiles
 ....
@@ -232,73 +337,6 @@ GET /pupper
 ==== Tags
 
 * pupper-profile-controller
-
-
-[[_getallpupperbreedsusingget]]
-=== getAllPupperBreeds
-....
-GET /pupper/api/breed
-....
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
-|===
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* pupper-profile-controller
-
-
-[[_registeruserusingpost]]
-=== registerUser
-....
-POST /register
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Body**|**request** +
-__required__|request|<<_userauthenticationrequest,UserAuthenticationRequest>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
-|===
-
-
-==== Consumes
-
-* `application/json`
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* auth-controller
 
 
 [[_uploadfileusingpost]]
@@ -344,47 +382,6 @@ __required__|requestBody|<<_imageuploadrequest,ImageUploadRequest>>
 * image-controller
 
 
-[[_createuserprofileusingpost]]
-=== createUserProfile
-....
-POST /user
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Body**|**request** +
-__required__|request|<<_userprofilerequest,UserProfileRequest>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
-|===
-
-
-==== Consumes
-
-* `application/json`
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* user-profile-controller
-
-
 [[_getuserprofileswithzipusingget]]
 === getUserProfilesWithZip
 ....
@@ -409,6 +406,47 @@ __required__|zip|string
 |HTTP Code|Description|Schema
 |**200**|OK|<<_userprofileresponse,UserProfileResponse>>
 |===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* user-profile-controller
+
+
+[[_createuserprofileusingpost]]
+=== createUserProfile
+....
+POST /user/
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**userProfile** +
+__required__|userProfile|<<_userprofile,UserProfile>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
 
 
 ==== Produces
@@ -447,8 +485,8 @@ GET /user/
 * user-profile-controller
 
 
-[[_getuserprofileusingget]]
-=== getUserProfile
+[[_finduserprofilebyidusingget]]
+=== findUserProfileById
 ....
 GET /user/{userId}
 ....
@@ -497,8 +535,8 @@ PUT /user/{userId}
 |Type|Name|Description|Schema
 |**Path**|**userId** +
 __required__|userId|integer (int64)
-|**Body**|**request** +
-__required__|request|<<_userprofilerequest,UserProfileRequest>>
+|**Body**|**userProfile** +
+__required__|userProfile|<<_userprofile,UserProfile>>
 |===
 
 
@@ -576,8 +614,8 @@ POST /user/{userId}/matchProfile
 |Type|Name|Description|Schema
 |**Path**|**userId** +
 __required__|userId|integer (int64)
-|**Body**|**request** +
-__required__|request|<<_matchprofilerequest,MatchProfileRequest>>
+|**Body**|**matchProfile** +
+__required__|matchProfile|<<_matchprofile,MatchProfile>>
 |===
 
 
@@ -679,6 +717,51 @@ __required__|userId|integer (int64)
 * pupper-profile-controller
 
 
+[[_createpupperprofileformatchprofileusingpost]]
+=== createPupperProfileForMatchProfile
+....
+POST /user/{userId}/matchProfile/{matchProfileId}/pupper/
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|**Body**|**pupperProfile** +
+__required__|pupperProfile|<<_pupperprofile,PupperProfile>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
 [[_uploadfileformatchprofileusingpost]]
 === uploadFileForMatchProfile
 ....
@@ -727,7 +810,7 @@ __required__|profilePic|file
 [[_getallpupperprofilesforuserusingget]]
 === getAllPupperProfilesForUser
 ....
-GET /user/{userId}/pupper
+GET /user/{userId}/pupper/
 ....
 
 
@@ -760,8 +843,8 @@ __required__|userId|integer (int64)
 * pupper-profile-controller
 
 
-[[_getpupperprofileusingget]]
-=== getPupperProfile
+[[_findpupperprofilebyidusingget]]
+=== findPupperProfileById
 ....
 GET /user/{userId}/pupper/{pupperId}
 ....
@@ -814,8 +897,8 @@ PUT /user/{userId}/pupper/{pupperId}
 __required__|pupperId|integer (int64)
 |**Path**|**userId** +
 __required__|userId|integer (int64)
-|**Body**|**request** +
-__required__|request|<<_pupperprofilerequest,PupperProfileRequest>>
+|**Body**|**pupperProfile** +
+__required__|pupperProfile|<<_pupperprofile,PupperProfile>>
 |===
 
 
@@ -843,8 +926,8 @@ __required__|request|<<_pupperprofilerequest,PupperProfileRequest>>
 * pupper-profile-controller
 
 
-[[_deletepupperprofileusingdelete]]
-=== deletePupperProfile
+[[_deletepupperprofilebyidusingdelete]]
+=== deletePupperProfileById
 ....
 DELETE /user/{userId}/pupper/{pupperId}
 ....

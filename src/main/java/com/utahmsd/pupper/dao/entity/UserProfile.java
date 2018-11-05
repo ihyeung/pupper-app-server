@@ -3,8 +3,8 @@ package com.utahmsd.pupper.dao.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Size;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.util.Date;
@@ -20,14 +20,17 @@ public class UserProfile implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_account_id_fk")
+    @Valid
     private UserAccount userAccount;
 
     @Size(min = 2, max = 30)
     @Column(name = "name_first")
+    @NotBlank
     private String firstName;
 
     @Size(min = 1, max = 30)
     @Column(name = "name_last")
+
     private String lastName;
 
     @Max(1)
@@ -36,6 +39,7 @@ public class UserProfile implements Serializable {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "birthdate")
+    @Past
     private Date birthdate; //For profile age
 
     @DefaultValue("single")
@@ -48,6 +52,7 @@ public class UserProfile implements Serializable {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
     @Column(name = "last_login")
+    @PastOrPresent
     private Date lastLogin;
 
     public UserProfile(){}

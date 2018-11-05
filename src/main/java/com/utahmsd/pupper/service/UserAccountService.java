@@ -1,9 +1,7 @@
 package com.utahmsd.pupper.service;
 
 import com.utahmsd.pupper.dao.UserAccountRepo;
-import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.UserAccount;
-import com.utahmsd.pupper.dto.UserAuthenticationRequest;
 import com.utahmsd.pupper.dto.UserAuthenticationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +33,11 @@ public class UserAccountService implements UserDetailsService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserAccountRepo userAccountRepo;
-    private final UserProfileRepo userProfileRepo;
 
     @Autowired
-    public UserAccountService(BCryptPasswordEncoder bCryptPasswordEncoder, UserAccountRepo userAccountRepo, UserProfileRepo userProfileRepo) {
+    public UserAccountService(BCryptPasswordEncoder bCryptPasswordEncoder, UserAccountRepo userAccountRepo) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userAccountRepo = userAccountRepo;
-        this.userProfileRepo = userProfileRepo;
     }
 
     public UserAuthenticationResponse getAllUserCredentials() {
@@ -59,22 +56,18 @@ public class UserAccountService implements UserDetailsService {
             LOGGER.error("User credentials with id {} not found", userAccountId);
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_LOGIN);
         }
-        List<UserAccount> userList = new ArrayList<>();
-        userList.add(new UserAccount(result.get().getUsername(), null)); //Hide sensitive data field
+        ArrayList<UserAccount> userList =
+                new ArrayList<>(Arrays.asList(new UserAccount(result.get().getUsername(), null))); //Hide sensitive data field
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
 
-
-
-    public UserAuthenticationResponse createUserCredentials(UserAuthenticationRequest request) {
-        UserAccount userAccount = request.getUser();
+    public UserAuthenticationResponse createUserCredentials(UserAccount userAccount) {
         if (loadUserByUsername(userAccount.getUsername()) != null) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
                     "An account with that username already exists.");
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
-        System.out.println(userAccount.getPassword());
         userAccountRepo.save(userAccount);
 //        request.getUser()
 //        UserCredentials userCredentials = new UserCredentials();
@@ -87,10 +80,32 @@ public class UserAccountService implements UserDetailsService {
 //
 //        userCredentials.setComputedHash(generateHash(request.getUser().getPassword(), salt.getBytes()));
 //        UserCredentials userCredentialsResult = userAccountRepo.save(userCredentials);
-        ArrayList<UserAccount> userList = new ArrayList<>();
-        userList.add(
-                new UserAccount(userAccount.getUsername(), null)); //Hide sensitive data field
+        ArrayList<UserAccount> userList =
+                new ArrayList<>(Arrays.asList(new UserAccount(userAccount.getUsername(), null)));//Hide sensitive data field
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserAuthenticationResponse updateUserCredentials(Long accountId, UserAccount userAccount) {
+        //First check to make sure email is registered as an existing account, and that the path param id and the request body id match
+        if (loadUserByUsername(userAccount.getUsername()) == null || accountId != userAccount.getId()) {
+            return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+                    "Invalid updateUserCredentials request.");
+        }
+        userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
+        userAccountRepo.save(userAccount);
+        ArrayList<UserAccount> userList =
+                new ArrayList<>(Arrays.asList(new UserAccount(userAccount.getUsername(), null)));
+        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserAuthenticationResponse deleteUserCredentialsById(Long accountId) {
+        Optional<UserAccount> result = userAccountRepo.findById(accountId);
+        if (!result.isPresent()) {
+            return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+                    "Invalid deleteUserCredentialsById request.");
+        }
+        userAccountRepo.deleteById(accountId);
+        return createUserAuthResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
 //    public UserAuthenticationResponse authenticateUser(UserCredentialsRequest request) {

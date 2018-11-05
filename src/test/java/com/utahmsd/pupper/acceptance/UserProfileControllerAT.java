@@ -2,14 +2,17 @@ package com.utahmsd.pupper.acceptance;
 
 import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
-import com.utahmsd.pupper.dto.UserProfileRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.http.Header;
+import io.restassured.parsing.Parser;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Instant;
@@ -21,23 +24,50 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@TestPropertySource("classpath:application-test.properties")
 public class UserProfileControllerAT {
 
-    private final String TEST_URL = System.getProperty("TEST_URL");
+    private static final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:9000/");
+
+    private static UserAccount userAccount= new UserAccount();
+    private static String accessToken = null;
 
     @Before
-    public void setup(){
+    public void init(){
         RestAssured.baseURI = TEST_URL;
+        RestAssured.registerParser("text/plain", Parser.JSON);
+        RestAssured.defaultParser = Parser.JSON;
+
+        userAccount.setUsername("createUserProfileTest@test.com");
+        userAccount.setPassword("TESTPASSWORD");
+
+        if (accessToken == null) {
+            accessToken =given().
+                    relaxedHTTPSValidation().
+                    log().all().
+                    contentType(ContentType.JSON).
+                    body(userAccount).
+                    when().
+                    post("/login").
+                    then().
+                    log().all().
+                    statusCode(200).
+                    body("isSuccess", equalTo(true)).
+                    extract().response().header("Authorization");
+        }
+        System.out.println("Access token: " + accessToken);
+
     }
 
     @Test
-    public void testFindAllUsers() {
+    public void testGetAllUsers() {
         given().
                 relaxedHTTPSValidation().
                 log().all().
                 contentType(ContentType.JSON).
+                header(new Header("Authorization", accessToken)).
         when().
-                get("/users/").
+                get("/user/").
         then().
                 log().all().
                 statusCode(200).
@@ -58,21 +88,16 @@ public class UserProfileControllerAT {
 
     @Test
     public void testCreateUserProfile() {
-        UserProfileRequest request = new UserProfileRequest();
-        request.setRequestingUserId(Long.parseLong("2"));
-        request.setUserProfile(createUserProfile());
-
         given().
                 relaxedHTTPSValidation().
                 log().all().
                 contentType(ContentType.JSON).
-                body(request).
-        when().
+                body(createUserProfile()).
+                when().
                 post("/user").
-        then().
+                then().
                 log().all().
                 statusCode(200).
-
                 body("isSuccess", equalTo(true)).
                 body("userProfiles", notNullValue());
     }
@@ -83,16 +108,6 @@ public class UserProfileControllerAT {
     }
 
     private UserProfile createUserProfile() {
-//        UserCredentials credentials = new UserCredentials();
-//        User userLogin = new User("createUserProfileTest@test.com", "TEST");
-//        credentials.setUser(userLogin);
-//        credentials.setSalt("SALT");
-//        credentials.setDateJoined(Date.from(Instant.now()));
-
-        UserAccount userAccount = new UserAccount();
-        userAccount.setUsername("createUserProfileTest@test.com");
-        userAccount.setPassword(new BCryptPasswordEncoder(4).encode("TESTPASSWORD"));
-//
         UserProfile user = new UserProfile();
         user.setUserAccount(userAccount);
         user.setFirstName("Carmen");
@@ -101,7 +116,6 @@ public class UserProfileControllerAT {
         user.setZip("84095");
         user.setSex('F');
         user.setLastLogin(Date.from(Instant.now()));
-
 
         return user;
     }

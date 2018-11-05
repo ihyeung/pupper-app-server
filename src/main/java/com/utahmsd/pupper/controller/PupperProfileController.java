@@ -1,14 +1,14 @@
 package com.utahmsd.pupper.controller;
 
+import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
-import com.utahmsd.pupper.dto.PupperProfileRequest;
 import com.utahmsd.pupper.service.PupperProfileService;
 import com.utahmsd.pupper.service.filter.PupperSearchFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
+import javax.validation.Valid;
 
 @RestController
 @Api(value = "PupperProfile Controller For PupperProfile Endpoints")
@@ -23,53 +23,54 @@ public class PupperProfileController {
         this.pupperSearchFilterService = filterService;
     }
 
-    @RequestMapping(path="/pupper", method= RequestMethod.POST)
-    public PupperProfileResponse createPupperProfile(@RequestBody PupperProfileRequest request) {
-
-        return pupperProfileService.createNewPupperProfile(request);
-    }
-
-    @RequestMapping(path="/pupper", method= RequestMethod.GET)
+    @GetMapping(path="/pupper")
     public PupperProfileResponse getAllPupperProfiles() {
 
         return pupperProfileService.getAllPupperProfiles();
     }
 
-    @RequestMapping(path ="/pupper/api/breed", method= RequestMethod.GET)
+    @GetMapping(path ="/breed")
     public PupperProfileResponse getAllPupperBreeds() {
-
         return pupperProfileService.getBreeds();
     }
 
-    @RequestMapping(path ="/user/{userId}/pupper", method= RequestMethod.GET)
+    @GetMapping(path ="/user/{userId}/pupper/")
     public PupperProfileResponse getAllPupperProfilesForUser(@PathVariable("userId") Long userId) {
-
         return pupperProfileService.findAllPupperProfilesByUserId(userId);
     }
-    @RequestMapping(path ="/user/{userId}/pupper/{pupperId}", method= RequestMethod.GET)
-    public PupperProfileResponse getPupperProfile(@PathVariable("userId") Long userId, @PathVariable("pupperId") Long pupId) {
 
-        return pupperProfileService.findPupperProfile(userId, pupId);
+    @PostMapping(path="/user/{userId}/matchProfile/{matchProfileId}/pupper/")
+    public PupperProfileResponse createPupperProfileForMatchProfile(@PathVariable("userId") Long userId,
+                                                                    @PathVariable("matchProfileId") Long matchProfileId,
+                                                                    @RequestBody @Valid final PupperProfile pupperProfile) {
+
+        return pupperProfileService.createNewPupperProfileForMatchProfile(userId, matchProfileId, pupperProfile);
     }
 
-    @RequestMapping(path ="/user/{userId}/pupper/{pupperId}", method= RequestMethod.PUT)
+    @GetMapping(path ="/user/{userId}/pupper/{pupperId}")
+    public PupperProfileResponse findPupperProfileById(@PathVariable("userId") Long userId, @PathVariable("pupperId") Long pupId) {
+
+        return pupperProfileService.findPupperProfileById(userId, pupId);
+    }
+
+    @PutMapping(path ="/user/{userId}/pupper/{pupperId}")
     public PupperProfileResponse updatePupperProfile(@PathVariable("userId") Long userId,
                                                      @PathVariable("pupperId") Long pupId,
-                                                     @RequestBody PupperProfileRequest request) {
-        return pupperProfileService.updatePupperProfile(userId, pupId, request);
+                                                     @RequestBody @Valid final PupperProfile pupperProfile) {
+        return pupperProfileService.updatePupperProfile(userId, pupId, pupperProfile);
     }
 
-    @RequestMapping(path ="/user/{userId}/pupper/{pupperId}", method= RequestMethod.DELETE)
-    public PupperProfileResponse deletePupperProfile(@PathVariable("userId") Long userId,
-                                                     @PathVariable("pupperId") Long pupperId) {
+    @DeleteMapping(path ="/user/{userId}/pupper/{pupperId}")
+    public PupperProfileResponse deletePupperProfileById(@PathVariable("userId") Long userId,
+                                                         @PathVariable("pupperId") Long pupperId) {
 
-        return pupperProfileService.deletePupperProfile(userId, pupperId);
+        return pupperProfileService.deletePupperProfileById(userId, pupperId);
     }
 
-    @RequestMapping(path ="/user/{userId}/matchProfile/{matchProfileId}/pupper", method= RequestMethod.GET)
+    @GetMapping(path ="/user/{userId}/matchProfile/{matchProfileId}/pupper")
     public PupperProfileResponse getAllPuppersInMatchProfile(@PathVariable("userId") Long userId,
-                                                     @PathVariable("matchProfileId") Long matchProfileId) {
-        return pupperProfileService.getAllPuppersInMatchProfile(userId, matchProfileId);
+                                                            @PathVariable("matchProfileId") Long matchProfileId) {
+        return pupperProfileService.getAllPuppersByMatchProfileId(userId, matchProfileId);
     }
 
 }

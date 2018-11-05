@@ -83,17 +83,6 @@ __optional__|<<_userprofile,UserProfile>>
 |===
 
 
-[[_matchprofilerequest]]
-=== MatchProfileRequest
-
-[options="header", cols=".^3a,.^4a"]
-|===
-|Name|Schema
-|**match_profile** +
-__optional__|<<_matchprofile,MatchProfile>>
-|===
-
-
 [[_matchprofileresponse]]
 === MatchProfileResponse
 
@@ -172,21 +161,6 @@ __optional__||<<_userprofile,UserProfile>>
 |===
 
 
-[[_pupperprofilerequest]]
-=== PupperProfileRequest
-
-[options="header", cols=".^3a,.^4a"]
-|===
-|Name|Schema
-|**pupperProfile** +
-__optional__|<<_pupperprofile,PupperProfile>>
-|**requestFrom** +
-__optional__|integer (int64)
-|**requestingPupperId** +
-__optional__|integer (int64)
-|===
-
-
 [[_pupperprofileresponse]]
 === PupperProfileResponse
 
@@ -218,17 +192,6 @@ __optional__|integer (int64)
 __optional__|string
 |**username** +
 __optional__|string
-|===
-
-
-[[_userauthenticationrequest]]
-=== UserAuthenticationRequest
-
-[options="header", cols=".^3a,.^4a"]
-|===
-|Name|Schema
-|**user** +
-__optional__|<<_useraccount,UserAccount>>
 |===
 
 
@@ -275,19 +238,6 @@ __optional__||string
 __optional__||<<_useraccount,UserAccount>>
 |**zip** +
 __optional__||string
-|===
-
-
-[[_userprofilerequest]]
-=== UserProfileRequest
-
-[options="header", cols=".^3a,.^4a"]
-|===
-|Name|Schema
-|**requestingUserId** +
-__optional__|integer (int64)
-|**userProfile** +
-__optional__|<<_userprofile,UserProfile>>
 |===
 
 

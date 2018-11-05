@@ -3,10 +3,11 @@ package com.utahmsd.pupper.dao.entity;
 import com.utahmsd.pupper.dto.pupper.Size;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "name")
+@Table(name = "breed")
 public class Breed implements Serializable {
 
     @Id
@@ -15,6 +16,7 @@ public class Breed implements Serializable {
     private Long id;
 
     @Column(name = "name")
+    @NotBlank
     private String name;
 
     @Column(name = "alt_name")

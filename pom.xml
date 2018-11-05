@@ -152,6 +152,11 @@
             <artifactId>joda-time</artifactId>
             <version>${joda-time}</version>
         </dependency>
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+        </dependency>
 
         <!--SWAGGER2MARKUP/ASCIIDOC DOCUMENTATION DEPENDENCIES-->
         <dependency>
@@ -175,11 +180,7 @@
             <version>${swagger2markup.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.imgscalr</groupId>
-            <artifactId>imgscalr-lib</artifactId>
-            <version>4.2</version>
-        </dependency>
+
     </dependencies>
 
     <build>
@@ -187,6 +188,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!--Elastic Beanstalk Configuration-->
+            <plugin>
+                <groupId>br.com.ingenieux</groupId>
+                <artifactId>beanstalk-maven-plugin</artifactId>
+                <version>1.5.0</version>
             </plugin>
 
             <!--Swagger2Markup/AsciiDoc Plugins/Configuration-->

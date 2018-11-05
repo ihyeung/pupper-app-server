@@ -1,12 +1,7 @@
 package com.utahmsd.pupper.service;
 
-import com.utahmsd.pupper.client.AmazonAwsClient;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
-import com.utahmsd.pupper.dao.PupperProfileRepo;
-import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
-import com.utahmsd.pupper.dao.entity.UserProfile;
-import com.utahmsd.pupper.dto.MatchProfileRequest;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,16 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.utahmsd.pupper.dto.MatchProfileResponse.createMatchProfileResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
+import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
 
 @Named
 @Singleton
@@ -33,21 +25,14 @@ public class MatchProfileService {
     private static final String DEFAULT_SORT_BY_CRITERIA = "breed";
     private static final float DEFAULT_SCORE = Float.MAX_VALUE;
     private final String INVALID_USER_ID = "No user profile with user profile id %s exists.";
-    private final String EMPTY_MATCH_PROFILE_LIST = "No match profiles belonging to user profile id %s were found.";
+    private final String EMPTY_MATCH_PROFILE_LIST = "No match profiles belonging to user profile id %d were found.";
     private final String INVALID_MATCH_PROFILE_ID = "No match profile with match profile id %s exists";
 
     private final MatchProfileRepo matchProfileRepo;
-    private final UserProfileRepo userProfileRepo;
-    private final PupperProfileRepo pupperProfileRepo;
-    private final AmazonAwsClient amazonAwsClient;
 
     @Autowired
-    public MatchProfileService(UserProfileRepo userProfileRepo, PupperProfileRepo pupperProfileRepo,
-                               MatchProfileRepo matchProfileRepo, AmazonAwsClient amazonAwsClient) {
+    public MatchProfileService(MatchProfileRepo matchProfileRepo) {
         this.matchProfileRepo = matchProfileRepo;
-        this.pupperProfileRepo = pupperProfileRepo;
-        this.userProfileRepo = userProfileRepo;
-        this.amazonAwsClient = amazonAwsClient;
     }
 
     public MatchProfileResponse getAllMatchProfiles() {
@@ -59,37 +44,54 @@ public class MatchProfileService {
             return createMatchProfileResponse(true, matchProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
         }
-        LOGGER.info("No match profiles were found.");
+        LOGGER.info("No match profiles were found in the match_profile database table");
         return createMatchProfileResponse(true, matchProfileList, HttpStatus.NO_CONTENT, DEFAULT_DESCRIPTION);
 
     }
 
-    public MatchProfileResponse getMatchProfilesByUser(Long userId) {
-        Optional<UserProfile> userProfile = userProfileRepo.findById(userId);
-        if (userProfile.isPresent()) {
-            Optional<List<MatchProfile>> matchProfiles = matchProfileRepo.findAllByUserProfile(userProfile.get());
-            if (!matchProfiles.isPresent() || matchProfiles.get().isEmpty()) {
-                return createMatchProfileResponse(false,
-                        Collections.emptyList(),
-                        HttpStatus.NO_CONTENT,
-                        String.format(EMPTY_MATCH_PROFILE_LIST, userId));
-            }
-            return createMatchProfileResponse(true, matchProfiles.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    public MatchProfileResponse getMatchProfileById(Long userId, Long matchProfileId) {
+        Optional<MatchProfile> result = matchProfileRepo.findById(matchProfileId);
+        if (!result.isPresent() || !userId.equals(result.get().getUserProfile().getId())) {
+            LOGGER.error("Invalid getMatchProfileById request");
 
+            return createMatchProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST, INVALID_REQUEST);
         }
-        return createMatchProfileResponse(false, Collections.emptyList(), HttpStatus.NOT_FOUND, String.format(INVALID_USER_ID));
+        List<MatchProfile> profiles = new ArrayList<>(Arrays.asList(result.get()));
+        return createMatchProfileResponse(true, profiles, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
 
-    public MatchProfileResponse createMatchProfileForUser(Long userId, MatchProfileRequest request) {
+    public MatchProfileResponse getAllMatchProfilesByUserId(Long userId) {
+        Optional<List<MatchProfile>> matchProfiles = matchProfileRepo.findAllByUserProfileId(userId);
+        if (!matchProfiles.isPresent() || matchProfiles.get().isEmpty()) {
+            return createMatchProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST,
+                    String.format(EMPTY_MATCH_PROFILE_LIST, userId));
+        }
+        return createMatchProfileResponse(true, matchProfiles.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+
+    }
+
+    public MatchProfileResponse createMatchProfileForUser(Long userId, MatchProfile matchProfile) {
+        Optional<MatchProfile> result = matchProfileRepo.findByUserProfileIdAndBreedAndEnergyLevelAndLifeStage(
+                matchProfile.getUserProfile().getId(), matchProfile.getBreed(), matchProfile.getEnergyLevel(), matchProfile.getLifeStage());
+        if (result.isPresent() || !userId.equals(matchProfile.getUserProfile().getId())) {
+            LOGGER.error("Invalid createMatchProfileForUser request");
+            return createMatchProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST, INVALID_REQUEST);
+        }
+        MatchProfile match = matchProfileRepo.save(matchProfile);
+        List<MatchProfile> matchProfiles = new ArrayList<>(Arrays.asList(match));
+        return createMatchProfileResponse(true, matchProfiles, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public MatchProfileResponse updateMatchprofile(Long userId, MatchProfile matchProfile) {
         return null;
     }
 
-    public MatchProfileResponse updateMatchprofile(MatchProfileRequest request) {
+    public MatchProfileResponse deleteMatchProfile(Long userId, MatchProfile matchProfile) {
         return null;
     }
 
-    public void addPhotoToMatchProfile(Long userId, MatchProfileRequest request) {
+    public void addPhotoToMatchProfile(Long userId, MatchProfile matchProfile) {
         //TODO: upload photo to s3
         String profilePhoto = uploadProfilePhoto();
         //Set photo url field in match profile to uploaded filepath

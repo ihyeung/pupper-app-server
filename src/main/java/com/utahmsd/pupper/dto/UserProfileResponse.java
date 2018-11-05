@@ -11,11 +11,7 @@ public class UserProfileResponse extends BaseResponse {
     @JsonProperty("userProfiles")
     private List<UserProfile> userProfileList;
 
-
-    //Constructors--need to clean these up later
-
-    public UserProfileResponse() {
-    }
+    public UserProfileResponse() { }
 
     public static UserProfileResponse createUserProfileResponse(boolean success,
                                                                 List<UserProfile> users,

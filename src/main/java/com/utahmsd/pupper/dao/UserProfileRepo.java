@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Date;
 import java.util.Optional;
 
 public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile, Long> {
@@ -13,6 +14,7 @@ public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile,
     Iterable<UserProfile> findAll(Sort sort);
     Page<UserProfile> findAll(Pageable pageable);
     Optional<UserProfile> findById (Long id);
+    Optional<UserProfile> findByFirstNameAndLastNameAndBirthdate(String firstName, String lastName, Date birthdate);
     UserProfile save(UserProfile userProfile);
     void deleteById(Long id);
 

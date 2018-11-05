@@ -1,6 +1,8 @@
 package com.utahmsd.pupper.dao.entity;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.PastOrPresent;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -15,12 +17,15 @@ public class PupperMessage implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "match_profile_id_fk_1")
+    @Valid
     private MatchProfile matchProfileSender;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "match_profile_id_fk_2")
+    @Valid
     private MatchProfile matchProfileReceiver;
 
+    @PastOrPresent
     private Date timestamp;
 
     private String message;

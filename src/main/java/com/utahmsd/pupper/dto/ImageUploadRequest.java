@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
-import com.utahmsd.pupper.dao.entity.UserProfile;
-
-import javax.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ImageUploadRequest {
 
     @JsonProperty("match_profile")
-    private MatchProfile matchProfile;
+    private MatchProfile matchProfile; //Match profile that the image being uploaded belongs to
 
     public ImageUploadRequest(){}
 

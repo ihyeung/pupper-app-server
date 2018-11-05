@@ -1,13 +1,13 @@
 package com.utahmsd.pupper.dao.entity;
 
-import com.utahmsd.pupper.dto.PupperProfileRequest;
 import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
 import com.utahmsd.pupper.dto.pupper.Size;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 
@@ -32,17 +32,18 @@ public class MatchProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @NotNull
     @ManyToOne //A user can have multiple match profiles
     @JoinColumn(name = "user_profile_id_fk")
+    @Valid
     private UserProfile userProfile;
 
     @DefaultValue("1")
     @Column(name = "num_dogs")
     private int numDogs;
 
-    @ManyToOne //Many match profiles can be of a certain breed, but a match profile can only be one breed
+    @ManyToOne //Many match profiles can belong to a type of breed, but a match profile can only be one breed
     @JoinColumn(name = "breed_id_fk")
+    @Valid
     private Breed breed;
 
     @Enumerated(EnumType.STRING)
@@ -60,6 +61,7 @@ public class MatchProfile implements Serializable {
     @Column(name = "score")
     private float score;
 
+    @NotBlank
     @Max(150)
     @Column(name = "about")
     private String aboutMe;
@@ -80,18 +82,18 @@ public class MatchProfile implements Serializable {
      * chooses to create a new match profile and is prompted to enter data to create a new pupper profile.
      *
      * A match profile will ONLY be created when the user clicks "Create Pupper Profile", generating a
-     * PupperProfileRequest. This will be used not only to create a new PupperProfile, but to auto-populate
+     * PupperProfile. This will be used not only to create a new PupperProfile, but to auto-populate
      * the fields of a newly created MatchProfile.
-     * @param request
+     * @param pupperProfile
      * @return
      */
 
-    public static MatchProfile createMatchProfileFromPupperProfile(PupperProfileRequest request) {
+    public static MatchProfile createMatchProfileFromPupperProfile(PupperProfile pupperProfile) {
         MatchProfile profile = new MatchProfile();
-        profile.setUserProfile(request.getPupperProfile().getUserProfile());
-        profile.setBreed(request.getPupperProfile().getBreed());
-        profile.setLifeStage(request.getPupperProfile().getLifeStage());
-        profile.setEnergyLevel(request.getPupperProfile().getEnergy());
+        profile.setUserProfile(pupperProfile.getUserProfile());
+        profile.setBreed(pupperProfile.getBreed());
+        profile.setLifeStage(pupperProfile.getLifeStage());
+        profile.setEnergyLevel(pupperProfile.getEnergy());
         profile.setNumDogs(1);
         profile.setScore(Float.MAX_VALUE);
 

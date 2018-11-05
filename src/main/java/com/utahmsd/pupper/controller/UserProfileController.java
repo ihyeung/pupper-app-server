@@ -1,14 +1,14 @@
 package com.utahmsd.pupper.controller;
 
+import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserProfileResponse;
-import com.utahmsd.pupper.dto.UserProfileRequest;
 import com.utahmsd.pupper.service.UserProfileService;
 import com.utahmsd.pupper.service.filter.UserSearchFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
+import javax.validation.Valid;
 
 @RestController
 @Api(value = "UserProfile Controller For User Endpoints")
@@ -24,34 +24,35 @@ public class UserProfileController {
         this.userSearchFilterService = userSearchFilterService;
     }
 
-    @RequestMapping(path="/", method= RequestMethod.GET)
+    @GetMapping(path="/")
     public UserProfileResponse getAllUserProfiles() {
         return userProfileService.getAllUserProfiles();
     }
 
-    @RequestMapping(path ="/{userId}", method= RequestMethod.GET)
-    public UserProfileResponse getUserProfile(@PathVariable("userId") Long userId) {
-        return userProfileService.findUserProfile(userId);
+    @GetMapping(path ="/{userId}")
+    public UserProfileResponse findUserProfileById(@PathVariable("userId") Long userId) {
+        return userProfileService.findUserProfileById(userId);
     }
 
-    @RequestMapping(method= RequestMethod.POST)
-    public UserProfileResponse createUserProfile(@RequestBody UserProfileRequest request) {
-        return userProfileService.createNewUserProfile(request);
+    @PostMapping(path = "/")
+    public UserProfileResponse createUserProfile(@RequestBody @Valid final UserProfile userProfile) {
+        return userProfileService.createNewUserProfile(userProfile);
     }
 
-    @RequestMapping(path ="/{userId}", method= RequestMethod.PUT)
-    public UserProfileResponse updateUserProfile(@PathVariable("userId") Long userId, @RequestBody UserProfileRequest request) {
-        return userProfileService.updateUserProfile(request);
+    @PutMapping(path ="/{userId}")
+    public UserProfileResponse updateUserProfile(@PathVariable("userId") Long userId,
+                                                 @RequestBody @Valid final UserProfile userProfile) {
+        return userProfileService.updateUserProfile(userId, userProfile);
     }
 
-    @RequestMapping(path ="/{userId}", method= RequestMethod.DELETE)
+    @DeleteMapping(path ="/{userId}")
     public UserProfileResponse deleteUserProfile(@PathVariable("userId") Long userId) {
-        return userProfileService.deleteProfile(userId);
+        return userProfileService.deleteUserProfileById(userId);
     }
 
     //Search result query filter endpoints
 
-    @RequestMapping(params = {"zip"}, method= RequestMethod.GET)
+    @GetMapping(params = {"zip"})
     public UserProfileResponse getUserProfilesWithZip(@RequestParam(value = "zip") String zip) {
         return userSearchFilterService.filterUserProfilesByZip(zip);
     }

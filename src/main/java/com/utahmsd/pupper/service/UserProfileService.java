@@ -3,23 +3,19 @@ package com.utahmsd.pupper.service;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserProfileResponse;
-import com.utahmsd.pupper.dto.UserProfileRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
-import static com.utahmsd.pupper.util.Constants.USER_NOT_FOUND;
-import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
+import static com.utahmsd.pupper.util.Constants.*;
 
 
 @Named
@@ -28,8 +24,12 @@ public class UserProfileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
-    @Inject
-    UserProfileRepo userProfileRepo;
+    private final UserProfileRepo userProfileRepo;
+
+    @Autowired
+    UserProfileService(UserProfileRepo userProfileRepo) {
+        this.userProfileRepo = userProfileRepo;
+    }
 
     public UserProfileResponse getAllUserProfiles() {
         String DEFAULT_SORT_BY_CRITERIA = "lastName";
@@ -43,7 +43,7 @@ public class UserProfileService {
         return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserProfileResponse findUserProfile(Long id) {
+    public UserProfileResponse findUserProfileById(Long id) {
         Optional<UserProfile> user = userProfileRepo.findById(id);
         List<UserProfile> userProfileList = new ArrayList<>();
         if (user.isPresent()) {
@@ -55,37 +55,42 @@ public class UserProfileService {
         return createUserProfileResponse(false, userProfileList, HttpStatus.NOT_FOUND, String.format(USER_NOT_FOUND, id));
     }
 
-    public UserProfileResponse createNewUserProfile(UserProfileRequest request) {
-        UserProfile profile = userProfileRepo.save(request.getUserProfile());
-        List<UserProfile> userProfileList = new ArrayList<>();
-        userProfileList.add(profile);
+    public UserProfileResponse createNewUserProfile(UserProfile userProfile) {
+        Optional<UserProfile> result = userProfileRepo.findByFirstNameAndLastNameAndBirthdate(userProfile.getFirstName(),
+                                                                    userProfile.getLastName(), userProfile.getBirthdate()); //Generally First Name/Last Name/DOB combo is unique
+        if (result.isPresent()) {
+            return createUserProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST,
+                    ("CreateNewUserProfile request failed: a user with data matching the request already exists."));
 
-        return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
-    }
-
-    public UserProfileResponse updateUserProfile(UserProfileRequest request) {
-        final Long userId = request.getUserProfile().getId();
-        UserProfileResponse userProfileResponse = findUserProfile(userId);
-        if (!userProfileResponse.isSuccess()) {
-            LOGGER.error("Error updating user profile: user profile with id {} was not found", userId);
-            return createUserProfileResponse(false, Collections.emptyList(), HttpStatus.NOT_FOUND, String.format(USER_NOT_FOUND, userId));
         }
-        userProfileRepo.save(request.getUserProfile());
-        List<UserProfile> userProfileList = new ArrayList<>();
-        userProfileList.add(request.getUserProfile());
-        LOGGER.error("User profile with id {} was found, updating existing profile", userId);
+        UserProfile profile = userProfileRepo.save(userProfile);
+        List<UserProfile> userProfileList = new ArrayList<>(Arrays.asList(profile));
 
         return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserProfileResponse deleteProfile(Long id) {
-        UserProfileResponse userProfileResponse = findUserProfile(id);
-        if (!userProfileResponse.isSuccess()) {
+    public UserProfileResponse updateUserProfile(Long userId, UserProfile userProfile) {
+        Optional<UserProfile> result = userProfileRepo.findById(userId);
+        if (!result.isPresent() || !userId.equals(userProfile.getId())) {
+            LOGGER.error("Error updating user profile for userId {}: invalid request", userId);
+            return createUserProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST,
+                    String.format("UpdateUserProfile error: %s", INVALID_REQUEST));
+        }
+        userProfileRepo.save(userProfile);
+        List<UserProfile> userProfileList = new ArrayList<>(Arrays.asList(userProfile));
+        LOGGER.info("User profile with id {} was found, updating existing profile", userId);
+
+        return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserProfileResponse deleteUserProfileById(Long id) {
+        Optional<UserProfile> result = userProfileRepo.findById(id);
+        if (!result.isPresent()) {
             LOGGER.error("Error deleting user profile: user profile with id {} not found", id);
-            return createUserProfileResponse( false, Collections.emptyList(), HttpStatus.NOT_FOUND,  String.format(USER_NOT_FOUND, id));
+            return createUserProfileResponse( false, Collections.emptyList(), HttpStatus.BAD_REQUEST,  String.format(USER_NOT_FOUND, id));
         }
         userProfileRepo.deleteById(id);
-        LOGGER.error("User profile with id {} was deleted successfully", id);
+        LOGGER.info("User profile with id {} was deleted successfully", id);
 
         return createUserProfileResponse(true, Collections.emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
 

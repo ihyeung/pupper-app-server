@@ -20,7 +20,6 @@ import static com.utahmsd.pupper.dto.ImageUploadResponse.errorResponse;
 
 @RestController
 @Api(value = "Image Controller")
-//@RequestMapping("/storage")
 public class ImageController {
 
     private static final Long MAX_UPLOAD_BYTES = 1_048_576L;

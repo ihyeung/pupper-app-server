@@ -139,7 +139,7 @@ public class AmazonAwsClient {
     }
 
 //    private String generateFileName(ImageUploadRequest request) {
-//        UserProfile userProfile = request.getMatchProfile().getUserProfile();
+//        UserProfile userProfile = request.getMatchProfile().findUserProfileById();
 //        return userProfile.getId() + "_" + userProfile.getFirstName() + "-" + userProfile.getLastName().substring(0,1) + "_"
 //                + request.getMatchProfile().getId() + "_" + new Date().getTime();
 //    }

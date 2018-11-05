@@ -7,6 +7,8 @@ import com.utahmsd.pupper.dto.pupper.LifeStage;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -27,18 +29,18 @@ public class PupperProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Valid
     @ManyToOne //A user can have multiple puppers, but a pupper can only belong to one user
     @JoinColumn(name = "user_profile_id_fk") //foreign key that references 'id' column in UserProfile entity
+    @Valid
     private UserProfile userProfile;
 
-    @Valid
     @ManyToOne //A match profile can have multiple puppers, but a pupper can only belong to one match profile
     @JoinColumn(name = "match_profile_id_fk")
+    @Valid
     private MatchProfile matchProfile;
 
-    @Size(min = 2, max = 30)
     @Column(name = "name")
+    @NotBlank
     private String name;
 
     @Max(1)
@@ -47,6 +49,7 @@ public class PupperProfile implements Serializable {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "birthdate")
+    @Past
     private Date birthdate;
 
     @Enumerated(EnumType.STRING)
@@ -59,11 +62,11 @@ public class PupperProfile implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "breed_id_fk")
+    @Valid
     private Breed breed;
 
     @Column(name = "is_neutered")
     private boolean isNeutered;
-
 
 
     public Long getId() {

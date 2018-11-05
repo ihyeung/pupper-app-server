@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,13 +20,16 @@ public interface PupperProfileRepo extends PagingAndSortingRepository<PupperProf
 //    Optional<List<PupperProfile>> findAllByBreed(String breed);
 //    Optional<List<PupperProfile>> findAllByLifeStage(LifeStage lifeStage);
 
-    Iterable<PupperProfile> findAll();
-    Iterable<PupperProfile> findAll(Sort sort);
-    Page<PupperProfile> findAll(Pageable pageable);
-    Optional<PupperProfile> findById (Long id);
-    PupperProfile save(PupperProfile pupperProfile);
+    @NotNull Page<PupperProfile> findAll(@NotNull Pageable pageable);
+    Optional<PupperProfile> findById (@NotNull Long id);
+    PupperProfile save(@NotNull PupperProfile pupperProfile);
     Optional<List<PupperProfile>> findAllByUserProfile (UserProfile userProfile);
+    Optional<List<PupperProfile>> findAllByUserProfileId (Long userProfileId);
     Optional<List<PupperProfile>> findAllByUserProfileIdAndMatchProfileId (Long userProfileId, Long matchProfileId);
-    void deleteById(Long id);
+    Optional<PupperProfile> findByMatchProfileIdAndName (Long matchProfileId, String name);
+    Optional<PupperProfile> findByUserProfileIdAndName (Long userProfileId, String name);
+    void deleteById(Long pupperProfileId);
     void deleteAllByUserProfile(UserProfile userProfile);
+    void deleteAllByUserProfileId(Long userProfileId);
+
 }

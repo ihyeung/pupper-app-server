@@ -3,6 +3,8 @@ package com.utahmsd.pupper.dao.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
 
 /**
@@ -19,6 +21,7 @@ public class MatchResult {
 
     @ManyToOne //A match result corresponds to multiple (2) match profiles, and a match profile has many match results
     @JoinColumn(name = "match_profile_id", insertable = false, updatable = false)
+    @Valid
     private MatchProfile matchProfileOne;
 
     @Column(name = "match_profile_1_result")
@@ -26,6 +29,7 @@ public class MatchResult {
 
     @ManyToOne
     @JoinColumn(name = "match_profile_id", insertable = false, updatable = false)
+    @Valid
     private MatchProfile matchProfileTwo;
 
     @Column(name = "match_profile_2_result")
@@ -33,6 +37,7 @@ public class MatchResult {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "last_update_match_result")
+    @PastOrPresent
     private Date lastUpdateToMatchResult; //Date that match result was last updated
 
 }
