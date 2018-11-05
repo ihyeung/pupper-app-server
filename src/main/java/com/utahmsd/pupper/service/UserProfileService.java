@@ -37,7 +37,10 @@ public class UserProfileService {
         Iterable<UserProfile> users = userProfileRepo.findAll(sortCriteria);
         List<UserProfile> userProfileList = new ArrayList<>();
         if (users.iterator().hasNext()) {
-            users.forEach(userProfileList::add);
+            users.forEach(userProfile -> {
+                userProfile.getUserAccount().setPassword(null);
+                userProfileList.add(userProfile);
+            });
         }
 
         return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
@@ -64,6 +67,7 @@ public class UserProfileService {
 
         }
         UserProfile profile = userProfileRepo.save(userProfile);
+        profile.getUserAccount().setPassword(null); //Hide password in response
         List<UserProfile> userProfileList = new ArrayList<>(Arrays.asList(profile));
 
         return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
@@ -77,6 +81,7 @@ public class UserProfileService {
                     String.format("UpdateUserProfile error: %s", INVALID_REQUEST));
         }
         userProfileRepo.save(userProfile);
+        userProfile.getUserAccount().setPassword(null); //Hide password in response
         List<UserProfile> userProfileList = new ArrayList<>(Arrays.asList(userProfile));
         LOGGER.info("User profile with id {} was found, updating existing profile", userId);
 

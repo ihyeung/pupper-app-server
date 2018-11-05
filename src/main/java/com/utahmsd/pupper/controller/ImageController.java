@@ -45,7 +45,8 @@ public class ImageController {
         return amazonClient.uploadFileByUserAndMatchProfile(file, userId, matchProfileId);
     }
 
-    @PostMapping(path = "/delete")
+    //FIXME: Change this endpoint so it makes sense (maybe /user/{userId}/matchProfile/{matchProfileId}/upload? )
+    @DeleteMapping(path = "/upload")
     public ImageUploadResponse deleteFile(@RequestBody ImageUploadRequest imageUploadRequest) {
         return this.amazonClient.deleteFileFromS3Bucket(imageUploadRequest);
     }

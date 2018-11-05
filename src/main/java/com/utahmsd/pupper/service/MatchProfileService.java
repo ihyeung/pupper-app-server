@@ -40,7 +40,10 @@ public class MatchProfileService {
         List<MatchProfile> matchProfileList = new ArrayList<>();
         Iterable<MatchProfile> matchProfiles = matchProfileRepo.findAll(sortCriteria);
         if (matchProfiles.iterator().hasNext()) {
-            matchProfiles.forEach(matchProfileList::add);
+            matchProfiles.forEach(matchProfile -> {
+                matchProfile.getUserProfile().getUserAccount().setPassword(null);
+                matchProfileList.add(matchProfile);
+            });
             return createMatchProfileResponse(true, matchProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
         }
@@ -56,6 +59,7 @@ public class MatchProfileService {
 
             return createMatchProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST, INVALID_REQUEST);
         }
+        result.get().getUserProfile().getUserAccount().setPassword(null);
         List<MatchProfile> profiles = new ArrayList<>(Arrays.asList(result.get()));
         return createMatchProfileResponse(true, profiles, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
@@ -67,6 +71,7 @@ public class MatchProfileService {
             return createMatchProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST,
                     String.format(EMPTY_MATCH_PROFILE_LIST, userId));
         }
+        matchProfiles.get().forEach(matchProfile -> matchProfile.getUserProfile().getUserAccount().setPassword(null));//Hide password
         return createMatchProfileResponse(true, matchProfiles.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
@@ -79,6 +84,7 @@ public class MatchProfileService {
             return createMatchProfileResponse(false, Collections.emptyList(), HttpStatus.BAD_REQUEST, INVALID_REQUEST);
         }
         MatchProfile match = matchProfileRepo.save(matchProfile);
+        match.getUserProfile().getUserAccount().setPassword(null);
         List<MatchProfile> matchProfiles = new ArrayList<>(Arrays.asList(match));
         return createMatchProfileResponse(true, matchProfiles, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }

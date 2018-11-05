@@ -51,7 +51,10 @@ public class PupperProfileService {
         Iterable<PupperProfile> puppers = pupperProfileRepo.findAll(sortCriteria);
         List<PupperProfile> pupperProfileList = new ArrayList<>();
         if (puppers.iterator().hasNext()) {
-            puppers.forEach(pupperProfileList::add);
+            puppers.forEach(pupperProfile -> {
+                pupperProfile.getUserProfile().getUserAccount().setPassword(null);
+                pupperProfileList.add(pupperProfile);
+            });
         }
         return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -74,7 +77,9 @@ public class PupperProfileService {
                     String.format(INVALID_PUPPER_ID, pupperId));
         }
         List<PupperProfile> pupperProfile = new ArrayList<>(Arrays.asList(result.get()));
-                return createPupperProfileResponse(true, pupperProfile, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        result.get().getUserProfile().getUserAccount().setPassword(null);
+
+        return createPupperProfileResponse(true, pupperProfile, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public PupperProfileResponse createNewPupperProfileForMatchProfile(Long userId, Long matchId, PupperProfile pupperProfile) {
@@ -90,6 +95,7 @@ public class PupperProfileService {
                             pupperProfile.getUserProfile().getId(), pupperProfile.getName()));
         }
         PupperProfile profile = pupperProfileRepo.save(pupperProfile);
+        profile.getUserProfile().getUserAccount().setPassword(null);
         List<PupperProfile> pupperProfileList = new ArrayList<>(Arrays.asList(profile));
         return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -99,6 +105,8 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_REQUEST);
         }
         PupperProfile profile = pupperProfileRepo.save(pupperProfile);
+        profile.getUserProfile().getUserAccount().setPassword(null);
+
         List<PupperProfile> pupper = new ArrayList<>(Arrays.asList(profile));
         return createPupperProfileResponse(true, pupper, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
@@ -145,6 +153,7 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
                     String.format(EMPTY_PUPPER_LIST_FOR_USER_ID_AND_MATCH_PROFILE_ID, userId, matchProfileId));
         }
+        results.get().forEach(pupperProfile -> pupperProfile.getUserProfile().getUserAccount().setPassword(null)); //Hide passwords
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 

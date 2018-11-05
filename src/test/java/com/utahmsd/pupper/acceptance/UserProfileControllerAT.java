@@ -52,7 +52,6 @@ public class UserProfileControllerAT {
                     then().
                     log().all().
                     statusCode(200).
-                    body("isSuccess", equalTo(true)).
                     extract().response().header("Authorization");
         }
         System.out.println("Access token: " + accessToken);
