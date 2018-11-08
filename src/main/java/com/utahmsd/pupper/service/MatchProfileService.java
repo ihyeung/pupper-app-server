@@ -89,11 +89,11 @@ public class MatchProfileService {
         return createMatchProfileResponse(true, matchProfiles, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public MatchProfileResponse updateMatchprofile(Long userId, MatchProfile matchProfile) {
+    public MatchProfileResponse updateMatchProfile(Long userId, Long matchProfileId, MatchProfile matchProfile) {
         return null;
     }
 
-    public MatchProfileResponse deleteMatchProfile(Long userId, MatchProfile matchProfile) {
+    public MatchProfileResponse deleteMatchProfile(Long userId, Long matchProfileId) {
         return null;
     }
 

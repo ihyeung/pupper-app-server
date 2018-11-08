@@ -21,6 +21,4 @@ public class HealthController {
         return "<ShouldCall>true</ShouldCall>";
     }
 
-
-
 }

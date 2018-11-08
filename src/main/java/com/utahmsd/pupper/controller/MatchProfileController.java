@@ -36,4 +36,17 @@ public class MatchProfileController {
 
         return matchProfileService.createMatchProfileForUser(userId, matchProfile);
     }
+
+    @PutMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
+    public MatchProfileResponse updateMatchProfileById(@PathVariable("userId") Long userId,
+                                                       @PathVariable("matchProfileId") Long matchProfileId,
+                                                       @RequestBody @Valid final MatchProfile matchProfile) {
+        return matchProfileService.updateMatchProfile(userId, matchProfileId, matchProfile);
+    }
+
+    @DeleteMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
+    public MatchProfileResponse deleteMatchProfileById(@PathVariable("userId") Long userId,
+                                                       @PathVariable("matchProfileId") Long matchProfileId) {
+        return matchProfileService.deleteMatchProfile(userId, matchProfileId);
+    }
 }

@@ -43,7 +43,6 @@ public class PupperProfileController {
     public PupperProfileResponse createPupperProfileForMatchProfile(@PathVariable("userId") Long userId,
                                                                     @PathVariable("matchProfileId") Long matchProfileId,
                                                                     @RequestBody @Valid final PupperProfile pupperProfile) {
-
         return pupperProfileService.createNewPupperProfileForMatchProfile(userId, matchProfileId, pupperProfile);
     }
 
@@ -54,9 +53,9 @@ public class PupperProfileController {
     }
 
     @PutMapping(path ="/user/{userId}/pupper/{pupperId}")
-    public PupperProfileResponse updatePupperProfile(@PathVariable("userId") Long userId,
-                                                     @PathVariable("pupperId") Long pupId,
-                                                     @RequestBody @Valid final PupperProfile pupperProfile) {
+    public PupperProfileResponse updatePupperProfileById(@PathVariable("userId") Long userId,
+                                                         @PathVariable("pupperId") Long pupId,
+                                                         @RequestBody @Valid final PupperProfile pupperProfile) {
         return pupperProfileService.updatePupperProfile(userId, pupId, pupperProfile);
     }
 

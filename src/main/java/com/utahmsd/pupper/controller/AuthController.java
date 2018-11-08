@@ -33,7 +33,7 @@ public class AuthController {
 
     @GetMapping(path="/account/{accountId}")
     public UserAuthenticationResponse getCredentialsByAccountId(@PathVariable("accountId") Long accountId) {
-        return userAccountService.findUserCredentialsById(accountId);
+        return userAccountService.findUserCredentialsByAccountId(accountId);
     }
 
     @PostMapping(path = REGISTER_ENDPOINT)
@@ -42,13 +42,13 @@ public class AuthController {
     }
 
     @PutMapping(path = "/account/{accountId}")
-    public UserAuthenticationResponse updateUserCredentials(@PathVariable("accountId") Long accountId,
+    public UserAuthenticationResponse updateCredentialsById(@PathVariable("accountId") Long accountId,
                                                             @RequestBody @Valid final UserAccount userAccount) {
-        return userAccountService.updateUserCredentials(accountId, userAccount);
+        return userAccountService.updateUserCredentialsById(accountId, userAccount);
     }
 
     @DeleteMapping(path = "/account/{accountId}")
-    public UserAuthenticationResponse deleteUserCredentialsById(@PathVariable("accountId") Long accountId) {
+    public UserAuthenticationResponse deleteCredentialsById(@PathVariable("accountId") Long accountId) {
         return userAccountService.deleteUserCredentialsById(accountId);
     }
 
@@ -57,8 +57,8 @@ public class AuthController {
 //        return userCredentialsService.authenticateUser(request);
 //    }
 
-//    @GetMapping(path="/user/{userId}/credentials}")
-//    public UserCredentialsResponse getUserCredentialsForUser(@PathVariable("userId") Long userProfileId) {
-//        return null;
-//    }
+    @GetMapping(path="/user/{userId}/account")
+    public UserAuthenticationResponse getCredentialsByUserId(@PathVariable("userId") Long userProfileId) {
+        return userAccountService.findUserCredentialsByUserProfileId(userProfileId);
+    }
 }

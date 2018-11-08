@@ -105,8 +105,8 @@ __required__|accountId|integer (int64)
 * auth-controller
 
 
-[[_updateusercredentialsusingput]]
-=== updateUserCredentials
+[[_updatecredentialsbyidusingput]]
+=== updateCredentialsById
 ....
 PUT /account/{accountId}
 ....
@@ -148,8 +148,8 @@ __required__|userAccount|<<_useraccount,UserAccount>>
 * auth-controller
 
 
-[[_deleteusercredentialsbyidusingdelete]]
-=== deleteUserCredentialsById
+[[_deletecredentialsbyidusingdelete]]
+=== deleteCredentialsById
 ....
 DELETE /account/{accountId}
 ....
@@ -208,47 +208,6 @@ GET /breed
 ==== Tags
 
 * pupper-profile-controller
-
-
-[[_deletefileusingpost]]
-=== deleteFile
-....
-POST /delete
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Body**|**imageUploadRequest** +
-__required__|imageUploadRequest|<<_imageuploadrequest,ImageUploadRequest>>
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_imageuploadresponse,ImageUploadResponse>>
-|===
-
-
-==== Consumes
-
-* `application/json`
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* image-controller
 
 
 [[_getallmatchprofilesusingget]]
@@ -375,6 +334,42 @@ __required__|requestBody|<<_imageuploadrequest,ImageUploadRequest>>
 ==== Produces
 
 * `application/json`
+
+
+==== Tags
+
+* image-controller
+
+
+[[_deletefileusingdelete]]
+=== deleteFile
+....
+DELETE /upload
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**imageUploadRequest** +
+__required__|imageUploadRequest|<<_imageuploadrequest,ImageUploadRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_imageuploadresponse,ImageUploadResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
 
 
 ==== Tags
@@ -600,6 +595,42 @@ __required__|userId|integer (int64)
 * user-profile-controller
 
 
+[[_getcredentialsbyuseridusingget]]
+=== getCredentialsByUserId
+....
+GET /user/{userId}/account
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userauthenticationresponse,UserAuthenticationResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* auth-controller
+
+
 [[_creatematchprofileusingpost]]
 === createMatchProfile
 ....
@@ -655,6 +686,89 @@ GET /user/{userId}/matchProfile
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_matchprofileresponse,MatchProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* match-profile-controller
+
+
+[[_updatematchprofilebyidusingput]]
+=== updateMatchProfileById
+....
+PUT /user/{userId}/matchProfile/{matchProfileId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|**Body**|**matchProfile** +
+__required__|matchProfile|<<_matchprofile,MatchProfile>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_matchprofileresponse,MatchProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* match-profile-controller
+
+
+[[_deletematchprofilebyidusingdelete]]
+=== deleteMatchProfileById
+....
+DELETE /user/{userId}/matchProfile/{matchProfileId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
 |**Path**|**userId** +
 __required__|userId|integer (int64)
 |===
@@ -881,8 +995,8 @@ __required__|userId|integer (int64)
 * pupper-profile-controller
 
 
-[[_updatepupperprofileusingput]]
-=== updatePupperProfile
+[[_updatepupperprofilebyidusingput]]
+=== updatePupperProfileById
 ....
 PUT /user/{userId}/pupper/{pupperId}
 ....

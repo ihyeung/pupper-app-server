@@ -1,7 +1,9 @@
 package com.utahmsd.pupper.service;
 
 import com.utahmsd.pupper.dao.UserAccountRepo;
+import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.UserAccount;
+import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserAuthenticationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,7 @@ import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.UserAuthenticationResponse.createUserAuthResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
+import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
 import static java.util.Collections.emptyList;
 
 @Named
@@ -33,11 +36,14 @@ public class UserAccountService implements UserDetailsService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserAccountRepo userAccountRepo;
+    private final UserProfileRepo userProfileRepo;
 
     @Autowired
-    public UserAccountService(BCryptPasswordEncoder bCryptPasswordEncoder, UserAccountRepo userAccountRepo) {
+    public UserAccountService(BCryptPasswordEncoder bCryptPasswordEncoder, UserAccountRepo userAccountRepo,
+                              UserProfileRepo userProfileRepo) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userAccountRepo = userAccountRepo;
+        this.userProfileRepo = userProfileRepo;
     }
 
     public UserAuthenticationResponse getAllUserCredentials() {
@@ -50,7 +56,7 @@ public class UserAccountService implements UserDetailsService {
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAuthenticationResponse findUserCredentialsById(Long userAccountId) {
+    public UserAuthenticationResponse findUserCredentialsByAccountId(Long userAccountId) {
         Optional<UserAccount> result = userAccountRepo.findById(userAccountId);
         if (!result.isPresent()) {
             LOGGER.error("User credentials with id {} not found", userAccountId);
@@ -85,11 +91,11 @@ public class UserAccountService implements UserDetailsService {
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAuthenticationResponse updateUserCredentials(Long accountId, UserAccount userAccount) {
+    public UserAuthenticationResponse updateUserCredentialsById(Long accountId, UserAccount userAccount) {
         //First check to make sure email is registered as an existing account, and that the path param id and the request body id match
         if (loadUserByUsername(userAccount.getUsername()) == null || accountId != userAccount.getId()) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
-                    "Invalid updateUserCredentials request.");
+                    "Invalid updateCredentialsById request.");
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         userAccountRepo.save(userAccount);
@@ -102,7 +108,7 @@ public class UserAccountService implements UserDetailsService {
         Optional<UserAccount> result = userAccountRepo.findById(accountId);
         if (!result.isPresent()) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
-                    "Invalid deleteUserCredentialsById request.");
+                    "Invalid deleteCredentialsById request.");
         }
         userAccountRepo.deleteById(accountId);
         return createUserAuthResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
@@ -131,6 +137,24 @@ public class UserAccountService implements UserDetailsService {
 //        return null;
 
 //    }
+
+    public UserAuthenticationResponse findUserCredentialsByUserProfileId(Long userId) {
+        Optional<UserProfile> userProfileResult = userProfileRepo.findById(userId);
+        if (!userProfileResult.isPresent()) {
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_REQUEST);
+        }
+        Long userAccountId = userProfileResult.get().getUserAccount().getId();
+        Optional<UserAccount> userAccountResult = userAccountRepo.findById(userAccountId);
+        if (!userAccountResult.isPresent()) {
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, String.format(
+                    "Invalid findUserCredentialsByUserProfileId request -- " +
+                            "no valid UserAccount is associated with userProfileId {}.", userId));
+        }
+        ArrayList<UserAccount> userList =
+                new ArrayList<>(Arrays.asList(new UserAccount(userAccountResult.get().getUsername(), null)));
+        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
