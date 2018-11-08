@@ -1,30 +1,20 @@
 package com.utahmsd.pupper.client;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.utahmsd.pupper.dao.entity.UserProfile;
-import com.utahmsd.pupper.dto.BaseResponse;
 import com.utahmsd.pupper.dto.ImageUploadRequest;
 import com.utahmsd.pupper.dto.ImageUploadResponse;
-import com.utahmsd.pupper.util.Utils;
 import org.imgscalr.Scalr;
-import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.awt.image.BufferedImage;
@@ -33,23 +23,25 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import static com.amazonaws.regions.Regions.US_EAST_2;
-import static com.utahmsd.pupper.dto.BaseResponse.successResponse;
+import static com.amazonaws.regions.Regions.US_EAST_1;
 
 @Named
 @Singleton
 public class AmazonAwsClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AmazonAwsClient.class);
-    private static final String AWS_REGION = "us-east-2";
 
-    @Inject
-    private AmazonS3 s3client;
+    private final AmazonS3 s3client;
 
     @Value("${amazonProperties.endpointUrl}")
     private String endpointUrl;
     @Value("${amazonProperties.bucketName}")
     private String bucketName;
+
+    @Autowired
+    public AmazonAwsClient(AmazonS3 s3client) {
+        this.s3client = s3client;
+    }
 
 //    @Value("${amazonProperties.accessKey}")
 //    private String accessKey;
@@ -64,9 +56,8 @@ public class AmazonAwsClient {
 
     private ImageUploadResponse uploadFileToS3(MultipartFile file, String fileName) {
         String outputFilePath = String.format("%s/%s/%s", endpointUrl, bucketName, fileName);
-        String imageUrl = outputFilePath.replace(US_EAST_2 + ".", "");
+        String imageUrl = outputFilePath.replace(US_EAST_1 + ".", "");
         ImageUploadResponse response = ImageUploadResponse.successResponse(imageUrl);
-
         File inputFile = null;
         try {
             inputFile = convertMultiPartToFile(file);
@@ -81,6 +72,8 @@ public class AmazonAwsClient {
             response.setSuccess(false);
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             response.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setDescription(String.format("File upload to S3 bucket failed: '%s'", e.getMessage()));
+            response.setImageUrl("");
             LOGGER.error("File upload to S3 bucket failed: {}", e.getMessage());
             e.printStackTrace();
         }

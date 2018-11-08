@@ -5,5 +5,5 @@ import javax.inject.Singleton;
 
 @Named
 @Singleton
-public class MessagingService {
+public class PupperMessagingService {
 }

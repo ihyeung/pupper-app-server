@@ -43,7 +43,7 @@ public class UserAuthorizationFilter extends BasicAuthenticationFilter {
 
     private UsernamePasswordAuthenticationToken validateAuthToken(HttpServletRequest request) {
         String accessToken = request.getHeader(AUTH_HEADER_KEY).replace(ACCESS_TOKEN_TYPE, "");
-        if (accessToken != null) { //If Authorization Bearer field exists, verify the access token
+        if (!accessToken.isEmpty()) { //If Authorization Bearer field exists, verify the access token
             String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                     .build()
                     .verify(accessToken)

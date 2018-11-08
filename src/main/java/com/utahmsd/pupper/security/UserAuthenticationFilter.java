@@ -56,13 +56,13 @@ public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilt
                                             FilterChain chain,
                                             Authentication auth){
 
-        Long expiresIn = System.currentTimeMillis() + AUTH_TOKEN_EXPIRATION;
+        long expiresIn = System.currentTimeMillis() + AUTH_TOKEN_EXPIRATION;
         //Upon successful authentication, generate JWT
         String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(expiresIn))
                 .sign(HMAC512(SECRET.getBytes()));
         response.addHeader(AUTH_HEADER_KEY, ACCESS_TOKEN_TYPE + token);
-        response.setHeader("expires", expiresIn.toString());
+        response.setHeader("expires", Long.toString(expiresIn));
     }
 }

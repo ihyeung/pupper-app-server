@@ -79,7 +79,7 @@ public class PupperApplicationConfig {
         AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
         return AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(Regions.US_EAST_2)
+                .withRegion(Regions.US_EAST_1)
                 .build();
     }
 

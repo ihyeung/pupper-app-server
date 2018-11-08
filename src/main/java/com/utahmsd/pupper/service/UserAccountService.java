@@ -50,8 +50,7 @@ public class UserAccountService implements UserDetailsService {
         Iterable<UserAccount> resultList = userAccountRepo.findAll();
         List<UserAccount> userList = new ArrayList<>();
         if (resultList.iterator().hasNext()) {
-            resultList.forEach(each -> userList.add(new UserAccount(each.getUsername(),
-                                          null))); //Hide sensitive data field
+            resultList.forEach(each -> userList.add(new UserAccount(each.getUsername()))); //Hide sensitive data field
         }
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -63,7 +62,7 @@ public class UserAccountService implements UserDetailsService {
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_LOGIN);
         }
         ArrayList<UserAccount> userList =
-                new ArrayList<>(Arrays.asList(new UserAccount(result.get().getUsername(), null))); //Hide sensitive data field
+                new ArrayList<>(Arrays.asList(new UserAccount(result.get().getUsername()))); //Hide sensitive data field
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
@@ -87,7 +86,7 @@ public class UserAccountService implements UserDetailsService {
 //        userCredentials.setComputedHash(generateHash(request.getUser().getPassword(), salt.getBytes()));
 //        UserCredentials userCredentialsResult = userAccountRepo.save(userCredentials);
         ArrayList<UserAccount> userList =
-                new ArrayList<>(Arrays.asList(new UserAccount(userAccount.getUsername(), null)));//Hide sensitive data field
+                new ArrayList<>(Arrays.asList(new UserAccount(userAccount.getUsername())));//Hide sensitive data field
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -100,7 +99,7 @@ public class UserAccountService implements UserDetailsService {
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         userAccountRepo.save(userAccount);
         ArrayList<UserAccount> userList =
-                new ArrayList<>(Arrays.asList(new UserAccount(userAccount.getUsername(), null)));
+                new ArrayList<>(Arrays.asList(new UserAccount(userAccount.getUsername())));
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -151,7 +150,7 @@ public class UserAccountService implements UserDetailsService {
                             "no valid UserAccount is associated with userProfileId {}.", userId));
         }
         ArrayList<UserAccount> userList =
-                new ArrayList<>(Arrays.asList(new UserAccount(userAccountResult.get().getUsername(), null)));
+                new ArrayList<>(Arrays.asList(new UserAccount(userAccountResult.get().getUsername())));
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
