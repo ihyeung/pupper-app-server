@@ -1,14 +1,10 @@
 package com.utahmsd.pupper.config;
 
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsAsyncClientBuilder;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -21,8 +17,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.encrypt.TextEncryptor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 
@@ -38,10 +32,8 @@ public class PupperApplicationConfig {
     @Value("${spring.datasource.url:}")
     private String dbUrl;
 
-//    @Value("${db.name}")
     private String dbName = System.getProperty("db.name");
 
-//    @Value("${db.password}")
     private String dbPassword = System.getProperty("db.password");
 
     @Value("${spring.datasource.username:}")
@@ -72,7 +64,6 @@ public class PupperApplicationConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(4);
     }
-
 
     @Bean
     public AmazonS3 amazonS3() {

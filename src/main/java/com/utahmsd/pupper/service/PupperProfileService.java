@@ -1,11 +1,11 @@
 package com.utahmsd.pupper.service;
 
 import com.utahmsd.pupper.dao.BreedRepo;
-import com.utahmsd.pupper.dao.entity.Breed;
-import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
-import com.utahmsd.pupper.dao.entity.UserProfile;
+import com.utahmsd.pupper.dao.entity.Breed;
+import com.utahmsd.pupper.dao.entity.PupperProfile;
+import com.utahmsd.pupper.dto.BreedResponse;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +15,13 @@ import org.springframework.http.HttpStatus;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
-import static com.utahmsd.pupper.dto.PupperProfileResponse.*;
+import static com.utahmsd.pupper.dto.BreedResponse.createBreedResponse;
+import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
 import static java.util.Collections.emptyList;
@@ -131,18 +135,17 @@ public class PupperProfileService {
         return pupperProfile.getId().equals(pupId) && pupperProfile.getUserProfile().getId().equals(userId);
     }
 
-    public PupperProfileResponse getBreeds() {
-        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, "breed"));
+    public BreedResponse getBreeds() {
+        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, "name"));
         Iterable<Breed> breeds = breedRepo.findAll(sortCriteria);
         List<Breed> breedList = new ArrayList<>();
         if (breeds.iterator().hasNext()) {
             breeds.forEach(breedList::add);
-        }
-        breedList.forEach(e->{
-            System.out.println(e.getName());
-        });
 
-        return createPupperProfileResponse(true, emptyList(), HttpStatus.OK, breedList.toString());
+            return createBreedResponse(true, breedList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+
+        return createBreedResponse(false, emptyList(), HttpStatus.BAD_REQUEST, "No results found.");
     }
 
     public PupperProfileResponse getAllPuppersByMatchProfileId(Long userId, Long matchProfileId) {

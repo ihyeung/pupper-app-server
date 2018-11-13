@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MatchProfileResponse extends BaseResponse {
 
-    @JsonProperty("match_profile")
+    @JsonProperty("matchProfiles")
     private List<MatchProfile> matchProfileList;
 
     public static MatchProfileResponse createMatchProfileResponse(boolean success,

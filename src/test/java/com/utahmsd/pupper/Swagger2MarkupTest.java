@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utahmsd.pupper.config.SwaggerConfig;
 import com.utahmsd.pupper.dao.entity.UserAccount;
 import io.github.swagger2markup.Swagger2MarkupConverter;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -37,11 +38,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource("classpath:application-test.properties")
 public class Swagger2MarkupTest {
 
-    private final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:9000/");
+    private final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:5000/");
 
     @Inject
     private MockMvc mockMvc;
 
+    @Ignore
     @Test
     public void createSpringfoxSwaggerJson() throws Exception {
         //String designFirstSwaggerLocation = Swagger2MarkupTest.class.getResource("/swagger.json").getPath();
@@ -69,7 +71,7 @@ public class Swagger2MarkupTest {
 //                .andExpect(status().isOk());
 //    }
 
-
+    @Ignore
     @Test
     public void convertRemoteSwaggerToAsciiDoc() throws MalformedURLException {
 //        Path path = Paths.get("src/docs/swagger/swagger.json");

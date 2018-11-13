@@ -73,7 +73,10 @@ public class UserAccountService implements UserDetailsService {
                     "An account with that username already exists.");
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
-        userAccountRepo.save(userAccount);
+        UserAccount savedUser = userAccountRepo.save(userAccount);
+        savedUser.setPassword(null); //Hide sensitive data field
+        ArrayList<UserAccount> userList = new ArrayList<>(Arrays.asList(savedUser)); //Reference newly created user so JSON response returns id
+        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 //        request.getUser()
 //        UserCredentials userCredentials = new UserCredentials();
 //        userCredentials.setUser(request.getUser());
@@ -85,9 +88,7 @@ public class UserAccountService implements UserDetailsService {
 //
 //        userCredentials.setComputedHash(generateHash(request.getUser().getPassword(), salt.getBytes()));
 //        UserCredentials userCredentialsResult = userAccountRepo.save(userCredentials);
-        ArrayList<UserAccount> userList =
-                new ArrayList<>(Arrays.asList(new UserAccount(userAccount.getUsername())));//Hide sensitive data field
-        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+
     }
 
     public UserAuthenticationResponse updateUserCredentialsById(Long accountId, UserAccount userAccount) {

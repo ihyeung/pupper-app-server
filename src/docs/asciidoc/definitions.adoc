@@ -19,6 +19,25 @@ __optional__|enum (TOY, SMALL, MID, LARGE, XLARGE)
 |===
 
 
+[[_breedresponse]]
+=== BreedResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**pupperBreeds** +
+__optional__|< <<_breed,Breed>> > array
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|===
+
+
 [[_imageuploadrequest]]
 === ImageUploadRequest
 
@@ -93,7 +112,7 @@ __optional__|<<_userprofile,UserProfile>>
 __optional__|string
 |**isSuccess** +
 __optional__|boolean
-|**match_profile** +
+|**matchProfiles** +
 __optional__|< <<_matchprofile,MatchProfile>> > array
 |**responseCode** +
 __optional__|integer (int32)
@@ -171,7 +190,7 @@ __optional__||<<_userprofile,UserProfile>>
 __optional__|string
 |**isSuccess** +
 __optional__|boolean
-|**pupperProfileList** +
+|**pupperProfiles** +
 __optional__|< <<_pupperprofile,PupperProfile>> > array
 |**responseCode** +
 __optional__|integer (int32)
@@ -209,7 +228,7 @@ __optional__|boolean
 __optional__|integer (int32)
 |**status** +
 __optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
-|**users** +
+|**userAccounts** +
 __optional__|< <<_useraccount,UserAccount>> > array
 |===
 

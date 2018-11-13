@@ -11,8 +11,8 @@ public class PupperMatcherResponse extends BaseResponse {
     @JsonProperty("matchResults")
     private List<MatchResult> matchResults;
 
-    public static PupperMatcherResponse createPupperMatcherResponse(boolean success, List<MatchResult> matchResults, HttpStatus code,
-                                                                    String description) {
+    public static PupperMatcherResponse createPupperMatcherResponse(boolean success, List<MatchResult> matchResults,
+                                                                    HttpStatus code, String description) {
         PupperMatcherResponse response = new PupperMatcherResponse();
         response.setSuccess(success);
         response.setMatchResults(matchResults);

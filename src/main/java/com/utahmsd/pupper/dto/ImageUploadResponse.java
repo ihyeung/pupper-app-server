@@ -11,23 +11,16 @@ public class ImageUploadResponse extends BaseResponse {
     public ImageUploadResponse() {
     }
 
-    public static ImageUploadResponse errorResponse(HttpStatus status, String description) {
+    public static ImageUploadResponse createImageUploadResponse(boolean success,
+                                                                  String imageUrl,
+                                                                  HttpStatus code,
+                                                                  String description) {
         ImageUploadResponse response = new ImageUploadResponse();
-        response.setSuccess(false);
-        response.setResponseCode(status.value());
-        response.setStatus(status);
+        response.setSuccess(success);
+        response.setImageUrl(imageUrl);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
         response.setDescription(description);
-        return response;
-
-    }
-
-    public static ImageUploadResponse successResponse(String url) {
-        ImageUploadResponse response = new ImageUploadResponse();
-        response.setSuccess(true);
-        response.setStatus(HttpStatus.OK);
-        response.setResponseCode(HttpStatus.OK.value());
-        response.setDescription(String.format("File upload success: %s", url));
-        response.setImageUrl(url);
         return response;
     }
 

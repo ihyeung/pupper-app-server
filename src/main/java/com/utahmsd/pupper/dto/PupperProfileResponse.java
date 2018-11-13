@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PupperProfileResponse extends BaseResponse {
 
-    @JsonProperty("pupperProfileList")
+    @JsonProperty("pupperProfiles")
     private List<PupperProfile> pupperProfileList;
 
     public PupperProfileResponse() {

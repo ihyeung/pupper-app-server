@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.utahmsd.pupper.dao.MatchProfileRepo;
+import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dto.ImageUploadRequest;
 import com.utahmsd.pupper.dto.ImageUploadResponse;
 import org.imgscalr.Scalr;
@@ -22,8 +24,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 
 import static com.amazonaws.regions.Regions.US_EAST_1;
+import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
+import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
+import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
 
 @Named
 @Singleton
@@ -32,6 +38,7 @@ public class AmazonAwsClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(AmazonAwsClient.class);
 
     private final AmazonS3 s3client;
+    private final MatchProfileRepo matchProfileRepo;
 
     @Value("${amazonProperties.endpointUrl}")
     private String endpointUrl;
@@ -39,25 +46,16 @@ public class AmazonAwsClient {
     private String bucketName;
 
     @Autowired
-    public AmazonAwsClient(AmazonS3 s3client) {
+    public AmazonAwsClient(AmazonS3 s3client, MatchProfileRepo matchProfileRepo) {
         this.s3client = s3client;
+        this.matchProfileRepo = matchProfileRepo;
     }
-
-//    @Value("${amazonProperties.accessKey}")
-//    private String accessKey;
-//    @Value("${amazonProperties.secretKey}")
-//    private String secretKey;
-
-//    @PostConstruct
-//    private void buildClient() {
-//        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-//        this.s3client = new AmazonS3Client(credentials);
-//    }
 
     private ImageUploadResponse uploadFileToS3(MultipartFile file, String fileName) {
         String outputFilePath = String.format("%s/%s/%s", endpointUrl, bucketName, fileName);
         String imageUrl = outputFilePath.replace(US_EAST_1 + ".", "");
-        ImageUploadResponse response = ImageUploadResponse.successResponse(imageUrl);
+
+        ImageUploadResponse response = createImageUploadResponse(true, imageUrl, HttpStatus.OK, DEFAULT_DESCRIPTION);
         File inputFile = null;
         try {
             inputFile = convertMultiPartToFile(file);
@@ -81,8 +79,23 @@ public class AmazonAwsClient {
     }
 
     public ImageUploadResponse uploadFileByUserAndMatchProfile(MultipartFile multipartFile, Long userId, Long matchProfileId) {
+        Optional<MatchProfile> matchProfileResult = matchProfileRepo.findById(matchProfileId);
+        if (!matchProfileResult.isPresent() || !matchProfileResult.get().getUserProfile().getId().equals(userId)) {
+            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST, INVALID_REQUEST);
+        }
         String fileName = generateFileNameByUserAndMatchProfileId(userId, matchProfileId);
-        return uploadFileToS3(multipartFile, fileName);
+        ImageUploadResponse response = uploadFileToS3(multipartFile, fileName);
+        if (response.getResponseCode() == 200) {
+            MatchProfile updatedMatchProfile = matchProfileResult.get();
+            updatedMatchProfile.setProfileImage(response.getImageUrl());
+            matchProfileRepo.save(updatedMatchProfile);
+
+            return createImageUploadResponse(true, response.getImageUrl(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+
+        return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
+                String.format("Failure response of '%d-%s' was returned when uploading file to s3 bucket.",
+                        response.getResponseCode(), response.getDescription()));
     }
 
 
@@ -124,6 +137,7 @@ public class AmazonAwsClient {
             return outputfile;
         }
         ImageIO.write(image, "jpg", outputfile);
+
         return outputfile;
     }
 
@@ -137,12 +151,21 @@ public class AmazonAwsClient {
 //                + request.getMatchProfile().getId() + "_" + new Date().getTime();
 //    }
 
-    public ImageUploadResponse deleteFileFromS3Bucket(ImageUploadRequest imageUploadRequest) {
-        String imageUrl = imageUploadRequest.getMatchProfile().getProfileImage();
+    public ImageUploadResponse deleteFileFromS3Bucket(Long userId, Long matchProfileId) {
+        Optional<MatchProfile> matchProfileResult = matchProfileRepo.findById(matchProfileId);
+        if (!matchProfileResult.isPresent() || !matchProfileResult.get().getUserProfile().getId().equals(userId)) {
+            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST,
+                    String.format("DeleteFileFromS3Bucket Failure: either no photo belonging to userId %d and matchProfileId %d exists," +
+                            " or malformed url.", userId, matchProfileId));
+        }
+        String imageUrl = matchProfileResult.get().getProfileImage();
         String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         s3client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName));
+        //Update the imageUrl field for that user
+        matchProfileResult.get().setProfileImage(null);
+        matchProfileRepo.save(matchProfileResult.get());
 
-        return ImageUploadResponse.successResponse(imageUrl);
+        return createImageUploadResponse(true, imageUrl, HttpStatus.OK, "DeleteFileFromS3Bucket success.");
     }
 
 

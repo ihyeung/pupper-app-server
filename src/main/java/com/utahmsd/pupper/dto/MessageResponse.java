@@ -8,13 +8,13 @@ import java.util.List;
 
 public class MessageResponse extends BaseResponse {
 
-    @JsonProperty("messages")
+    @JsonProperty("pupperMessages")
     private List<PupperMessage> messages;
 
     public static MessageResponse createMessageResponse(boolean success,
-                                                                  List<PupperMessage> messages,
-                                                                  HttpStatus code,
-                                                                  String description) {
+                                                        List<PupperMessage> messages,
+                                                        HttpStatus code,
+                                                        String description) {
         MessageResponse response = new MessageResponse();
         response.setSuccess(success);
         response.setMessages(messages);

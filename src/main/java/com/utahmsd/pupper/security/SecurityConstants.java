@@ -7,5 +7,5 @@ public class SecurityConstants {
     static final String AUTH_HEADER_KEY = "Authorization";
     public static final String REGISTER_ENDPOINT = "/account/register";
     static final String[] SWAGGER_WHITELIST =
-            {"/api/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs", "/docs/**"};
+            {"/api/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs", "/docs/**", "/webjars/**"};
 }

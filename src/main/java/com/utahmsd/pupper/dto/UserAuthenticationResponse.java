@@ -10,7 +10,7 @@ import java.util.List;
 
 public class UserAuthenticationResponse extends BaseResponse {
 
-    @JsonProperty("users")
+    @JsonProperty("userAccounts")
     private List<UserAccount> users;
 
     public static UserAuthenticationResponse createUserAuthResponse(boolean success, List<UserAccount> users, HttpStatus code,

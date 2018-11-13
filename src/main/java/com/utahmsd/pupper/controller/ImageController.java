@@ -9,14 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.File;
 
-import static com.utahmsd.pupper.dto.ImageUploadResponse.errorResponse;
+import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
 
 @RestController
 @Api(value = "Image Controller")
@@ -38,17 +32,20 @@ public class ImageController {
                                                          @PathVariable("userId") Long userId,
                                                          @PathVariable("matchProfileId") Long matchProfileId) throws IllegalStateException {
         if (file.getSize() > MAX_UPLOAD_BYTES) {
-           return ImageUploadResponse.errorResponse(HttpStatus.UNPROCESSABLE_ENTITY,
+           return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
                    String.format("Error: file exceeds allowable upload size of %d bytes -- file is %d bytes",
                     MAX_UPLOAD_BYTES, file.getSize()));
         }
         return amazonClient.uploadFileByUserAndMatchProfile(file, userId, matchProfileId);
     }
 
-    //FIXME: Change this endpoint so it makes sense (maybe /user/{userId}/matchProfile/{matchProfileId}/upload? )
-    @DeleteMapping(path = "/upload")
-    public ImageUploadResponse deleteFile(@RequestBody ImageUploadRequest imageUploadRequest) {
-        return this.amazonClient.deleteFileFromS3Bucket(imageUploadRequest);
+    /*
+    Deletes profile picture for a given userId/matchProfileId
+     */
+    @DeleteMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload")
+    public ImageUploadResponse deleteFile(@PathVariable("userId") Long userId,
+                                          @PathVariable("matchProfileId") Long matchProfileId) {
+        return this.amazonClient.deleteFileFromS3Bucket(userId, matchProfileId);
     }
 }
 

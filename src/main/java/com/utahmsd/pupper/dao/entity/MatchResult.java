@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.PastOrPresent;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "match_result")
-public class MatchResult {
+public class MatchResult implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
