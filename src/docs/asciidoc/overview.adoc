@@ -28,6 +28,7 @@ __BasePath__ : /
 * auth-controller : Auth Controller
 * image-controller : Image Controller
 * match-profile-controller : Match Profile Controller
+* message-controller : Message Controller
 * pupper-matcher-controller : Pupper Matcher Controller
 * pupper-profile-controller : Pupper Profile Controller
 * user-profile-controller : User Profile Controller

@@ -15,12 +15,12 @@ public class PupperMessage implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "match_profile_id_fk_1")
     @Valid
     private MatchProfile matchProfileSender;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "match_profile_id_fk_2")
     @Valid
     private MatchProfile matchProfileReceiver;

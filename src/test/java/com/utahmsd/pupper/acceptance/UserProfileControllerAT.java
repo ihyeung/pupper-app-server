@@ -7,11 +7,10 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import io.restassured.parsing.Parser;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -27,7 +26,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @TestPropertySource("classpath:application-test.properties")
 public class UserProfileControllerAT {
 
-    private static final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:9000/");
+    private static final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:5000/");
 
     private static UserAccount userAccount= new UserAccount();
     private static String accessToken = null;
@@ -40,21 +39,23 @@ public class UserProfileControllerAT {
 
         userAccount.setUsername("createUserProfileTest@test.com");
         userAccount.setPassword("TESTPASSWORD");
+        userAccount.setId(10); //Id for userAccount entry in current database, will need to be updated
+//        userAccount.setId(3); //FIXME: Uncomment this once database migration to AWS has been completed
 
         if (accessToken == null) {
-            accessToken =given().
+            accessToken =
+            given().
                     relaxedHTTPSValidation().
                     log().all().
                     contentType(ContentType.JSON).
                     body(userAccount).
-                    when().
+            when().
                     post("/login").
-                    then().
+            then().
                     log().all().
                     statusCode(200).
                     extract().response().header("Authorization");
         }
-        System.out.println("Access token: " + accessToken);
 
     }
 
@@ -66,7 +67,7 @@ public class UserProfileControllerAT {
                 contentType(ContentType.JSON).
                 header(new Header("Authorization", accessToken)).
         when().
-                get("/user/").
+                get("/user").
         then().
                 log().all().
                 statusCode(200).
@@ -75,10 +76,22 @@ public class UserProfileControllerAT {
     }
 
     @Test
-    public void testFindUserById() {
-
+    public void testGetUserProfileById() {
+        given().
+                relaxedHTTPSValidation().
+                log().all().
+                contentType(ContentType.JSON).
+                header(new Header("Authorization", accessToken)).
+        when().
+                get("/user/1").
+        then().
+                log().all().
+                statusCode(200).
+                body("isSuccess", equalTo(true)).
+                body("userProfiles", notNullValue());
     }
 
+    @Ignore
     @Test
     public void testUpdateUserProfile() {
 
@@ -92,15 +105,17 @@ public class UserProfileControllerAT {
                 log().all().
                 contentType(ContentType.JSON).
                 body(createUserProfile()).
-                when().
+                header(new Header("Authorization", accessToken)).
+        when().
                 post("/user").
-                then().
+        then().
                 log().all().
                 statusCode(200).
                 body("isSuccess", equalTo(true)).
                 body("userProfiles", notNullValue());
     }
 
+    @Ignore
     @Test
     public void testDeleteUserProfileById() {
 
@@ -109,12 +124,15 @@ public class UserProfileControllerAT {
     private UserProfile createUserProfile() {
         UserProfile user = new UserProfile();
         user.setUserAccount(userAccount);
+
         user.setFirstName("Carmen");
         user.setLastName("San Diego");
         user.setBirthdate(Date.from(Instant.parse("2004-12-03T10:15:30.00Z")));
         user.setZip("84095");
-        user.setSex('F');
+        user.setSex("F");
+        user.setMaritalStatus("Single");
         user.setLastLogin(Date.from(Instant.now()));
+        user.setDateJoin(Date.from(Instant.now()));
 
         return user;
     }

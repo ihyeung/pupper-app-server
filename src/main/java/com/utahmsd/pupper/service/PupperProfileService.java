@@ -24,6 +24,7 @@ import static com.utahmsd.pupper.dto.BreedResponse.createBreedResponse;
 import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
+import static com.utahmsd.pupper.util.PupperUtils.dobToLifeStage;
 import static java.util.Collections.emptyList;
 
 @Named
@@ -98,6 +99,11 @@ public class PupperProfileService {
                     String.format("A pupper associated with userProfile %d named '%s' already exists.",
                             pupperProfile.getUserProfile().getId(), pupperProfile.getName()));
         }
+
+        if (pupperProfile.getLifeStage() == null) {
+            pupperProfile.setLifeStage(dobToLifeStage(pupperProfile.getBirthdate()));
+        }
+
         PupperProfile profile = pupperProfileRepo.save(pupperProfile);
         profile.getUserProfile().getUserAccount().setPassword(null);
         List<PupperProfile> pupperProfileList = new ArrayList<>(Arrays.asList(profile));
@@ -108,6 +114,11 @@ public class PupperProfileService {
         if (!validateUserIdAndPupperIdMatchesRequest(userId, pupId, pupperProfile)) {
             return createPupperProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_REQUEST);
         }
+
+        if (pupperProfile.getLifeStage() == null) {
+            pupperProfile.setLifeStage(dobToLifeStage(pupperProfile.getBirthdate()));
+        }
+
         PupperProfile profile = pupperProfileRepo.save(pupperProfile);
         profile.getUserProfile().getUserAccount().setPassword(null);
 

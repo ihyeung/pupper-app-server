@@ -101,7 +101,7 @@ public class AmazonAwsClient {
 
     public ImageUploadResponse uploadFileByRequest(MultipartFile multipartFile, ImageUploadRequest request) {
         String fileName = generateFileNameByUserAndMatchProfileId(request.getMatchProfile().getUserProfile().getId(),
-                request.getMatchProfile().getUserProfile().getId());
+                request.getMatchProfile().getId());
         return uploadFileToS3(multipartFile, fileName);
     }
 

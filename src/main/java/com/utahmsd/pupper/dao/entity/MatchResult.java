@@ -20,7 +20,7 @@ public class MatchResult implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne //A match result corresponds to multiple (2) match profiles, and a match profile has many match results
+    @ManyToOne(fetch = FetchType.LAZY) //A match result corresponds to multiple (2) match profiles, and a match profile has many match results
     @JoinColumn(name = "match_profile_id", insertable = false, updatable = false)
     @Valid
     private MatchProfile matchProfileOne;
@@ -28,7 +28,7 @@ public class MatchResult implements Serializable {
     @Column(name = "match_profile_1_result")
     private boolean isMatchForProfileOne; //Match profile 1's decision on match profile 2
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_profile_id", insertable = false, updatable = false)
     @Valid
     private MatchProfile matchProfileTwo;

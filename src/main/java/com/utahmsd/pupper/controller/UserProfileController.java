@@ -24,7 +24,7 @@ public class UserProfileController {
         this.userSearchFilterService = userSearchFilterService;
     }
 
-    @GetMapping(path="/")
+    @GetMapping()
     public UserProfileResponse getAllUserProfiles() {
         return userProfileService.getAllUserProfiles();
     }
@@ -34,7 +34,7 @@ public class UserProfileController {
         return userProfileService.findUserProfileById(userId);
     }
 
-    @PostMapping(path = "/")
+    @PostMapping()
     public UserProfileResponse createUserProfile(@RequestBody @Valid final UserProfile userProfile) {
         return userProfileService.createNewUserProfile(userProfile);
     }

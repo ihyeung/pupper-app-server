@@ -50,7 +50,10 @@ public class UserProfileService {
         Optional<UserProfile> user = userProfileRepo.findById(id);
         List<UserProfile> userProfileList = new ArrayList<>();
         if (user.isPresent()) {
-            userProfileList.add(user.get());
+            UserProfile userProfile = user.get();
+            userProfile.getUserAccount().setPassword(null);
+
+            userProfileList.add(userProfile);
             return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         LOGGER.error("User profile with id {} not found", id);
@@ -58,7 +61,7 @@ public class UserProfileService {
         return createUserProfileResponse(false, userProfileList, HttpStatus.NOT_FOUND, String.format(USER_NOT_FOUND, id));
     }
 
-    public UserProfileResponse createNewUserProfile(UserProfile userProfile) {
+    public UserProfileResponse createNewUserProfile(final UserProfile userProfile) {
         Optional<UserProfile> result = userProfileRepo.findByFirstNameAndLastNameAndBirthdate(userProfile.getFirstName(),
                                                                     userProfile.getLastName(), userProfile.getBirthdate()); //Generally First Name/Last Name/DOB combo is unique
         if (result.isPresent()) {
@@ -73,7 +76,7 @@ public class UserProfileService {
         return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserProfileResponse updateUserProfile(Long userId, UserProfile userProfile) {
+    public UserProfileResponse updateUserProfile(Long userId, final UserProfile userProfile) {
         Optional<UserProfile> result = userProfileRepo.findById(userId);
         if (!result.isPresent() || !userId.equals(userProfile.getId())) {
             LOGGER.error("Error updating user profile for userId {}: invalid request", userId);

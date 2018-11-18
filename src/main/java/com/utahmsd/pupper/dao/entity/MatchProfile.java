@@ -32,7 +32,7 @@ public class MatchProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne //A user can have multiple match profiles
+    @ManyToOne(fetch = FetchType.LAZY) //A user can have multiple match profiles
     @JoinColumn(name = "user_profile_id_fk")
     @Valid
     private UserProfile userProfile;

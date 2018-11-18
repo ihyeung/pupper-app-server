@@ -18,7 +18,7 @@ public class UserProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_account_id_fk")
     @Valid
     private UserAccount userAccount;
@@ -30,12 +30,11 @@ public class UserProfile implements Serializable {
 
     @Size(min = 1, max = 30)
     @Column(name = "name_last")
-
     private String lastName;
 
-    @Max(1)
     @Column(name = "sex")
-    private char sex; //M or F
+    @Size(min = 1, max = 1)
+    private String sex; //M or F
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "birthdate")
@@ -44,11 +43,17 @@ public class UserProfile implements Serializable {
 
     @DefaultValue("single")
     @Column(name = "marital_status")
-    @Max(20)
+    @Size(min = 3, max = 20)
     private String maritalStatus;
 
     @Column(name = "zip")
+    @Size(max = 5)
     private String zip;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column(name = "date_join")
+    @PastOrPresent
+    private Date dateJoin;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
     @Column(name = "last_login")
@@ -89,11 +94,11 @@ public class UserProfile implements Serializable {
         this.lastName = lastName;
     }
 
-    public char getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(char sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -120,6 +125,10 @@ public class UserProfile implements Serializable {
     public void setZip(String zip) {
         this.zip = zip;
     }
+
+    public Date getDateJoin() { return dateJoin; }
+
+    public void setDateJoin(Date dateJoin) { this.dateJoin = dateJoin; }
 
     public Date getLastLogin() { return lastLogin; }
 

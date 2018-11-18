@@ -8,15 +8,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
-@RequestMapping(path = "/")
 public class HealthController {
 
-    @GetMapping(path="api")
+    @GetMapping(path="/api")
     public String swaggerApi() {
         return "redirect:swagger-ui.html";
     }
 
-    @GetMapping(path = "sla", produces = "application/xml")
+    @GetMapping(path = "/sla", produces = "application/xml")
     public @ResponseBody String slaHealthCheck() {
         return "<ShouldCall>true</ShouldCall>";
     }

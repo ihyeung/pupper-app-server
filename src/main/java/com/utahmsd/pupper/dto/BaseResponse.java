@@ -19,24 +19,26 @@ public class BaseResponse {
     @JsonProperty("description")
     private String description;
 
-    public static BaseResponse successResponse() {
-        BaseResponse response = new BaseResponse();
-        response.setSuccess(true);
-        response.setStatus(HttpStatus.OK);
-        response.setResponseCode(HttpStatus.OK.value());
-        response.setDescription("Success");
-        return response;
-    }
-
-    public static BaseResponse errorResponse(HttpStatus error, String description) {
-        BaseResponse response = new BaseResponse();
-        response.setSuccess(false);
-        response.setResponseCode(error.value());
-        response.setStatus(error);
-        response.setDescription(description);
-        return response;
-
-    }
+    public BaseResponse (){}
+//
+//    public static BaseResponse successResponse() {
+//        BaseResponse response = new BaseResponse();
+//        response.setSuccess(true);
+//        response.setStatus(HttpStatus.OK);
+//        response.setResponseCode(HttpStatus.OK.value());
+//        response.setDescription("Success");
+//        return response;
+//    }
+//
+//    public static BaseResponse errorResponse(HttpStatus error, String description) {
+//        BaseResponse response = new BaseResponse();
+//        response.setSuccess(false);
+//        response.setResponseCode(error.value());
+//        response.setStatus(error);
+//        response.setDescription(description);
+//        return response;
+//
+//    }
 
     public boolean isSuccess() {
         return success;
@@ -62,7 +64,6 @@ public class BaseResponse {
         this.description = description;
     }
 
-
     public int getResponseCode() {
         return responseCode;
     }
@@ -70,4 +71,5 @@ public class BaseResponse {
     public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
     }
+
 }

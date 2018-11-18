@@ -9,7 +9,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,12 +28,12 @@ public class PupperProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne //A user can have multiple puppers, but a pupper can only belong to one user
+    @ManyToOne(fetch = FetchType.LAZY) //A user can have multiple puppers, but a pupper can only belong to one user
     @JoinColumn(name = "user_profile_id_fk") //foreign key that references 'id' column in UserProfile entity
     @Valid
     private UserProfile userProfile;
 
-    @ManyToOne //A match profile can have multiple puppers, but a pupper can only belong to one match profile
+    @ManyToOne(fetch = FetchType.LAZY) //A match profile can have multiple puppers, but a pupper can only belong to one match profile
     @JoinColumn(name = "match_profile_id_fk")
     @Valid
     private MatchProfile matchProfile;
@@ -65,8 +64,8 @@ public class PupperProfile implements Serializable {
     @Valid
     private Breed breed;
 
-    @Column(name = "is_neutered")
-    private boolean isNeutered;
+    @Column(name = "is_fixed")
+    private boolean isFixed;
 
 
     public Long getId() {
@@ -137,12 +136,12 @@ public class PupperProfile implements Serializable {
         this.breed = breed;
     }
 
-    public boolean isNeutered() {
-        return isNeutered;
+    public boolean isFixed() {
+        return isFixed;
     }
 
-    public void setNeutered(boolean neutered) {
-        isNeutered = neutered;
+    public void setFixed(boolean fixed) {
+        isFixed = fixed;
     }
 
 }

@@ -1,30 +1,48 @@
 package com.utahmsd.pupper.controller;
 
+import com.utahmsd.pupper.dto.PupperMatcherRequest;
 import com.utahmsd.pupper.dto.PupperMatcherResponse;
 import com.utahmsd.pupper.service.PupperMatcherService;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.inject.Inject;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
- * Controller for PupperMatcherService where a user is shown various MatchProfiles
+ * Controller for mobile app's main matching/playing functionality through calling methods contained in PupperMatcherService.
+ * A user flips through various MatchProfiles "cards" within a deck and selects like/dislike on each MatchProfile card.
  */
 
 @RestController
 @Api(value = "PupperMatcher Controller For PupperMatcherService Endpoints")
-@RequestMapping("/matcher")
+@RequestMapping("/match")
 public class PupperMatcherController {
 
-    @Inject
-    private PupperMatcherService pupperMatcherService;
+    private final PupperMatcherService pupperMatcherService;
 
-    @RequestMapping(path="/{matchProfileId}", method= RequestMethod.GET)
+    @Autowired
+    public PupperMatcherController(PupperMatcherService pupperMatcherService) {
+        this.pupperMatcherService = pupperMatcherService;
+    }
+
+    @GetMapping(path="/{matchProfileId}")
     public PupperMatcherResponse getMatches(@PathVariable("matchProfileId") Long matchProfileId) {
         return pupperMatcherService.getSuccessPupperMatchResults(matchProfileId);
+    }
+
+    @PutMapping(path="/{matchProfileId}")
+    public PupperMatcherResponse updateMatches(@PathVariable("matchProfileId") Long matchProfileId,
+                                               @RequestBody PupperMatcherRequest pupperMatcherRequest) {
+        return null;
+    }
+
+    @DeleteMapping(path="/{matchProfileId1}/match/{matchProfileId2}")
+    public PupperMatcherResponse unmatchWithMatchProfile(@PathVariable("matchProfileId1") Long ativeMatchProfileId,
+                                                         @PathVariable("matchProfileId2") Long passiveMatchProfileId) {
+        return null;
+    }
+
+    @DeleteMapping(path="/{matchProfileId}")
+    public PupperMatcherResponse deleteAllMatches(@PathVariable("matchProfileId") Long matchProfileId) {
+        return null;
     }
 }

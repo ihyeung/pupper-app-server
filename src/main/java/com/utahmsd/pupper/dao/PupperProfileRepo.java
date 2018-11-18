@@ -20,9 +20,9 @@ public interface PupperProfileRepo extends PagingAndSortingRepository<PupperProf
 //    Optional<List<PupperProfile>> findAllByBreed(String breed);
 //    Optional<List<PupperProfile>> findAllByLifeStage(LifeStage lifeStage);
 
-    @NotNull Page<PupperProfile> findAll(@NotNull Pageable pageable);
-    Optional<PupperProfile> findById (@NotNull Long id);
-    PupperProfile save(@NotNull PupperProfile pupperProfile);
+    Page<PupperProfile> findAll(Pageable pageable);
+    Optional<PupperProfile> findById (Long id);
+    PupperProfile save(PupperProfile pupperProfile);
     Optional<List<PupperProfile>> findAllByUserProfile (UserProfile userProfile);
     Optional<List<PupperProfile>> findAllByUserProfileId (Long userProfileId);
     Optional<List<PupperProfile>> findAllByUserProfileIdAndMatchProfileId (Long userProfileId, Long matchProfileId);

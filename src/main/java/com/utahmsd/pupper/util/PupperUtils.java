@@ -17,7 +17,7 @@ import static com.utahmsd.pupper.util.Constants.PUPPER_AGE;
 
 public class PupperUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PupperUtils.class);
 
     public static LifeStage ageToStage(String age) throws ValidationException {
         CharSequence ageUnits = "DWMY";

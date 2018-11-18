@@ -62,15 +62,6 @@ public class Swagger2MarkupTest {
         }
     }
 
-//    @Ignore
-//    @Test
-//    public void registerUser() throws Exception {
-//        this.mockMvc.perform(post("/register").content(createUser())
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andDo(document("registerUserUsingPOST", preprocessResponse(prettyPrint())))
-//                .andExpect(status().isOk());
-//    }
-
     @Ignore
     @Test
     public void convertRemoteSwaggerToAsciiDoc() throws MalformedURLException {
@@ -86,4 +77,15 @@ public class Swagger2MarkupTest {
         account.setPassword("password");
         return new ObjectMapper().writeValueAsString(account);
     }
+
+
+//    @Ignore
+//    @Test
+//    public void registerUser() throws Exception {
+//        this.mockMvc.perform(post("/register").content(createUser())
+//                .contentType(MediaType.APPLICATION_JSON))
+//                .andDo(document("registerUserUsingPOST", preprocessResponse(prettyPrint())))
+//                .andExpect(status().isOk());
+//    }
+
 }
