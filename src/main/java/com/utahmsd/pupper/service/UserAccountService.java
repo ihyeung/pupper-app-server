@@ -50,7 +50,10 @@ public class UserAccountService implements UserDetailsService {
         Iterable<UserAccount> resultList = userAccountRepo.findAll();
         List<UserAccount> userList = new ArrayList<>();
         if (resultList.iterator().hasNext()) {
-            resultList.forEach(each -> userList.add(new UserAccount(each.getUsername()))); //Hide sensitive data field
+            resultList.forEach(each -> {
+                each.setPassword(null); //Hide sensitive data field
+                userList.add(each);
+            });
         }
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
