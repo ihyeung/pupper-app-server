@@ -1,8 +1,12 @@
 package com.utahmsd.pupper.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,18 +20,21 @@ public class PupperMessage implements Serializable {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "match_profile_id_fk_1")
+    @JoinColumn(name = "from_match_profile_id_fk")
     @Valid
     private MatchProfile matchProfileSender;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "match_profile_id_fk_2")
+    @JoinColumn(name = "to_match_profile_id_fk")
     @Valid
     private MatchProfile matchProfileReceiver;
 
     @PastOrPresent
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
     private Date timestamp;
 
+    @Size(max = 500)
+    @NotBlank
     private String message;
 
     public Long getId() {

@@ -6,8 +6,7 @@ import com.utahmsd.pupper.dto.pupper.Size;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 
@@ -59,14 +58,16 @@ public class MatchProfile implements Serializable {
     private LifeStage lifeStage;
 
     @Column(name = "score")
+    @DefaultValue("100")
     private float score;
 
     @NotBlank
-    @Max(150)
+    @javax.validation.constraints.Size(max = 130)
     @Column(name = "about")
     private String aboutMe;
 
     @Column(name = "profile_image")
+    @javax.validation.constraints.Size(max = 100)
     private String profileImage;
 
     public Long getId() {
@@ -76,30 +77,6 @@ public class MatchProfile implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    /**
-     * This method will be called when the user with no existing pupper profiles
-     * chooses to create a new match profile and is prompted to enter data to create a new pupper profile.
-     *
-     * A match profile will ONLY be created when the user clicks "Create Pupper Profile", generating a
-     * PupperProfile. This will be used not only to create a new PupperProfile, but to auto-populate
-     * the fields of a newly created MatchProfile.
-     * @param pupperProfile
-     * @return
-     */
-
-    public static MatchProfile createMatchProfileFromPupperProfile(PupperProfile pupperProfile) {
-        MatchProfile profile = new MatchProfile();
-        profile.setUserProfile(pupperProfile.getUserProfile());
-        profile.setBreed(pupperProfile.getBreed());
-        profile.setLifeStage(pupperProfile.getLifeStage());
-        profile.setEnergyLevel(pupperProfile.getEnergy());
-        profile.setNumDogs(1);
-        profile.setScore(Float.MAX_VALUE);
-
-        return profile;
-    }
-
     public UserProfile getUserProfile() {
         return userProfile;
     }

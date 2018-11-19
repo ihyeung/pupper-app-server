@@ -6,26 +6,29 @@ import com.utahmsd.pupper.dto.MessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Named
 @Singleton
-public class PupperMessagingService {
+public class PupperMessageService {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PupperMessagingService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PupperMessageService.class);
 
     private final MessageRepo messageRepo;
 
     @Autowired
-    PupperMessagingService(MessageRepo messageRepo) {
+    PupperMessageService(MessageRepo messageRepo) {
         this.messageRepo = messageRepo;
     }
 
-    public MessageResponse getMessages(Long matchProfileId) {
+    public MessageResponse getAllMessagesByMatchProfileId(Long matchProfileId) {
+        return null;
+    }
+
+    public MessageResponse getMessageHistoryByMatchProfileIds(Long matchProfileId1, Long matchProfileId2) {
         return null;
     }
 
@@ -33,7 +36,7 @@ public class PupperMessagingService {
         return null;
     }
 
-    public MessageResponse deleteMessageHistoryByMatchProfileId(Long senderId, Long receiverId) {
+    public MessageResponse deleteMessageHistoryByMatchProfileIds(Long matchProfileId1, Long matchProfileId2) {
         return null;
     }
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
-import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
+import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
 
 /**
  * Controller specifically for setting/updating the profile image for a given matchProfile, through the use of uploading/deleting
@@ -41,7 +41,8 @@ public class ImageController {
     public ImageUploadResponse uploadFile(@RequestPart(value = "profilePic") MultipartFile file,
                                           @RequestPart(value = "requestBody") @RequestBody ImageUploadRequest imageUploadRequest) {
         if (imageUploadRequest.getMatchProfile() == null || imageUploadRequest.getMatchProfile().getUserProfile() == null) {
-            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST, INVALID_REQUEST);
+            return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Null check validation failed");
         }
 
         return this.amazonClient.uploadFileByRequest(file, imageUploadRequest);

@@ -29,7 +29,7 @@ import java.util.Optional;
 import static com.amazonaws.regions.Regions.US_EAST_1;
 import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
-import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
+import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
 
 @Named
 @Singleton
@@ -81,7 +81,10 @@ public class AmazonAwsClient {
     public ImageUploadResponse uploadFileByUserAndMatchProfile(MultipartFile multipartFile, Long userId, Long matchProfileId) {
         Optional<MatchProfile> matchProfileResult = matchProfileRepo.findById(matchProfileId);
         if (!matchProfileResult.isPresent() || !matchProfileResult.get().getUserProfile().getId().equals(userId)) {
-            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST, INVALID_REQUEST);
+            LOGGER.error("Either matchProfileId={} was not found, or userProfileId contained in the matchProfile result " +
+                    "corresponding to matchProfileId={} does not match the path userProfileId={}",
+                    matchProfileId, matchProfileId, userId);
+            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST, NOT_FOUND);
         }
         String fileName = generateFileNameByUserAndMatchProfileId(userId, matchProfileId);
         ImageUploadResponse response = uploadFileToS3(multipartFile, fileName);

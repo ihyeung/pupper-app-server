@@ -20,7 +20,9 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "pupper_profile")
+@Table(name = "pupper_profile",
+       indexes = {@Index(columnList = "breed_id_fk", name = "pupper_profile_ibfk_2"),
+                 @Index(columnList = "match_profile_id_fk", name = "pupper_profile_ibfk_4")})
 public class PupperProfile implements Serializable {
 
     @Id
@@ -28,10 +30,11 @@ public class PupperProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) //A user can have multiple puppers, but a pupper can only belong to one user
-    @JoinColumn(name = "user_profile_id_fk") //foreign key that references 'id' column in UserProfile entity
-    @Valid
-    private UserProfile userProfile;
+    //REMOVED THIS FIELD SINCE A PUPPER PROFILE IS ALWAYS ASSOCIATED WITH A MATCH PROFILE, AND A MATCH PROFILE REFERENCES A USER PROFILE ID.
+//    @ManyToOne(fetch = FetchType.LAZY) //A user can have multiple puppers, but a pupper can only belong to one user
+//    @JoinColumn(name = "user_profile_id_fk") //foreign key that references 'id' column in UserProfile entity
+//    @Valid
+//    private UserProfile userProfile;
 
     @ManyToOne(fetch = FetchType.LAZY) //A match profile can have multiple puppers, but a pupper can only belong to one match profile
     @JoinColumn(name = "match_profile_id_fk")
@@ -75,14 +78,14 @@ public class PupperProfile implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
-
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
-    }
+//
+//    public UserProfile getUserProfile() {
+//        return userProfile;
+//    }
+//
+//    public void setUserProfile(UserProfile userProfile) {
+//        this.userProfile = userProfile;
+//    }
 
     public MatchProfile getMatchProfile() { return matchProfile; }
 

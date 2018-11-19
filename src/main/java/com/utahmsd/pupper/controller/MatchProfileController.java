@@ -26,27 +26,38 @@ public class MatchProfileController {
     }
 
     @GetMapping(path="/user/{userId}/matchProfile")
-    public MatchProfileResponse getAllMatchProfilesByUserId(@PathVariable("userId") Long userId) {
+    public MatchProfileResponse getMatchProfilesByUserId(@PathVariable("userId") Long userId) {
         return matchProfileService.getAllMatchProfilesByUserId(userId);
     }
 
+    @GetMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
+    public MatchProfileResponse getMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
+                                                    @PathVariable("matchProfileId") Long matchProfileId) {
+        return matchProfileService.getMatchProfileById(userId, matchProfileId);
+    }
+
     @PostMapping(path="/user/{userId}/matchProfile")
-    public MatchProfileResponse createMatchProfile(@PathVariable("userId") Long userId,
-                                                   @RequestBody @Valid final MatchProfile matchProfile) {
+    public MatchProfileResponse createMatchProfileForUserByUserProfileId(@PathVariable("userId") Long userId,
+                                                              @RequestBody @Valid final MatchProfile matchProfile) {
 
         return matchProfileService.createMatchProfileForUser(userId, matchProfile);
     }
 
     @PutMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
-    public MatchProfileResponse updateMatchProfileById(@PathVariable("userId") Long userId,
-                                                       @PathVariable("matchProfileId") Long matchProfileId,
-                                                       @RequestBody @Valid final MatchProfile matchProfile) {
+    public MatchProfileResponse updateMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
+                                                                        @PathVariable("matchProfileId") Long matchProfileId,
+                                                                        @RequestBody @Valid final MatchProfile matchProfile) {
         return matchProfileService.updateMatchProfile(userId, matchProfileId, matchProfile);
     }
 
     @DeleteMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
-    public MatchProfileResponse deleteMatchProfileById(@PathVariable("userId") Long userId,
-                                                       @PathVariable("matchProfileId") Long matchProfileId) {
+    public MatchProfileResponse deleteMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
+                                                                                   @PathVariable("matchProfileId") Long matchProfileId) {
         return matchProfileService.deleteMatchProfile(userId, matchProfileId);
+    }
+
+    @DeleteMapping(path="/user/{userId}")
+    public MatchProfileResponse deleteMatchProfilesByUserProfileId(@PathVariable("userId") Long userId) {
+        return matchProfileService.deleteMatchProfilesByUserId(userId);
     }
 }

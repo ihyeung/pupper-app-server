@@ -22,7 +22,7 @@ import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.UserAuthenticationResponse.createUserAuthResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
-import static com.utahmsd.pupper.util.Constants.INVALID_REQUEST;
+import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
 import static java.util.Collections.emptyList;
 
 @Named
@@ -30,8 +30,6 @@ import static java.util.Collections.emptyList;
 public class UserAccountService implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserAccountService.class);
-    private static final String INVALID_CREDENTIALS_ID = "User credentials with id %d not found";
-    private static final String INVALID_EMAIL = "User credentials with email %s not found";
     private static final String INVALID_LOGIN = "Invalid login credentials were entered.";
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -64,15 +62,15 @@ public class UserAccountService implements UserDetailsService {
             LOGGER.error("User credentials with id {} not found", userAccountId);
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_LOGIN);
         }
-        ArrayList<UserAccount> userList =
-                new ArrayList<>(Arrays.asList(new UserAccount(result.get().getUsername()))); //Hide sensitive data field
-        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        result.get().setPassword(null);
+
+        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
 
     public UserAuthenticationResponse createUserCredentials(UserAccount userAccount) {
         if (loadUserByUsername(userAccount.getUsername()) != null) {
-            return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+            return createUserAuthResponse(false, emptyList(), HttpStatus.CONFLICT,
                     "An account with that username already exists.");
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
@@ -102,15 +100,16 @@ public class UserAccountService implements UserDetailsService {
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         userAccountRepo.save(userAccount);
-        ArrayList<UserAccount> userList =
-                new ArrayList<>(Arrays.asList(new UserAccount(userAccount.getUsername())));
-        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+
+        userAccount.setPassword(null);
+
+        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse deleteUserCredentialsById(Long accountId) {
         Optional<UserAccount> result = userAccountRepo.findById(accountId);
         if (!result.isPresent()) {
-            return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND,
                     "Invalid deleteCredentialsById request.");
         }
         userAccountRepo.deleteById(accountId);
@@ -141,21 +140,22 @@ public class UserAccountService implements UserDetailsService {
 
 //    }
 
-    public UserAuthenticationResponse findUserCredentialsByUserProfileId(Long userId) {
+    public UserAuthenticationResponse getUserAccountByUserProfileId(Long userId) {
         Optional<UserProfile> userProfileResult = userProfileRepo.findById(userId);
         if (!userProfileResult.isPresent()) {
-            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_REQUEST);
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         Long userAccountId = userProfileResult.get().getUserAccount().getId();
         Optional<UserAccount> userAccountResult = userAccountRepo.findById(userAccountId);
         if (!userAccountResult.isPresent()) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, String.format(
-                    "Invalid findUserCredentialsByUserProfileId request -- " +
+                    "Invalid getUserAccountByUserProfileId request -- " +
                             "no valid UserAccount is associated with userProfileId {}.", userId));
         }
-        ArrayList<UserAccount> userList =
-                new ArrayList<>(Arrays.asList(new UserAccount(userAccountResult.get().getUsername())));
-        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        userAccountResult.get().setPassword(null);
+
+        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccountResult.get())),
+                HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
 
