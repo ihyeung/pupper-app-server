@@ -53,7 +53,7 @@ public class UserProfileController {
     -AuthController deleteAccount endpoint to delete the UserAccount
      */
     @DeleteMapping(path ="/{userId}")
-    public UserProfileResponse deleteUserProfile(@PathVariable("userId") Long userId) {
+    public UserProfileResponse deleteUserProfileById(@PathVariable("userId") Long userId) {
         return userProfileService.deleteUserProfileById(userId);
     }
 

@@ -127,8 +127,18 @@ __optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 2
 [options="header", cols=".^3a,.^11a,.^4a"]
 |===
 |Name|Description|Schema
+|**id** +
+__optional__||integer (int64)
 |**lastUpdateToMatchResult** +
-__optional__|**Example** : `"yyyy-MM-dd"`|string
+__optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
+|**matchForProfileOne** +
+__optional__||boolean
+|**matchForProfileTwo** +
+__optional__||boolean
+|**matchProfileOne** +
+__optional__||<<_matchprofile,MatchProfile>>
+|**matchProfileTwo** +
+__optional__||<<_matchprofile,MatchProfile>>
 |===
 
 
@@ -209,19 +219,19 @@ __optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 2
 [[_puppermessage]]
 === PupperMessage
 
-[options="header", cols=".^3a,.^4a"]
+[options="header", cols=".^3a,.^11a,.^4a"]
 |===
-|Name|Schema
+|Name|Description|Schema
 |**id** +
-__optional__|integer (int64)
+__optional__||integer (int64)
 |**matchProfileReceiver** +
-__optional__|<<_matchprofile,MatchProfile>>
+__optional__||<<_matchprofile,MatchProfile>>
 |**matchProfileSender** +
-__optional__|<<_matchprofile,MatchProfile>>
+__optional__||<<_matchprofile,MatchProfile>>
 |**message** +
-__optional__|string
+__optional__||string
 |**timestamp** +
-__optional__|string (date-time)
+__optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
 |===
 
 
@@ -249,8 +259,6 @@ __optional__||<<_matchprofile,MatchProfile>>
 __optional__||string
 |**sex** +
 __optional__||string
-|**userProfile** +
-__optional__||<<_userprofile,UserProfile>>
 |===
 
 
