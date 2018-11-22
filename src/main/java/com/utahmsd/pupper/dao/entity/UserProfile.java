@@ -1,6 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -11,6 +12,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "user_profile", indexes = @Index(columnList = "user_account_id_fk", name = "user_profile_ibfk_1"))
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class UserProfile implements Serializable {
 
     @Id

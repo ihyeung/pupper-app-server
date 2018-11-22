@@ -9,7 +9,9 @@ import java.util.List;
 public class MessageResponse extends BaseResponse {
 
     @JsonProperty("pupperMessages")
-    private List<PupperMessage> messages;
+    public List<PupperMessage> messages;
+
+    public MessageResponse() {}
 
     public static MessageResponse createMessageResponse(boolean success,
                                                         List<PupperMessage> messages,

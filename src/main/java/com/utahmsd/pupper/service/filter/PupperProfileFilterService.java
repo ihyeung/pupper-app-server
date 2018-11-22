@@ -5,5 +5,5 @@ import javax.inject.Singleton;
 
 @Named
 @Singleton
-public class PupperSearchFilterService {
+public class PupperProfileFilterService {
 }

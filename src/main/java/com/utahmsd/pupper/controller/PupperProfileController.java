@@ -4,7 +4,7 @@ import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dto.BreedResponse;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import com.utahmsd.pupper.service.PupperProfileService;
-import com.utahmsd.pupper.service.filter.PupperSearchFilterService;
+import com.utahmsd.pupper.service.filter.PupperProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +16,12 @@ import javax.validation.Valid;
 public class PupperProfileController {
 
     private final PupperProfileService pupperProfileService;
-    private final PupperSearchFilterService pupperSearchFilterService;
+    private final PupperProfileFilterService pupperProfileFilterService;
 
     @Autowired
-    PupperProfileController(PupperProfileService pupperProfileService, PupperSearchFilterService filterService) {
+    PupperProfileController(PupperProfileService pupperProfileService, PupperProfileFilterService filterService) {
         this.pupperProfileService = pupperProfileService;
-        this.pupperSearchFilterService = filterService;
+        this.pupperProfileFilterService = filterService;
     }
 
     @GetMapping(path="/pupper")

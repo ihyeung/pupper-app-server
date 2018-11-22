@@ -1,6 +1,8 @@
 package com.utahmsd.pupper.service;
 
+import com.utahmsd.pupper.dao.UserAccountRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
+import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserProfileResponse;
 import org.slf4j.Logger;
@@ -28,10 +30,12 @@ public class UserProfileService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
     private final UserProfileRepo userProfileRepo;
+    private final UserAccountRepo userAccountRepo;
 
     @Autowired
-    UserProfileService(UserProfileRepo userProfileRepo) {
+    UserProfileService(UserProfileRepo userProfileRepo, UserAccountRepo userAccountRepo) {
         this.userProfileRepo = userProfileRepo;
+        this.userAccountRepo = userAccountRepo;
     }
 
     public UserProfileResponse getAllUserProfiles() {
@@ -63,7 +67,21 @@ public class UserProfileService {
         return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, String.format(USER_NOT_FOUND, id));
     }
 
-    public UserProfileResponse createNewUserProfile(final UserProfile userProfile) {
+    public UserProfileResponse findUserProfileByUserAccountEmail(String email) {
+        UserAccount userAccount = userAccountRepo.findByUsername(email);
+        Optional<UserProfile> userProfile = userProfileRepo.findByUserAccount(userAccount);
+        if (userProfile.isPresent()) {
+            userProfile.get().getUserAccount().setPassword(null);
+            return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+        LOGGER.error("User profile with email={} not found", email);
+
+        return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
+                String.format("User profile with email=%s not found", email));
+    }
+
+
+        public UserProfileResponse createNewUserProfile(final UserProfile userProfile) {
         Optional<UserProfile> result =
                 userProfileRepo.findByFirstNameAndLastNameAndBirthdate(
                         userProfile.getFirstName(),

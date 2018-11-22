@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
 import com.utahmsd.pupper.dto.pupper.Size;
@@ -24,6 +25,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "match_profile")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class MatchProfile implements Serializable {
 
     @Id

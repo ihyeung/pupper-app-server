@@ -3,7 +3,7 @@ package com.utahmsd.pupper.controller;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserProfileResponse;
 import com.utahmsd.pupper.service.UserProfileService;
-import com.utahmsd.pupper.service.filter.UserSearchFilterService;
+import com.utahmsd.pupper.service.filter.UserProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +16,12 @@ import javax.validation.Valid;
 public class UserProfileController {
 
     private final UserProfileService userProfileService;
-    private final UserSearchFilterService userSearchFilterService;
+    private final UserProfileFilterService userProfileFilterService;
 
     @Autowired
-    UserProfileController(UserProfileService userProfileService, UserSearchFilterService userSearchFilterService) {
+    UserProfileController(UserProfileService userProfileService, UserProfileFilterService userProfileFilterService) {
         this.userProfileService = userProfileService;
-        this.userSearchFilterService = userSearchFilterService;
+        this.userProfileFilterService = userProfileFilterService;
     }
 
     @GetMapping()
@@ -32,6 +32,11 @@ public class UserProfileController {
     @GetMapping(path ="/{userId}")
     public UserProfileResponse findUserProfileById(@PathVariable("userId") Long userId) {
         return userProfileService.findUserProfileById(userId);
+    }
+
+    @GetMapping(params = {"email"})
+    public UserProfileResponse findUserProfileByUserAccountEmail(@RequestParam(value = "email") String email) {
+        return userProfileService.findUserProfileByUserAccountEmail(email);
     }
 
     @PostMapping()
@@ -61,7 +66,7 @@ public class UserProfileController {
 
     @GetMapping(params = {"zip"})
     public UserProfileResponse getUserProfilesWithZip(@RequestParam(value = "zip") String zip) {
-        return userSearchFilterService.filterUserProfilesByZip(zip);
+        return userProfileFilterService.filterUserProfilesByZip(zip);
     }
 
 }

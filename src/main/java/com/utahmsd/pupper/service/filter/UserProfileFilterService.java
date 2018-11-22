@@ -17,16 +17,16 @@ import java.util.Collections;
 
 import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
+import static com.utahmsd.pupper.util.Constants.DEFAULT_PAGE_NUM;
+import static com.utahmsd.pupper.util.Constants.DEFAULT_PAGE_SIZE;
 
 @Named
 @Singleton
-public class UserSearchFilterService {
+public class UserProfileFilterService {
 
-    private final int DEFAULT_PAGE_NUM = 0;
-    private final int DEFAULT_PAGE_SIZE = 10;
     private final String DEFAULT_SORT_ORDER = "lastName";
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(UserSearchFilterService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileFilterService.class);
 
 
     @Inject

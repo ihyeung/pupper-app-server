@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.utahmsd</groupId>
     <artifactId>pupper</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>pupper</name>
     <description>Server application for Pupper mobile app</description>
@@ -196,7 +196,6 @@
                 <version>1.5.0</version>
             </plugin>
 
-            <!--Swagger2Markup/AsciiDoc Plugins/Configuration-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -207,6 +206,8 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+
+            <!--Swagger2Markup/AsciiDoc Plugins/Configuration-->
             <plugin>
                 <groupId>io.github.swagger2markup</groupId>
                 <artifactId>swagger2markup-maven-plugin</artifactId>

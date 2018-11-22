@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.dao;
 
+import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile,
     Optional<UserProfile> findByFirstNameAndLastNameAndBirthdate(String firstName, String lastName, Date birthdate);
     UserProfile save(UserProfile userProfile);
     void deleteById(Long id);
-
+    Optional<UserProfile> findByUserAccount(UserAccount userAccount);
 
     //Search result filter methods
 
