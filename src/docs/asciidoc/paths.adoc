@@ -482,10 +482,46 @@ GET /matchProfile
 * match-profile-controller
 
 
+[[_getallmessageswithlimitusingget]]
+=== getAllMessagesWithLimit
+....
+GET /message
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**limit** +
+__required__|limit|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|< <<_puppermessage,PupperMessage>> > array
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* message-controller
+
+
 [[_sendmessagetomatchusingpost]]
 === sendMessageToMatch
 ....
-POST /message/{fromMatchProfileId}/message/{toMatchProfileId}
+POST /message/matchProfile/{fromMatchProfileId}/matchProfile/{toMatchProfileId}
 ....
 
 
@@ -498,8 +534,8 @@ POST /message/{fromMatchProfileId}/message/{toMatchProfileId}
 __required__|fromMatchProfileId|integer (int64)
 |**Path**|**toMatchProfileId** +
 __required__|toMatchProfileId|integer (int64)
-|**Body**|**messageRequest** +
-__required__|messageRequest|<<_messagerequest,MessageRequest>>
+|**Body**|**pupperMessage** +
+__required__|pupperMessage|<<_puppermessage,PupperMessage>>
 |===
 
 
@@ -530,7 +566,7 @@ __required__|messageRequest|<<_messagerequest,MessageRequest>>
 [[_getmessagehistoryusingget]]
 === getMessageHistory
 ....
-GET /message/{matchProfileId1}/message/{matchProfileId2}
+GET /message/matchProfile/{matchProfileId1}/matchProfile/{matchProfileId2}
 ....
 
 
@@ -551,7 +587,7 @@ __required__|matchProfileId2|integer (int64)
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|<<_messageresponse,MessageResponse>>
+|**200**|OK|< <<_puppermessage,PupperMessage>> > array
 |===
 
 
@@ -565,10 +601,10 @@ __required__|matchProfileId2|integer (int64)
 * message-controller
 
 
-[[_deleteallmessagesbymatchprofileidusingdelete]]
-=== deleteAllMessagesByMatchProfileId
+[[_deleteallmessagesbetweenmatchprofilesbyidusingdelete]]
+=== deleteAllMessagesBetweenMatchProfilesById
 ....
-DELETE /message/{matchProfileId1}/message/{matchProfileId2}
+DELETE /message/matchProfile/{matchProfileId1}/matchProfile/{matchProfileId2}
 ....
 
 
@@ -606,7 +642,7 @@ __required__|matchProfileId2|integer (int64)
 [[_getallmessagesbymatchprofileidusingget]]
 === getAllMessagesByMatchProfileId
 ....
-GET /message/{matchProfileId}
+GET /message/matchProfile/{matchProfileId}
 ....
 
 
@@ -625,7 +661,7 @@ __required__|matchProfileId|integer (int64)
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|<<_messageresponse,MessageResponse>>
+|**200**|OK|< <<_puppermessage,PupperMessage>> > array
 |===
 
 
@@ -639,10 +675,10 @@ __required__|matchProfileId|integer (int64)
 * message-controller
 
 
-[[_deleteallmessagesusingdelete]]
-=== deleteAllMessages
+[[_deleteallmessagesbymatchprofileidusingdelete]]
+=== deleteAllMessagesByMatchProfileId
 ....
-DELETE /message/{matchProfileId}
+DELETE /message/matchProfile/{matchProfileId}
 ....
 
 

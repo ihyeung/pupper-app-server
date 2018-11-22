@@ -142,23 +142,6 @@ __optional__||<<_matchprofile,MatchProfile>>
 |===
 
 
-[[_messagerequest]]
-=== MessageRequest
-
-[options="header", cols=".^3a,.^11a,.^4a"]
-|===
-|Name|Description|Schema
-|**messageContents** +
-__optional__||string
-|**receiverId** +
-__optional__||integer (int64)
-|**senderId** +
-__optional__||integer (int64)
-|**timestamp** +
-__optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
-|===
-
-
 [[_messageresponse]]
 === MessageResponse
 
