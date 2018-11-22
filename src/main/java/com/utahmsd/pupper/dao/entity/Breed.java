@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "breed")
+@Table(name = "breed", indexes = {@Index(columnList = "name", name = "name")})
 public class Breed implements Serializable {
 
     @Id

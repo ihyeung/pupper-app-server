@@ -127,7 +127,12 @@ public class UserProfileService {
         LOGGER.info("User profile with id {} was deleted successfully", id);
 
         return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
 
+    private boolean userProfileFailsNullPointerCheck(UserProfile userProfile) {
+        return userProfile == null ||
+                userProfile.getId() == null ||
+                userProfile.getUserAccount() == null;
     }
 
 }

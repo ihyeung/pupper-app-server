@@ -156,7 +156,6 @@ public class UserAccountService implements UserDetailsService {
 
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccountResult.get())),
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
-
     }
 
     @Override

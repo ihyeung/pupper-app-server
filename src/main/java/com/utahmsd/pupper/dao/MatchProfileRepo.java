@@ -14,17 +14,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MatchProfileRepo extends PagingAndSortingRepository<MatchProfile, Long> {
-
-    Iterable<MatchProfile> findAll();
-    Iterable<MatchProfile> findAll(Sort sort);
     Page<MatchProfile> findAllByBreed(Breed breed, Pageable pageable);
-    Optional<MatchProfile> findById (Long id);
     Optional<List<MatchProfile>> findAllByUserProfile (UserProfile userProfile);
-    Optional<List<MatchProfile>> findAllByUserProfileId (Long userProfileId);
+    Optional<MatchProfile> findByUserProfileIdAndId(Long userProfileId, Long matchProfileId);
+    Optional<List<MatchProfile>> findAllByUserProfile_Id (Long userProfileId);
     Optional<MatchProfile> findByUserProfileIdAndBreedAndEnergyLevelAndLifeStage(Long userId, Breed breed, Energy energy,
                                                                                   LifeStage lifeStage);
-    MatchProfile save (MatchProfile matchProfile);
-    void deleteById(Long id);
-    void deleteAllByUserProfile(UserProfile userProfile);
+    void deleteAllByUserProfile_Id(Long userProfileId);
 
 }

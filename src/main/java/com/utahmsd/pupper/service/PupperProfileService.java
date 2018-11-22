@@ -34,6 +34,7 @@ public class PupperProfileService {
     public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
     private final String DEFAULT_SORT_BY_CRITERIA = "breed";
+    private final String PUPPER_PROFILE = "PupperProfile";
     private final String INVALID_PUPPER_ID = "No pupper profile with profile id %d exists";
     private final String EMPTY_PUPPER_LIST_FOR_USER = "No pupper profiles belonging to user profile id %d were found.";
     private final String EMPTY_PUPPER_LIST_FOR_USER_ID_AND_MATCH_PROFILE_ID =
@@ -64,7 +65,7 @@ public class PupperProfileService {
     }
 
     public PupperProfileResponse findAllPupperProfilesByUserId(Long userId) {
-        Optional<List<MatchProfile>> matchProfileResults = matchProfileRepo.findAllByUserProfileId(userId);
+        Optional<List<MatchProfile>> matchProfileResults = matchProfileRepo.findAllByUserProfile_Id(userId);
         if (!matchProfileResults.isPresent() || matchProfileResults.get().isEmpty()) {
             LOGGER.error("No match profiles corresponding to userProfileId={} were found. Therefore, no pupper profiles exist" +
                     "that correspond to this userProfileId.", userId);
@@ -90,9 +91,9 @@ public class PupperProfileService {
                     String.format(INVALID_PUPPER_ID, pupperId));
         }
 
-        else if (!validatePupperProfileNullPointerCheck(result.get())) {
-            return createPupperProfileResponse(false, emptyList(), HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Null check validation of pupperProfile data failed");
+        else if (pupperProfileFailsNullPointerCheck(result.get())) {
+            return createPupperProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+                    String.format(NULL_FIELD, PUPPER_PROFILE));
         }
         else if (!userId.equals(result.get().getMatchProfile().getUserProfile().getId()) ||
                 !matchProfileId.equals(result.get().getMatchProfile().getId())) {
@@ -106,13 +107,14 @@ public class PupperProfileService {
     }
 
     public PupperProfileResponse createNewPupperProfileForMatchProfile(Long userId, Long matchId, PupperProfile pupperProfile) {
-        if (!validatePupperProfileNullPointerCheck(pupperProfile)) {
-            return createPupperProfileResponse(false, emptyList(), HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Null check validation of pupperProfile data failed");
+        if (pupperProfileFailsNullPointerCheck(pupperProfile)) {
+            return createPupperProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+                    String.format(NULL_FIELD, PUPPER_PROFILE));
         }
         else if (!userId.equals(pupperProfile.getMatchProfile().getUserProfile().getId()) ||
                 !matchId.equals(pupperProfile.getMatchProfile().getId())) {
             LOGGER.error("Invalid createNewPupperProfileForMatchProfile request");
+
             return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
         Optional<PupperProfile> result =
@@ -135,9 +137,9 @@ public class PupperProfileService {
     }
 
     public PupperProfileResponse updatePupperProfile(Long userId, Long pupId, PupperProfile pupperProfile) {
-        if (!validatePupperProfileNullPointerCheck(pupperProfile)) {
-            return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
-                    "Null check validation of pupperProfile data failed");
+        if (pupperProfileFailsNullPointerCheck(pupperProfile)) {
+            return createPupperProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+                    String.format(NULL_FIELD, PUPPER_PROFILE));
         }
         else if (!pupperProfile.getId().equals(pupId) ||
                 !pupperProfile.getMatchProfile().getUserProfile().getId().equals(userId)) {
@@ -163,9 +165,9 @@ public class PupperProfileService {
             LOGGER.error("Invalid deletePupperProfileById request");
           return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
         }
-        else if (!validatePupperProfileNullPointerCheck(result.get())) {
-            return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
-                    "Null check validation of pupperProfile data failed");
+        else if (pupperProfileFailsNullPointerCheck(result.get())) {
+            return createPupperProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
+                    String.format(NULL_FIELD, PUPPER_PROFILE));
         }
         else if (!userId.equals(result.get().getMatchProfile().getUserProfile().getId())) {
             return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
@@ -173,30 +175,6 @@ public class PupperProfileService {
 
         pupperProfileRepo.deleteById(pupperId);
         return createPupperProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
-    }
-
-    private boolean validatePupperProfileNullPointerCheck(PupperProfile pupperProfile) {
-        if (pupperProfile == null ||
-            pupperProfile.getId() == null ||
-            pupperProfile.getMatchProfile() == null ||
-            pupperProfile.getMatchProfile().getUserProfile() == null ||
-            pupperProfile.getMatchProfile().getUserProfile().getId() == null) {
-            return false;
-        }
-        return true;
-    }
-
-    public BreedResponse getBreeds() {
-        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, "name"));
-        Iterable<Breed> breeds = breedRepo.findAll(sortCriteria);
-        List<Breed> breedList = new ArrayList<>();
-        if (breeds.iterator().hasNext()) {
-            breeds.forEach(breedList::add);
-
-            return createBreedResponse(true, breedList, HttpStatus.OK, DEFAULT_DESCRIPTION);
-        }
-
-        return createBreedResponse(false, emptyList(), HttpStatus.NOT_FOUND, "No results found.");
     }
 
     public PupperProfileResponse getPupperProfilesByBreedId(Long breedId) {
@@ -231,6 +209,27 @@ public class PupperProfileService {
                 pupperProfile.getMatchProfile().getUserProfile().getUserAccount().setPassword(null)); //Hide passwords
 
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    private boolean pupperProfileFailsNullPointerCheck(PupperProfile pupperProfile) {
+        return pupperProfile == null ||
+                pupperProfile.getId() == null ||
+                pupperProfile.getMatchProfile() == null ||
+                pupperProfile.getMatchProfile().getUserProfile() == null ||
+                pupperProfile.getMatchProfile().getUserProfile().getId() == null;
+    }
+
+    public BreedResponse getBreeds() {
+        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, "name"));
+        Iterable<Breed> breeds = breedRepo.findAll(sortCriteria);
+        List<Breed> breedList = new ArrayList<>();
+        if (breeds.iterator().hasNext()) {
+            breeds.forEach(breedList::add);
+
+            return createBreedResponse(true, breedList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+
+        return createBreedResponse(false, emptyList(), HttpStatus.NOT_FOUND, "No results found.");
     }
 
 }

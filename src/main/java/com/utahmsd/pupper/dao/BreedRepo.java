@@ -10,14 +10,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Optional;
 
 public interface BreedRepo extends PagingAndSortingRepository<Breed, Long> {
-    Iterable<Breed> findAll(Sort sort);
-    Page<Breed> findAll(Pageable pageable);
+//    Iterable<Breed> findAll(Sort sort);
+//    Page<Breed> findAll(Pageable pageable);
     Page<Breed> findAllBySize(Size size, Pageable pageable);
-    Optional<Breed> findById(Long id);
+//    Optional<Breed> findById(Long id);
     Page<Breed> findAllByName(String breed, Pageable pageable);
     Iterable<Breed> findAllByName(String breed, Sort sort);
-    Breed save(Breed breed);
-    void deleteAll(Iterable<? extends Breed> iterable);
-    void deleteAll();
-    long count();
+//    Breed save(Breed breed);
+//    void deleteAll(Iterable<? extends Breed> iterable);
+//    void deleteAll();
+//    long count();
 }

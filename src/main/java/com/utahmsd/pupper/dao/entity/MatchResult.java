@@ -15,8 +15,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "match_result",
-        indexes = {@Index(columnList = "match_profile_id_fk_1", name = "pupper_message_ibfk_1"),
-        @Index(columnList = "match_profile_id_fk_2", name = "pupper_message_ibfk_2")})
+        indexes = {@Index(columnList = "match_profile_id_fk_1", name = "match_result_ibfk_1"),
+        @Index(columnList = "match_profile_id_fk_2", name = "match_result_ibfk_2")})
 public class MatchResult implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

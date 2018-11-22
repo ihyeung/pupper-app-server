@@ -8,11 +8,11 @@ import java.util.Optional;
 
 public interface UserAccountRepo extends PagingAndSortingRepository<UserAccount, Long> {
 
-    UserAccount save(UserAccount userAccount);
+//    UserAccount save(UserAccount userAccount);
     UserAccount findByUsername(String username);
-    Optional<UserAccount> findById(Long id);
-    Iterable<UserAccount> findAll();
-    Iterable<UserAccount> findAll(Sort sort);
-    void deleteById(Long id);
+//    Optional<UserAccount> findById(Long id);
+//    Iterable<UserAccount> findAll();
+//    Iterable<UserAccount> findAll(Sort sort);
+//    void deleteById(Long id);
 
 }

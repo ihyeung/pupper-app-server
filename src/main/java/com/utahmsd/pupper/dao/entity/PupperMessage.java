@@ -11,7 +11,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "pupper_message")
+@Table(name = "pupper_message",
+        indexes = {@Index(columnList = "from_match_profile_id_fk", name = "pupper_message_ibfk_1"),
+        @Index(columnList = "to_match_profile_id_fk", name = "pupper_message_ibfk_2")})
 public class PupperMessage implements Serializable {
 
     @Id

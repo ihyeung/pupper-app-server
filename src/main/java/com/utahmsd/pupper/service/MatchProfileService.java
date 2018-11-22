@@ -14,10 +14,9 @@ import javax.inject.Singleton;
 import java.util.*;
 
 import static com.utahmsd.pupper.dto.MatchProfileResponse.createMatchProfileResponse;
-import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
-import static com.utahmsd.pupper.util.Constants.INVALID_PATH_VARIABLE;
-import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
+import static com.utahmsd.pupper.util.Constants.*;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 @Named
 @Singleton
@@ -26,6 +25,7 @@ public class MatchProfileService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MatchProfileService.class);
     private static final String DEFAULT_SORT_BY_CRITERIA = "breed";
     private final String EMPTY_MATCH_PROFILE_LIST = "No match profiles belonging to user profile id %d were found.";
+    private static final String MATCH_PROFILE = "matchProfile";
 
     private final MatchProfileRepo matchProfileRepo;
 
@@ -65,7 +65,7 @@ public class MatchProfileService {
     }
 
     public MatchProfileResponse getAllMatchProfilesByUserId(Long userId) {
-        Optional<List<MatchProfile>> matchProfiles = matchProfileRepo.findAllByUserProfileId(userId);
+        Optional<List<MatchProfile>> matchProfiles = matchProfileRepo.findAllByUserProfile_Id(userId);
         if (!matchProfiles.isPresent() || matchProfiles.get().isEmpty()) {
             return createMatchProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
                     String.format(EMPTY_MATCH_PROFILE_LIST, userId));
@@ -76,6 +76,10 @@ public class MatchProfileService {
     }
 
     public MatchProfileResponse createMatchProfileForUser(Long userId, MatchProfile matchProfile) {
+        if (matchProfileFailsNullCheck(matchProfile)) {
+            return createMatchProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST, String.format(NULL_FIELD, MATCH_PROFILE));
+        }
+
         Optional<MatchProfile> result = matchProfileRepo.findByUserProfileIdAndBreedAndEnergyLevelAndLifeStage(
                 matchProfile.getUserProfile().getId(), matchProfile.getBreed(), matchProfile.getEnergyLevel(), matchProfile.getLifeStage());
         if (result.isPresent()) {
@@ -93,15 +97,54 @@ public class MatchProfileService {
         return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(match)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
+    //TODO: Test updateMatchProfile and deleteMatchProfile methods
+
     public MatchProfileResponse updateMatchProfile(Long userId, Long matchProfileId, MatchProfile matchProfile) {
-        return null;
+        if (matchProfileFailsNullCheck(matchProfile)) {
+            return createMatchProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST, String.format(NULL_FIELD, MATCH_PROFILE));
+        }
+        if (!matchProfile.getId().equals(matchProfileId) || !matchProfile.getUserProfile().getId().equals(userId)) {
+            return createMatchProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_PATH_VARIABLE);
+        }
+        Optional<MatchProfile> result = matchProfileRepo.findById(matchProfileId);
+        if (!result.isPresent()) {
+            return createMatchProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
+                    String.format("UpdateMatchProfile Error: A matchProfile with userProfileId=%d and matchProfileId=%d " +
+                            "does not exist and cannot be updated.", userId, matchProfileId));
+        }
+        matchProfileRepo.save(matchProfile);
+        matchProfile.getUserProfile().getUserAccount().setPassword(null);
+
+        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(matchProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
+
     public MatchProfileResponse deleteMatchProfile(Long userId, Long matchProfileId) {
-        return null;
+        Optional<MatchProfile> matchProfile = matchProfileRepo.findByUserProfileIdAndId(userId, matchProfileId);
+        if (!matchProfile.isPresent()) {
+            LOGGER.error("Error deleting matchProfile with userProfileId={} and matchProfileId={}", userId, matchProfileId);
+
+            return createMatchProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        }
+        matchProfileRepo.delete(matchProfile.get());
+
+        return createMatchProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public MatchProfileResponse deleteMatchProfilesByUserId(Long userId) {
-        return null;
+        Optional<List<MatchProfile>> matchProfiles = matchProfileRepo.findAllByUserProfile_Id(userId);
+        if (!matchProfiles.isPresent()) {
+            return createMatchProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        }
+        matchProfileRepo.deleteAllByUserProfile_Id(userId);
+
+        return createMatchProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    private boolean matchProfileFailsNullCheck(MatchProfile matchProfile) {
+        return matchProfile == null ||
+                matchProfile.getId() == null ||
+                matchProfile.getUserProfile() == null ||
+                matchProfile.getUserProfile().getId() == null;
     }
 }

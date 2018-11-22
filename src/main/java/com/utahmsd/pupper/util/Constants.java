@@ -12,4 +12,5 @@ public class Constants {
     public static final String INVALID_PATH_VARIABLE = "Not found: one or more invalid path variables were used in URL path.";
 
     public static final String PUPPER_AGE = "%dY%dM%dW%dD";
+    public static final String NULL_FIELD = "Null check validation of %s data failed";
 }

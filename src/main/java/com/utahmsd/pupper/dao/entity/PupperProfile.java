@@ -78,14 +78,6 @@ public class PupperProfile implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-//
-//    public UserProfile getUserProfile() {
-//        return userProfile;
-//    }
-//
-//    public void setUserProfile(UserProfile userProfile) {
-//        this.userProfile = userProfile;
-//    }
 
     public MatchProfile getMatchProfile() { return matchProfile; }
 

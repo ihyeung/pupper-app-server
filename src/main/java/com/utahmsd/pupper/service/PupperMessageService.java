@@ -124,6 +124,8 @@ public class PupperMessageService {
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
+    //TODO: Implement delete methods
+
     public MessageResponse deleteMessageHistoryByMatchProfileIds(Long matchProfileId1, Long matchProfileId2) {
         return null;
     }

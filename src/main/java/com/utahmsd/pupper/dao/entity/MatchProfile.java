@@ -24,7 +24,9 @@ import java.io.Serializable;
  */
 
 @Entity
-@Table(name = "match_profile")
+@Table(name = "match_profile",
+        indexes = {@Index(columnList = "breed_id_fk", name = "breed_id_fk"),
+                @Index(columnList = "user_profile_id_fk", name = "user_id_fk")})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class MatchProfile implements Serializable {
 
