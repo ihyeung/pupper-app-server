@@ -30,7 +30,8 @@ import static com.utahmsd.pupper.security.SecurityConstants.*;
 public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final Logger LOGGER = LoggerFactory.getLogger(UserAuthenticationFilter.class);
-    private Date sessionAuthenticationSuccess;
+    private Date sessionAuthSuccess;
+    private Date sessionAuthExpires;
 
     private AuthenticationManager authenticationManager;
 
@@ -64,29 +65,34 @@ public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilt
 
         long expiresIn = AUTH_TOKEN_EXPIRATION;
         Date currentTime = Date.from(Instant.now());
-        if (sessionAuthenticationSuccess != null) { //If a previously authenticated session, update value of expiresIn header
+        if (sessionAuthSuccess != null) { //If a previously authenticated session, update value of expiresIn header
 
-            expiresIn -= (currentTime.getTime() - sessionAuthenticationSuccess.getTime());
+            expiresIn -= (currentTime.getTime() - sessionAuthSuccess.getTime());
 
             if (expiresIn > 0) {
                 LOGGER.info("Access token is valid and will expire in {} ms.", expiresIn);
             } else {
                 LOGGER.info("Access token is expired.");
                 expiresIn = AUTH_TOKEN_EXPIRATION; //Reset expiresInMilliseconds value
-                sessionAuthenticationSuccess = null; //Reset auth session timestamp
+                sessionAuthSuccess = null; //Reset auth session timestamp
+                sessionAuthExpires = null;
             }
+        }
+
+        if (sessionAuthSuccess == null) { //If a new session is established, set session timestamp
+            sessionAuthSuccess = currentTime;
+            sessionAuthExpires = new Date(currentTime.getTime() + AUTH_TOKEN_EXPIRATION);
         }
 
         //Upon successful authentication, either creates new JWT or references previously issued JWT
         String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(expiresIn))
+                .withExpiresAt(sessionAuthExpires)
                 .sign(HMAC512(SECRET.getBytes()));
         response.addHeader(AUTH_HEADER_KEY, ACCESS_TOKEN_TYPE + token);
-        response.setHeader("Expires", Long.toString(expiresIn));
+        response.setHeader("Expires", sessionAuthExpires.toString()); //Timestamp of when it expires
+        response.setHeader("expiresInMs", Long.toString(expiresIn)); //Remaining ms left
 
-        if (sessionAuthenticationSuccess == null) { //If a new session is established, set session timestamp
-            sessionAuthenticationSuccess = currentTime;
-        }
+
     }
 }
