@@ -32,11 +32,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
+        http.cors().and().csrf()
+                .disable().authorizeRequests()
+//                .antMatchers(HttpMethod.OPTIONS,"/login").permitAll()//allow CORS option calls
                 .antMatchers(HttpMethod.GET, SWAGGER_WHITELIST).permitAll()
-                .and().authorizeRequests()
+//                .and().authorizeRequests()
                 .antMatchers(HttpMethod.POST, REGISTER_ENDPOINT).permitAll()
                 .anyRequest().authenticated()
+//                .and().formLogin()
+//                .and().httpBasic()
                 .and()
                 .addFilter(new UserAuthenticationFilter(authenticationManager()))
                 .addFilter(new UserAuthorizationFilter(authenticationManager()))
@@ -53,7 +57,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.applyPermitDefaultValues();
+//        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.addExposedHeader("Authorization");
+
+        source.registerCorsConfiguration("/**",
+                corsConfiguration);
         return source;
     }
 }

@@ -3,6 +3,8 @@ package com.utahmsd.pupper.security;
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utahmsd.pupper.dao.entity.UserAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -25,6 +28,9 @@ import static com.utahmsd.pupper.security.SecurityConstants.*;
  */
 
 public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(UserAuthenticationFilter.class);
+    private Date sessionAuthenticationSuccess;
 
     private AuthenticationManager authenticationManager;
 
@@ -56,13 +62,31 @@ public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilt
                                             FilterChain chain,
                                             Authentication auth){
 
-        long expiresIn = System.currentTimeMillis() + AUTH_TOKEN_EXPIRATION;
-        //Upon successful authentication, generate JWT
+        long expiresIn = AUTH_TOKEN_EXPIRATION;
+        Date currentTime = Date.from(Instant.now());
+        if (sessionAuthenticationSuccess != null) { //If a previously authenticated session, update value of expiresIn header
+
+            expiresIn -= (currentTime.getTime() - sessionAuthenticationSuccess.getTime());
+
+            if (expiresIn > 0) {
+                LOGGER.info("Access token is valid and will expire in {} ms.", expiresIn);
+            } else {
+                LOGGER.info("Access token is expired.");
+                expiresIn = AUTH_TOKEN_EXPIRATION; //Reset expiresInMilliseconds value
+                sessionAuthenticationSuccess = null; //Reset auth session timestamp
+            }
+        }
+
+        //Upon successful authentication, either creates new JWT or references previously issued JWT
         String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(expiresIn))
                 .sign(HMAC512(SECRET.getBytes()));
         response.addHeader(AUTH_HEADER_KEY, ACCESS_TOKEN_TYPE + token);
-        response.setHeader("expires", Long.toString(expiresIn));
+        response.setHeader("Expires", Long.toString(expiresIn));
+
+        if (sessionAuthenticationSuccess == null) { //If a new session is established, set session timestamp
+            sessionAuthenticationSuccess = currentTime;
+        }
     }
 }

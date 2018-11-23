@@ -32,10 +32,6 @@ public class PupperApplicationConfig {
     @Value("${spring.datasource.url:}")
     private String dbUrl;
 
-    private String dbName = System.getProperty("db.name");
-
-    private String dbPassword = System.getProperty("db.password");
-
     @Value("${spring.datasource.username:}")
     private String dbUsername;
 
@@ -73,5 +69,4 @@ public class PupperApplicationConfig {
                 .withRegion(Regions.US_EAST_1)
                 .build();
     }
-
 }

@@ -4,8 +4,6 @@ import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dto.UserAuthenticationResponse;
 import com.utahmsd.pupper.service.UserAccountService;
 import io.swagger.annotations.Api;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +14,6 @@ import static com.utahmsd.pupper.security.SecurityConstants.REGISTER_ENDPOINT;
 @RestController
 @Api(value = "UserAccount/Auth Controller For Testing UserAccount")
 public class AuthController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     private final UserAccountService userAccountService;
 
