@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -116,7 +117,19 @@ public class UserProfileService {
         return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserProfileResponse deleteUserProfileById(Long id) {
+    public UserProfileResponse updateLastLoginForUserProfile(Long userId, String lastLogin) {
+        Optional<UserProfile> result = userProfileRepo.findById(userId);
+        if (result.isPresent()) {
+            result.get().setLastLogin(Date.valueOf(lastLogin));
+            result.get().getUserAccount().setPassword(null);
+
+            return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+        return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+    }
+
+
+        public UserProfileResponse deleteUserProfileById(Long id) {
         Optional<UserProfile> result = userProfileRepo.findById(id);
         if (!result.isPresent()) {
             LOGGER.error("Error deleting user profile: user profile with id {} not found", id);

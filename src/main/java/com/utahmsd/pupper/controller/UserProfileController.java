@@ -50,6 +50,12 @@ public class UserProfileController {
         return userProfileService.updateUserProfile(userId, userProfile);
     }
 
+    @PutMapping(path = "/{userId}", params = {"lastLogin"})
+    public UserProfileResponse updateLastLogin(@PathVariable("userId") Long userId,
+                                               @RequestParam(value = "lastLogin") String lastLogin) {
+        return userProfileService.updateLastLoginForUserProfile(userId, lastLogin);
+    }
+
     /*
     Delete endpoint for deleting a userProfile.
 
