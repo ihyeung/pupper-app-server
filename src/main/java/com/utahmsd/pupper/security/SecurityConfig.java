@@ -39,8 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and().authorizeRequests()
                 .antMatchers(HttpMethod.POST, REGISTER_ENDPOINT).permitAll()
                 .anyRequest().authenticated()
-//                .and().formLogin()
-//                .and().httpBasic()
                 .and()
                 .addFilter(new UserAuthenticationFilter(authenticationManager()))
                 .addFilter(new UserAuthorizationFilter(authenticationManager()))
