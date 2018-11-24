@@ -43,7 +43,7 @@ public class PupperMessageService {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER)); //Sorts messages from oldest to newest
         Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, sort));
         ArrayList<PupperMessage> pupperMessages = new ArrayList<>();
-        results.forEach(each -> pupperMessages.add(hideSensitiveData(each)));
+        results.forEach(pupperMessages::add);
 
         return pupperMessages;
     }
@@ -53,7 +53,6 @@ public class PupperMessageService {
         Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(DEFAULT_PAGE_NUM, limit, sort));
         int numResults = results.getNumberOfElements();
         LOGGER.info("Number of messages returned: {}", numResults);
-        results.forEach(this::hideSensitiveData);
 
         return results.getContent();
     }
@@ -67,8 +66,6 @@ public class PupperMessageService {
         }
 
         LOGGER.info("{} messages were found that were sent/received by matchProfileId={}", messageList.get().size(), matchProfileId);
-
-        messageList.get().forEach(this::hideSensitiveData);
 
         return messageList.get();
     }
@@ -96,8 +93,6 @@ public class PupperMessageService {
             messageHistory.addAll(messagesFrom2To1.get());
         }
 
-        messageHistory.forEach(this::hideSensitiveData);
-
         LOGGER.info("{} messages were exchanged between matchProfileId={} and matchProfileId={}",
                 messageHistory.size(), matchProfileId1, matchProfileId2);
 
@@ -120,7 +115,7 @@ public class PupperMessageService {
         }
         messageRepo.save(pupperMessage);
 
-        return createMessageResponse(true, new ArrayList<>(Arrays.asList(hideSensitiveData(pupperMessage))),
+        return createMessageResponse(true, new ArrayList<>(Arrays.asList(pupperMessage)),
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -137,8 +132,8 @@ public class PupperMessageService {
 
     /**
      * Helper method that verifies that two match profiles attempting to exchange messages are a match.
-     * @param matchProfileId1
-     * @param matchProfileId2
+     * @param matchProfileId1 match profile #1
+     * @param matchProfileId2 match profile #2
      * @return
      */
     private boolean isValidMatchResult(Long matchProfileId1, Long matchProfileId2) {
@@ -154,12 +149,4 @@ public class PupperMessageService {
                 .map(m1 -> m1.isMatchForProfileOne() && m1.isMatchForProfileTwo())
                 .orElseGet(() -> matchResult2.get().isMatchForProfileOne() && matchResult2.get().isMatchForProfileTwo());
     }
-
-    private PupperMessage hideSensitiveData(PupperMessage pupperMessage) {
-        pupperMessage.getMatchProfileSender().getUserProfile().getUserAccount().setPassword(null);
-        pupperMessage.getMatchProfileReceiver().getUserProfile().getUserAccount().setPassword(null);
-
-        return pupperMessage;
-    }
-
 }

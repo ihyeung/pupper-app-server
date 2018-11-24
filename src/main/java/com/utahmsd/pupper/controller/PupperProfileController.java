@@ -40,7 +40,7 @@ public class PupperProfileController {
         return pupperProfileService.getPupperProfilesByBreedId(breedId);
     }
 
-    @GetMapping(path ="/user/{userId}/pupper/")
+    @GetMapping(path ="/user/{userId}/pupper")
     public PupperProfileResponse getPupperProfilesByUserId(@PathVariable("userId") Long userId) {
         return pupperProfileService.findAllPupperProfilesByUserId(userId);
     }

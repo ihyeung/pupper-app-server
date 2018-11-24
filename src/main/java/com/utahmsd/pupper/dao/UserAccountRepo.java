@@ -1,12 +1,9 @@
 package com.utahmsd.pupper.dao;
 
 import com.utahmsd.pupper.dao.entity.UserAccount;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
-public interface UserAccountRepo extends PagingAndSortingRepository<UserAccount, Long> {
+public interface UserAccountRepo extends JpaRepository<UserAccount, Long> {
 
 //    UserAccount save(UserAccount userAccount);
     UserAccount findByUsername(String username);

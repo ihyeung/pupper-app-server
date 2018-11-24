@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
-public class HealthController {
+public class HealthApiController {
 
     @GetMapping(path="/api")
     public String swaggerApi() {

@@ -45,10 +45,7 @@ public class UserProfileService {
         Iterable<UserProfile> users = userProfileRepo.findAll(sortCriteria);
         List<UserProfile> userProfileList = new ArrayList<>();
         if (users.iterator().hasNext()) {
-            users.forEach(userProfile -> {
-                userProfile.getUserAccount().setPassword(null);
-                userProfileList.add(userProfile);
-            });
+            users.forEach(userProfileList::add);
         }
 
         return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
@@ -57,12 +54,9 @@ public class UserProfileService {
     public UserProfileResponse findUserProfileById(Long id) {
         Optional<UserProfile> user = userProfileRepo.findById(id);
         if (user.isPresent()) {
-            UserProfile userProfile = user.get();
-            userProfile.getUserAccount().setPassword(null);
-            return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(user.get())),
-                    HttpStatus.OK, DEFAULT_DESCRIPTION);
+            return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(user.get())), HttpStatus.OK,
+                    DEFAULT_DESCRIPTION);
         }
-
         LOGGER.error("User profile with id={} not found", id);
 
         return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, String.format(USER_NOT_FOUND, id));
@@ -72,7 +66,6 @@ public class UserProfileService {
         UserAccount userAccount = userAccountRepo.findByUsername(email);
         Optional<UserProfile> userProfile = userProfileRepo.findByUserAccount(userAccount);
         if (userProfile.isPresent()) {
-            userProfile.get().getUserAccount().setPassword(null);
             return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         LOGGER.error("User profile with email={} not found", email);
@@ -111,7 +104,6 @@ public class UserProfileService {
             return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
         userProfileRepo.save(userProfile);
-        userProfile.getUserAccount().setPassword(null); //Hide password in response
 
         LOGGER.info("User profile with id {} was found, updating existing profile", userId);
         return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
@@ -121,8 +113,6 @@ public class UserProfileService {
         Optional<UserProfile> result = userProfileRepo.findById(userId);
         if (result.isPresent()) {
             result.get().setLastLogin(Date.valueOf(lastLogin));
-            result.get().getUserAccount().setPassword(null);
-
             return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);

@@ -48,10 +48,7 @@ public class UserAccountService implements UserDetailsService {
         Iterable<UserAccount> resultList = userAccountRepo.findAll();
         List<UserAccount> userList = new ArrayList<>();
         if (resultList.iterator().hasNext()) {
-            resultList.forEach(each -> {
-                each.setPassword(null); //Hide sensitive data field
-                userList.add(each);
-            });
+            resultList.forEach(userList::add);
         }
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -62,7 +59,6 @@ public class UserAccountService implements UserDetailsService {
             LOGGER.error("User credentials with id {} not found", userAccountId);
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_LOGIN);
         }
-        result.get().setPassword(null);
 
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
@@ -75,9 +71,7 @@ public class UserAccountService implements UserDetailsService {
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         UserAccount savedUser = userAccountRepo.save(userAccount);
-        savedUser.setPassword(null); //Hide sensitive data field
-        ArrayList<UserAccount> userList = new ArrayList<>(Arrays.asList(savedUser)); //Reference newly created user so JSON response returns id
-        return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(savedUser)), HttpStatus.OK, DEFAULT_DESCRIPTION);
 //        request.getUser()
 //        UserCredentials userCredentials = new UserCredentials();
 //        userCredentials.setUser(request.getUser());
@@ -100,8 +94,6 @@ public class UserAccountService implements UserDetailsService {
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         userAccountRepo.save(userAccount);
-
-        userAccount.setPassword(null);
 
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -152,8 +144,6 @@ public class UserAccountService implements UserDetailsService {
                     "Invalid getUserAccountByUserProfileId request -- " +
                             "no valid UserAccount is associated with userProfileId {}.", userId));
         }
-        userAccountResult.get().setPassword(null);
-
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccountResult.get())),
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
     }

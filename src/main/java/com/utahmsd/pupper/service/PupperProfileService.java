@@ -100,8 +100,6 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
-        result.get().getMatchProfile().getUserProfile().getUserAccount().setPassword(null);
-
         return createPupperProfileResponse(true, new ArrayList<>(Arrays.asList(result.get())),
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -131,9 +129,8 @@ public class PupperProfileService {
         }
 
         PupperProfile profile = pupperProfileRepo.save(pupperProfile);
-        profile.getMatchProfile().getUserProfile().getUserAccount().setPassword(null);
-        List<PupperProfile> pupperProfileList = new ArrayList<>(Arrays.asList(profile));
-        return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createPupperProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK,
+                DEFAULT_DESCRIPTION);
     }
 
     public PupperProfileResponse updatePupperProfile(Long userId, Long pupId, PupperProfile pupperProfile) {
@@ -152,10 +149,10 @@ public class PupperProfileService {
             pupperProfile.setLifeStage(dobToLifeStage(pupperProfile.getBirthdate()));
         }
 
-        PupperProfile profile = pupperProfileRepo.save(pupperProfile);
-        profile.getMatchProfile().getUserProfile().getUserAccount().setPassword(null);
+        pupperProfileRepo.save(pupperProfile);
 
-        return createPupperProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createPupperProfileResponse(true, new ArrayList<>(Arrays.asList(pupperProfile)), HttpStatus.OK,
+                DEFAULT_DESCRIPTION);
 
     }
 
@@ -183,8 +180,6 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
                     INVALID_PATH_VARIABLE);
         }
-        results.get().forEach(pupperProfile ->
-                pupperProfile.getMatchProfile().getUserProfile().getUserAccount().setPassword(null)); //Hide passwords
 
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }

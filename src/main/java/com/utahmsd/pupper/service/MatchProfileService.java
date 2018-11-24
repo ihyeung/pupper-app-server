@@ -39,10 +39,8 @@ public class MatchProfileService {
         List<MatchProfile> matchProfileList = new ArrayList<>();
         Iterable<MatchProfile> matchProfiles = matchProfileRepo.findAll(sortCriteria);
         if (matchProfiles.iterator().hasNext()) {
-            matchProfiles.forEach(matchProfile -> {
-                matchProfile.getUserProfile().getUserAccount().setPassword(null);
-                matchProfileList.add(matchProfile);
-            });
+            matchProfiles.forEach(matchProfileList::add);
+
             return createMatchProfileResponse(true, matchProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
         }
@@ -58,8 +56,7 @@ public class MatchProfileService {
 
             return createMatchProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
         }
-        result.get().getUserProfile().getUserAccount().setPassword(null);
-        
+
         return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
@@ -70,7 +67,7 @@ public class MatchProfileService {
             return createMatchProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
                     String.format(EMPTY_MATCH_PROFILE_LIST, userId));
         }
-        matchProfiles.get().forEach(matchProfile -> matchProfile.getUserProfile().getUserAccount().setPassword(null));//Hide password
+
         return createMatchProfileResponse(true, matchProfiles.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
@@ -92,7 +89,6 @@ public class MatchProfileService {
             return createMatchProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
         MatchProfile match = matchProfileRepo.save(matchProfile);
-        match.getUserProfile().getUserAccount().setPassword(null);
 
         return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(match)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -113,7 +109,6 @@ public class MatchProfileService {
                             "does not exist and cannot be updated.", userId, matchProfileId));
         }
         matchProfileRepo.save(matchProfile);
-        matchProfile.getUserProfile().getUserAccount().setPassword(null);
 
         return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(matchProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
