@@ -57,7 +57,6 @@ public class PupperProfileService {
         List<PupperProfile> pupperProfileList = new ArrayList<>();
         if (puppers.iterator().hasNext()) {
             puppers.forEach(pupperProfile -> {
-                pupperProfile.getMatchProfile().getUserProfile().getUserAccount().setPassword(null);
                 pupperProfileList.add(pupperProfile);
             });
         }
@@ -199,9 +198,6 @@ public class PupperProfileService {
 
             return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
-
-        results.get().forEach(pupperProfile ->
-                pupperProfile.getMatchProfile().getUserProfile().getUserAccount().setPassword(null)); //Hide passwords
 
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }

@@ -24,9 +24,10 @@ public class UserProfileController {
         this.userProfileFilterService = userProfileFilterService;
     }
 
-    @GetMapping()
-    public UserProfileResponse getAllUserProfiles() {
-        return userProfileService.getAllUserProfiles();
+    @GetMapping(params = {"sortBy", "limit"})
+    public UserProfileResponse getAllUserProfiles(@RequestParam(value = "sortBy") String sort,
+                                                  @RequestParam(value = "limit") String limit) {
+        return userProfileService.getAllUserProfiles(sort, limit);
     }
 
     @GetMapping(path ="/{userId}")
@@ -35,7 +36,7 @@ public class UserProfileController {
     }
 
     @GetMapping(params = {"email"})
-    public UserProfileResponse findUserProfileByUserAccountEmail(@RequestParam(value = "email") String email) {
+    public UserProfileResponse findUserProfileByUserAccountEmail(@RequestParam(value = "email", required = false) String email) {
         return userProfileService.findUserProfileByUserAccountEmail(email);
     }
 

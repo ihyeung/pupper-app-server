@@ -5,15 +5,17 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  * Entity containing user credentials/account information.
  */
 @Entity // reference to table defaults to table_name (i.e., reference database table MyTable using my_table)
 @Table (indexes = @Index(columnList = "username", name = "user_account_username_uindex"))
-public class UserAccount {
+public class UserAccount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private long id;
 
     @Size(max = 50)
@@ -23,6 +25,10 @@ public class UserAccount {
     @Size(max = 100)
     @NotBlank
     private String password;
+//
+//    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL,
+//            fetch = FetchType.LAZY, optional = false)
+//    private UserProfile userProfile;
 
     public UserAccount(){}
 
@@ -52,4 +58,12 @@ public class UserAccount {
     public void setPassword(String password) {
         this.password = password;
     }
+//
+//    public UserProfile getUserProfile() {
+//        return userProfile;
+//    }
+//
+//    public void setUserProfile(UserProfile userProfile) {
+//        this.userProfile = userProfile;
+//    }
 }

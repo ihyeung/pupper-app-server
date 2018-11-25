@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.service;
 
+import com.amazonaws.util.StringUtils;
 import com.utahmsd.pupper.dao.UserAccountRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.UserAccount;
@@ -16,7 +17,6 @@ import javax.inject.Singleton;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
@@ -39,16 +39,21 @@ public class UserProfileService {
         this.userAccountRepo = userAccountRepo;
     }
 
-    public UserProfileResponse getAllUserProfiles() {
-        String DEFAULT_SORT_BY_CRITERIA = "lastName";
-        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_BY_CRITERIA));
+    public UserProfileResponse getAllUserProfiles(String sortBy, String limit) {
+        int resultLimit = StringUtils.isNullOrEmpty(limit) ? 100 : Integer.valueOf(limit);
+        String sortParam = StringUtils.isNullOrEmpty(sortBy) ? "lastName" : sortBy;
+        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, sortParam));
         Iterable<UserProfile> users = userProfileRepo.findAll(sortCriteria);
-        List<UserProfile> userProfileList = new ArrayList<>();
-        if (users.iterator().hasNext()) {
-            users.forEach(userProfileList::add);
+        ArrayList<UserProfile> userList = new ArrayList<>();
+        if (!users.iterator().hasNext()) {
+            return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-
-        return createUserProfileResponse(true, userProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        users.forEach(each -> {
+            if (userList.size() < resultLimit) {
+                userList.add(each);
+            }
+        });
+        return createUserProfileResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserProfileResponse findUserProfileById(Long id) {
@@ -87,7 +92,6 @@ public class UserProfileService {
 
         }
         UserProfile profile = userProfileRepo.save(userProfile);
-        profile.getUserAccount().setPassword(null); //Hide password in response
 
         return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -111,8 +115,9 @@ public class UserProfileService {
 
     public UserProfileResponse updateLastLoginForUserProfile(Long userId, String lastLogin) {
         Optional<UserProfile> result = userProfileRepo.findById(userId);
-        if (result.isPresent()) {
-            result.get().setLastLogin(Date.valueOf(lastLogin));
+        if (result.isPresent() && lastLogin.matches("^\\d{4}-\\d{1,2}-\\d{1,2}$")) {
+            userProfileRepo.updateLastLogin(userId, Date.valueOf(lastLogin));
+
             return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);

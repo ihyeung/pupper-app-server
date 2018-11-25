@@ -57,7 +57,8 @@ public class UserAccountService implements UserDetailsService {
         Optional<UserAccount> result = userAccountRepo.findById(userAccountId);
         if (!result.isPresent()) {
             LOGGER.error("User credentials with id {} not found", userAccountId);
-            return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_LOGIN);
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND,
+                    String.format("User credentials with id = %d not found", userAccountId));
         }
 
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
@@ -152,7 +153,7 @@ public class UserAccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         UserAccount userResult = userAccountRepo.findByUsername(username);
         if (userResult == null) {
-            LOGGER.error(INVALID_LOGIN);
+            LOGGER.error("User account with username not found.");
             return null;
         }
         return new org.springframework.security.core.userdetails.User(

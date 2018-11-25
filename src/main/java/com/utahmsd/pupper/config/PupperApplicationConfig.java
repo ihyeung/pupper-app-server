@@ -7,8 +7,8 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -17,14 +17,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Arrays;
 
 @Configuration
 @EnableJpaRepositories("com.utahmsd.pupper.dao")
+@EnableTransactionManagement
 public class PupperApplicationConfig {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PupperApplicationConfig.class);
 
     @Value("${spring.datasource.driver-class-name:}")
     private String dbDriver;
@@ -36,7 +36,7 @@ public class PupperApplicationConfig {
     private String dbUsername;
 
     @Value("${spring.datasource.password:}")
-    private String getDbPassword;
+    private String dbPassword;
 
     @Value("${amazonProperties.accessKey}")
     private String accessKey;
@@ -56,6 +56,36 @@ public class PupperApplicationConfig {
         return cacheManager;
     }
 
+//    @Bean
+//    public DataSource dataSource() {
+////        final HikariConfig hikariConfig = new HikariConfig();
+//        return DataSourceBuilder.create().driverClassName(dbDriver).url(dbUrl).username(dbUsername).password(dbPassword).build();
+////        hikariConfig.setDriverClassName(dbDriver);
+////        hikariConfig.setJdbcUrl(dbUrl);
+////        hikariConfig.setUsername(dbUsername);
+////        hikariConfig.setPassword(dbPassword);
+////        hikariConfig.setMaximumPoolSize(10);
+////
+////        return new HikariDataSource(hikariConfig);
+//    }
+//
+//    @Bean
+//    LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+//        final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+//        entityManagerFactoryBean.setPackagesToScan("com.utahmsd.pupper");
+//        entityManagerFactoryBean.setDataSource(dataSource());
+//        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+//
+////        entityManagerFactoryBean.afterPropertiesSet();
+//
+//        return entityManagerFactoryBean;
+//    }
+//
+//    @Bean
+//    PlatformTransactionManager transactionManager() {
+//        return new JpaTransactionManager(entityManagerFactory().getObject());
+//    }
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(4);
@@ -68,5 +98,10 @@ public class PupperApplicationConfig {
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .withRegion(Regions.US_EAST_1)
                 .build();
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClients.createDefault();
     }
 }

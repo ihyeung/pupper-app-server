@@ -36,7 +36,7 @@ public class PupperProfile implements Serializable {
 //    @Valid
 //    private UserProfile userProfile;
 
-    @ManyToOne(fetch = FetchType.LAZY) //A match profile can have multiple puppers, but a pupper can only belong to one match profile
+    @ManyToOne //A match profile can have multiple puppers, but a pupper can only belong to one match profile
     @JoinColumn(name = "match_profile_id_fk")
     @Valid
     private MatchProfile matchProfile;

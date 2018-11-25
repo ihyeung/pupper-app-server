@@ -5,6 +5,7 @@ import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,9 +29,12 @@ public class UserProfileFilterService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserProfileFilterService.class);
 
+    private final UserProfileRepo userProfileRepo;
 
-    @Inject
-    UserProfileRepo userProfileRepo;
+    @Autowired
+    public UserProfileFilterService(UserProfileRepo userProfileRepo) {
+        this.userProfileRepo = userProfileRepo;
+    }
 
     public UserProfileResponse filterUserProfilesByZip(String zipCode) {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER));

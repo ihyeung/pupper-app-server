@@ -40,7 +40,6 @@ public class MatchProfileService {
         Iterable<MatchProfile> matchProfiles = matchProfileRepo.findAll(sortCriteria);
         if (matchProfiles.iterator().hasNext()) {
             matchProfiles.forEach(matchProfileList::add);
-
             return createMatchProfileResponse(true, matchProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
         }

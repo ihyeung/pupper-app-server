@@ -14,8 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-public interface PupperProfileRepo extends JpaRepository<PupperProfile, Long> {
-//    Optional<PupperProfile> findById(Long pupId);
+public interface PupperProfileRepo extends PagingAndSortingRepository<PupperProfile, Long> {
 //    Optional<List<PupperProfile>> findAllByMatchProfileId(Long matchProfileId);
 //    Optional<List<PupperProfile>> findAllByUserId(Long userId); //Find all pups belonging to a given user
 //    Optional<List<PupperProfile>> findAllByBreed(String breed);
