@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
 import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
+import static com.utahmsd.pupper.util.Constants.NULL_FIELD;
 
 /**
  * Controller specifically for setting/updating the profile image for a given matchProfile, through the use of uploading/deleting
@@ -42,7 +43,7 @@ public class ImageController {
                                           @RequestPart(value = "requestBody") @RequestBody ImageUploadRequest imageUploadRequest) {
         if (imageUploadRequest.getMatchProfile() == null || imageUploadRequest.getMatchProfile().getUserProfile() == null) {
             return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Null check validation failed");
+                    String.format(NULL_FIELD, "matchProfile and/or userProfile"));
         }
 
         return this.amazonClient.uploadFileByRequest(file, imageUploadRequest);
@@ -52,25 +53,27 @@ public class ImageController {
     Upload endpoint that references the matchProfileId and userProfileId in the endpoint path.
     No JSON request body is needed.
      */
-    @PutMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload", consumes = {"multipart/form-data"})
+    @PutMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload", consumes = {"multipart/form-data"}, headers = {"Authorization"})
     public ImageUploadResponse uploadFileForMatchProfile(@RequestPart(value = "profilePic") MultipartFile file,
                                                          @PathVariable("userId") Long userId,
-                                                         @PathVariable("matchProfileId") Long matchProfileId) throws IllegalStateException {
+                                                         @PathVariable("matchProfileId") Long matchProfileId,
+                                                         @RequestHeader("Authorization") String authToken) throws IllegalStateException {
         if (file.getSize() > MAX_UPLOAD_BYTES) {
            return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
                    String.format("Error: file exceeds allowable upload size of %d bytes -- file is %d bytes",
                     MAX_UPLOAD_BYTES, file.getSize()));
         }
-        return amazonClient.uploadFileByUserAndMatchProfile(file, userId, matchProfileId);
+        return amazonClient.uploadFileByUserAndMatchProfile(file, userId, matchProfileId, authToken);
     }
 
     /*
     Delete endpoint for deleting a profile picture for a given userId/matchProfileId.
      */
-    @DeleteMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload")
+    @DeleteMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload", headers = {"Authorization"})
     public ImageUploadResponse deleteFile(@PathVariable("userId") Long userId,
-                                          @PathVariable("matchProfileId") Long matchProfileId) {
-        return this.amazonClient.deleteFileFromS3Bucket(userId, matchProfileId);
+                                          @PathVariable("matchProfileId") Long matchProfileId,
+                                          @RequestHeader("Authorization") String authToken) {
+        return this.amazonClient.deleteFileFromS3Bucket(userId, matchProfileId, authToken);
     }
 }
 

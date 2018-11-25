@@ -30,7 +30,6 @@ import static java.util.Collections.emptyList;
 public class UserAccountService implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserAccountService.class);
-    private static final String INVALID_LOGIN = "Invalid login credentials were entered.";
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserAccountRepo userAccountRepo;
@@ -153,7 +152,7 @@ public class UserAccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         UserAccount userResult = userAccountRepo.findByUsername(username);
         if (userResult == null) {
-            LOGGER.error("User account with username not found.");
+            LOGGER.error("A user account with that username was not found.");
             return null;
         }
         return new org.springframework.security.core.userdetails.User(

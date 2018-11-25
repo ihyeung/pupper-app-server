@@ -135,6 +135,17 @@ public class MatchProfileService {
         return createMatchProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
+    public MatchProfileResponse updateProfileImageByMatchProfileId(Long userId, Long matchProfileId, String imageUrl) {
+        Optional<MatchProfile> result = matchProfileRepo.findById(matchProfileId);
+        if (!result.isPresent() || !result.get().getUserProfile().getId().equals(userId)) {
+            return createMatchProfileResponse(false, emptyList(), HttpStatus.BAD_REQUEST, INVALID_PATH_VARIABLE);
+        }
+        result.get().setProfileImage(imageUrl); //Update image_url
+        matchProfileRepo.save(result.get());
+
+        return createMatchProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
     private boolean matchProfileFailsNullCheck(MatchProfile matchProfile) {
         return matchProfile == null ||
                 matchProfile.getId() == null ||
