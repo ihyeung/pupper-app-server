@@ -9,8 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
+
 import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
-import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
 import static com.utahmsd.pupper.util.Constants.NULL_FIELD;
 
 /**
@@ -49,19 +50,28 @@ public class ImageController {
         return this.amazonClient.uploadFileByRequest(file, imageUploadRequest);
     }
 
-    /*
-    Upload endpoint that references the matchProfileId and userProfileId in the endpoint path.
-    No JSON request body is needed.
+    /**
+     * Upload endpoint that references the matchProfileId and userProfileId in the endpoint path.
+     * No JSON request body is needed.
+     *
+     * A 500 error response is returned when the request is rejected due to no multipart boundary being
+     * found (i.e., no profilePic file was included in the request).
+     *
+     * @param file form-data for profilePic to upload
+     * @param userId the userProfileId that the upload will correspond to
+     * @param matchProfileId the matchProfileId that the uploaded file will belong to
+     * @param authToken authorization token for accessing endpoint called in AmazonAwsClient class.
+     * @return imageUploadResponse
      */
     @PutMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload", consumes = {"multipart/form-data"}, headers = {"Authorization"})
-    public ImageUploadResponse uploadFileForMatchProfile(@RequestPart(value = "profilePic") MultipartFile file,
+    public ImageUploadResponse uploadFileForMatchProfile(@RequestPart(value = "profilePic") @NotNull MultipartFile file,
                                                          @PathVariable("userId") Long userId,
                                                          @PathVariable("matchProfileId") Long matchProfileId,
-                                                         @RequestHeader("Authorization") String authToken) throws IllegalStateException {
+                                                         @RequestHeader("Authorization") String authToken) {
         if (file.getSize() > MAX_UPLOAD_BYTES) {
-           return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
-                   String.format("Error: file exceeds allowable upload size of %d bytes -- file is %d bytes",
-                    MAX_UPLOAD_BYTES, file.getSize()));
+            return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format("Error: image exceeds allowable upload size of %d bytes -- file is %d bytes",
+                            MAX_UPLOAD_BYTES, file.getSize()));
         }
         return amazonClient.uploadFileByUserAndMatchProfile(file, userId, matchProfileId, authToken);
     }

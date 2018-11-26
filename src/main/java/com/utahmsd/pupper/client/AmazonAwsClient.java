@@ -5,11 +5,9 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.StringUtils;
-import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dto.ImageUploadRequest;
 import com.utahmsd.pupper.dto.ImageUploadResponse;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -21,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.BasicJsonParser;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,14 +29,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import java.text.ParseException;
+import java.util.*;
 
 import static com.amazonaws.regions.Regions.US_EAST_1;
 import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
-import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
+import static com.utahmsd.pupper.util.Constants.INVALID_PATH_VARIABLE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
@@ -53,13 +49,11 @@ public class AmazonAwsClient {
 
     private final long MAX_IMAGE_BYTES = 1_048_576L;
 
-
     @Value("${spring.jersey.application-path:}")
     private String baseUrl;
 
     private final HttpClient httpClient;
     private final AmazonS3 s3client;
-    private final MatchProfileRepo matchProfileRepo;
 
     @Value("${amazonProperties.endpointUrl}")
     private String s3endpointUrl;
@@ -67,9 +61,8 @@ public class AmazonAwsClient {
     private String bucketName;
 
     @Autowired
-    public AmazonAwsClient(AmazonS3 s3client, MatchProfileRepo matchProfileRepo, HttpClient httpClient) {
+    public AmazonAwsClient(AmazonS3 s3client, HttpClient httpClient) {
         this.s3client = s3client;
-        this.matchProfileRepo = matchProfileRepo;
         this.httpClient = httpClient;
     }
 
@@ -101,26 +94,26 @@ public class AmazonAwsClient {
     }
 
     public ImageUploadResponse uploadFileByUserAndMatchProfile(MultipartFile multipartFile, Long userId, Long matchProfileId, String authToken) {
-//        HttpStatus status = doGet(userId, matchProfileId, authToken);
-//        if (status.isError()) {
-//            LOGGER.error("Either matchProfileId={} was not found, or userProfileId contained in the matchProfile result " +
-//                    "corresponding to matchProfileId={} does not match the path userProfileId={}",
-//                    matchProfileId, matchProfileId, userId);
-//            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST, NOT_FOUND);
-//        }
-//        return createImageUploadResponse(true, null, OK, DEFAULT_DESCRIPTION);
-        Optional<MatchProfile> matchProfileResult = matchProfileRepo.findById(matchProfileId);
-        if (!matchProfileResult.isPresent() || !matchProfileResult.get().getUserProfile().getId().equals(userId)) {
+        //Use http client to hit GET endpoint in matchProfileController to verify matchProfile exists
+        Object getResponseObject= doGetRequest(userId, matchProfileId, authToken, "matchProfiles");
+        MatchProfile matchProfile = null;
+        try {
+            matchProfile = MatchProfile.createFromObject(getResponseObject);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (matchProfile == null || !matchProfile.getUserProfile().getId().equals(userId)) {
             LOGGER.error("Either matchProfileId={} was not found, or userProfileId contained in the matchProfile result " +
                     "corresponding to matchProfileId={} does not match the path userProfileId={}",
                     matchProfileId, matchProfileId, userId);
-            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST, NOT_FOUND);
+            return createImageUploadResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
+
         String fileName = generateFileNameByUserAndMatchProfileId(userId, matchProfileId);
         ImageUploadResponse response = uploadFileToS3(multipartFile, fileName);
         if (response.getResponseCode() == 200) {
             //Use http client to hit updateProfileImageForMatchProfile endpoint in matchProfileController
-            HttpStatus postResponseStatus = doPost(userId, matchProfileId, authToken, response.getImageUrl());
+            HttpStatus postResponseStatus = doPostRequest(userId, matchProfileId, authToken, response.getImageUrl());
             if (postResponseStatus.is2xxSuccessful()) {
                 return createImageUploadResponse(true, response.getImageUrl(), HttpStatus.OK, DEFAULT_DESCRIPTION);
             }
@@ -189,26 +182,39 @@ public class AmazonAwsClient {
 //    }
 
     public ImageUploadResponse deleteFileFromS3Bucket(Long userId, Long matchProfileId, String authToken) {
-        Optional<MatchProfile> matchProfileResult = matchProfileRepo.findById(matchProfileId);
-        if (!matchProfileResult.isPresent() || !matchProfileResult.get().getUserProfile().getId().equals(userId)) {
-            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST,
-                    String.format("DeleteFileFromS3Bucket Failure: either no photo belonging to userId %d and matchProfileId %d exists," +
-                            " or malformed url.", userId, matchProfileId));
+        //Use http client to hit GET endpoint in matchProfileController to verify matchProfile exists
+        Object getResponseObject= doGetRequest(userId, matchProfileId, authToken, "matchProfiles");
+        MatchProfile matchProfile = null;
+        try {
+            matchProfile = MatchProfile.createFromObject(getResponseObject);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        String imageUrl = matchProfileResult.get().getProfileImage();
+        if (matchProfile == null || !matchProfile.getUserProfile().getId().equals(userId)) {
+            LOGGER.error("Either matchProfileId={} was not found, or userProfileId contained in the matchProfile result " +
+                            "corresponding to matchProfileId={} does not match the path userProfileId={}",
+                    matchProfileId, matchProfileId, userId);
+
+            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST,
+                    String.format("Error deleting profile image: either matchProfile with id=%d is not a valid matchProfile" +
+                            " or endpoint URL is malformed.", matchProfileId));
+        }
+
+        String imageUrl = matchProfile.getProfileImage();
         String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         s3client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName)); //Delete from S3 bucket
 
         //Use http client to hit updateProfileImageForMatchProfile endpoint in matchProfileController to update image_url to empty string
-        HttpStatus responseStatus = doPost(userId, matchProfileId, authToken, "");
+        HttpStatus responseStatus = doPostRequest(userId, matchProfileId, authToken, "");
         if (responseStatus.isError()) {
             return createImageUploadResponse(false, imageUrl, HttpStatus.BAD_REQUEST,
-                    String.format("Error deleting image_url for matchProfile=%d", matchProfileId));
+                    String.format("Error deleting profile image for matchProfile=%d", matchProfileId));
         }
-        return createImageUploadResponse(true, imageUrl, OK, "DeleteFileFromS3Bucket success.");
+        return createImageUploadResponse(true, imageUrl, OK, "Profile image was successfully deleted from S3 bucket " +
+                "and deleted from profile.");
     }
 
-    private HttpStatus doPost(Long userId, Long matchProfileId, String authToken, String imageUrl) {
+    private HttpStatus doPostRequest(Long userId, Long matchProfileId, String authToken, String imageUrl) {
         HttpPost httpPost = new HttpPost(baseUrl + String.format(MATCH_PROFILE_IMAGE_UPDATE_ENDPOINT, userId, matchProfileId, imageUrl));
         LOGGER.info("Making HTTP POST Request to '{}'", httpPost.getURI());
         httpPost.setHeader("Authorization", authToken);
@@ -217,14 +223,14 @@ public class AmazonAwsClient {
         HttpResponse response;
         try {
             response = httpClient.execute(httpPost);
-            return handleResponse(response);
+            return handlePostResponse(response);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return HttpStatus.UNPROCESSABLE_ENTITY;
     }
 
-    private HttpStatus doGet(Long userId, Long matchProfileId, String authToken) {
+    private Object doGetRequest(Long userId, Long matchProfileId, String authToken, String getObject) {
         HttpGet httpGet = new HttpGet(baseUrl + String.format(MATCH_PROFILE_GET_ENDPOINT, userId, matchProfileId));
         LOGGER.info("Making HTTP GET Request to '{}'", httpGet.getURI());
         httpGet.setHeader("Authorization", authToken);
@@ -232,22 +238,35 @@ public class AmazonAwsClient {
         HttpResponse response;
         try {
             response = httpClient.execute(httpGet);
-            return handleResponse(response);
+            return handleGetResponse(response, getObject);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return HttpStatus.UNPROCESSABLE_ENTITY;
+        return null;
     }
 
-    private HttpStatus handleResponse(HttpResponse response) throws IOException {
+    private HttpStatus handlePostResponse(HttpResponse response) {
         if (response == null) {
             return UNPROCESSABLE_ENTITY;
         }
-        String responseBody = EntityUtils.toString(response.getEntity());
-        Object object = extractEntityObjectFromResponse(responseBody, "matchProfiles");
+        String responseBody = null;
+        try {
+            responseBody = EntityUtils.toString(response.getEntity());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        LOGGER.info("Extracted matchProfile object from response: '{}'", object);
         return extractHttpStatusFromResponse(responseBody);
+    }
+
+    private Object handleGetResponse(HttpResponse response, String objectEntityName) throws IOException {
+        String responseBody = EntityUtils.toString(response.getEntity());
+        HttpStatus httpStatus = extractHttpStatusFromResponse(responseBody);
+        if (httpStatus.is2xxSuccessful()) {
+            //Extract value for 'status' key from JSON string containing response, because generic HttpResponse will always return 200
+            return extractEntityObjectFromResponse(responseBody, objectEntityName);
+        }
+        return null;
     }
 
     private HttpStatus extractHttpStatusFromResponse(String responseBodyString) {
@@ -263,7 +282,11 @@ public class AmazonAwsClient {
         if (!StringUtils.isNullOrEmpty(responseBodyString)) {
             BasicJsonParser parser = new BasicJsonParser();
             Map<String, Object> responseMap = parser.parseMap(responseBodyString);
-            return responseMap.getOrDefault(entityName, null);
+
+            ArrayList<String> entityList =
+                    (ArrayList<String>) responseMap.getOrDefault(entityName, null);
+            // for single DTO lookup response gives array containing single DTO object
+            return entityList == null || entityList.isEmpty() ? null : entityList.get(0);
         }
         return null;
     }

@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.util.LinkedHashMap;
 
 /**
  * Entity representing each individual MatchProfile associated with a user (for 1-3 PupperProfiles).
@@ -73,6 +75,27 @@ public class MatchProfile implements Serializable {
     @Column(name = "profile_image")
     @javax.validation.constraints.Size(max = 100)
     private String profileImage;
+
+    public static MatchProfile createFromObject(Object object) throws ParseException {
+        if (object != null) {
+            LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
+            MatchProfile matchProfile = new MatchProfile();
+            matchProfile.setId((Long) entityObject.get("id"));
+            matchProfile.setUserProfile(
+                    UserProfile.createFromObject(entityObject.get("userProfile")));
+            matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
+            matchProfile.setBreed(Breed.createFromObject(entityObject.get("breed")));
+            matchProfile.setSize(Size.valueOf((String) entityObject.get("size")));
+            matchProfile.setEnergyLevel(Energy.valueOf((String) entityObject.get("energyLevel")));
+            matchProfile.setLifeStage(LifeStage.valueOf((String) entityObject.get("lifeStage")));
+            matchProfile.setScore(((Double) entityObject.get("score")).floatValue());
+            matchProfile.setAboutMe((String) entityObject.get("aboutMe"));
+            matchProfile.setProfileImage((String) entityObject.get("profileImage"));
+
+            return matchProfile;
+        }
+        return null;
+    }
 
     public Long getId() {
         return id;

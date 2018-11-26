@@ -3,9 +3,9 @@ package com.utahmsd.pupper.dao.entity;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 
 /**
  * Entity containing user credentials/account information.
@@ -32,9 +32,17 @@ public class UserAccount implements Serializable {
 
     public UserAccount(){}
 
-    public UserAccount(String username) {
-        this.username = username;
-        this.password = null;
+    public static UserAccount createFromObject(Object object) {
+        if (object != null) {
+            LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
+            UserAccount userAccount = new UserAccount();
+            userAccount.setId((Long) entityObject.get("id"));
+            userAccount.setUsername((String) entityObject.get("username"));
+            userAccount.setPassword((String) entityObject.get("password"));
+
+            return userAccount;
+        }
+        return null;
     }
 
     public long getId() {

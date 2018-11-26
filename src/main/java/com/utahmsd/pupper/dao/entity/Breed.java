@@ -5,6 +5,7 @@ import com.utahmsd.pupper.dto.pupper.Size;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 
 @Entity
 @Table(name = "breed", indexes = {@Index(columnList = "name", name = "name")})
@@ -26,7 +27,22 @@ public class Breed implements Serializable {
     @Column(name = "size")
     private Size size;
 
-    public Long getId() {
+    public static Breed createFromObject(Object object) {
+        if (object != null) {
+            LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
+            Breed breed = new Breed();
+            breed.setId((Long) entityObject.get("id"));
+            breed.setName((String) entityObject.get("name"));
+            breed.setAltName((String) entityObject.get("altName"));
+            breed.setSize(Size.fromValue((String) entityObject.get("size")));
+
+            return breed;
+        }
+        return null;
+    }
+
+
+        public Long getId() {
         return id;
     }
 

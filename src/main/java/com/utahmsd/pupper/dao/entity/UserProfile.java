@@ -11,7 +11,10 @@ import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 @Entity
 @Table(name = "user_profile", indexes = @Index(columnList = "user_account_id_fk", name = "user_profile_ibfk_1"))
@@ -66,6 +69,26 @@ public class UserProfile implements Serializable {
     private Date lastLogin;
 
     public UserProfile(){}
+
+    public static UserProfile createFromObject(Object object) throws ParseException {
+        if (object != null) {
+            LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
+            UserProfile userProfile = new UserProfile();
+            userProfile.setId((Long) entityObject.get("id"));
+            userProfile.setUserAccount(UserAccount.createFromObject(entityObject.get("userAccount")));
+            userProfile.setFirstName((String) entityObject.get("firstName"));
+            userProfile.setLastName((String) entityObject.get("lastName"));
+            userProfile.setSex((String) entityObject.get("sex"));
+            userProfile.setBirthdate(new SimpleDateFormat("yyyy-MM-dd").parse((String) entityObject.get("birthdate")));
+            userProfile.setMaritalStatus((String) entityObject.get("maritalStatus"));
+            userProfile.setZip((String) entityObject.get("zip"));
+            userProfile.setDateJoin(new SimpleDateFormat("yyyy-MM-dd").parse((String) entityObject.get("dateJoin")));
+            userProfile.setLastLogin(new SimpleDateFormat("yyyy-MM-dd HH:mm a").parse((String) entityObject.get("lastLogin")));
+
+            return userProfile;
+        }
+        return null;
+    }
 
     public Long getId() {
         return id;
