@@ -33,7 +33,7 @@ public class PupperMessage implements Serializable {
 
     @PastOrPresent
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
-    private Date timestamp;
+    private String timestamp;
 
     @Size(max = 500)
     @NotBlank
@@ -63,11 +63,11 @@ public class PupperMessage implements Serializable {
         this.matchProfileReceiver = matchProfileReceiver;
     }
 
-    public Date getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 

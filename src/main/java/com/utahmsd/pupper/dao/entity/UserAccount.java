@@ -25,14 +25,10 @@ public class UserAccount implements Serializable {
     @Size(max = 100)
     @NotBlank
     private String password;
-//
-//    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL,
-//            fetch = FetchType.LAZY, optional = false)
-//    private UserProfile userProfile;
 
     public UserAccount(){}
 
-    public static UserAccount createFromObject(Object object) {
+    static UserAccount createFromObject(Object object) {
         if (object != null) {
             LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
             UserAccount userAccount = new UserAccount();
@@ -66,12 +62,5 @@ public class UserAccount implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-//
-//    public UserProfile getUserProfile() {
-//        return userProfile;
-//    }
-//
-//    public void setUserProfile(UserProfile userProfile) {
-//        this.userProfile = userProfile;
-//    }
+
 }

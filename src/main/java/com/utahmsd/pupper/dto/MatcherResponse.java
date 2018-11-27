@@ -6,14 +6,14 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-public class PupperMatcherResponse extends BaseResponse {
+public class MatcherResponse extends BaseResponse {
 
     @JsonProperty("matchResults")
     private List<MatchResult> matchResults;
 
-    public static PupperMatcherResponse createPupperMatcherResponse(boolean success, List<MatchResult> matchResults,
-                                                                    HttpStatus code, String description) {
-        PupperMatcherResponse response = new PupperMatcherResponse();
+    public static MatcherResponse createPupperMatcherResponse(boolean success, List<MatchResult> matchResults,
+                                                              HttpStatus code, String description) {
+        MatcherResponse response = new MatcherResponse();
         response.setSuccess(success);
         response.setMatchResults(matchResults);
         response.setStatus(code);

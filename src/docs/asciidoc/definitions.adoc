@@ -76,29 +76,35 @@ __Type__ : object
 [[_matchprofile]]
 === MatchProfile
 
-[options="header", cols=".^3a,.^4a"]
+[options="header", cols=".^3a,.^11a,.^4a"]
 |===
-|Name|Schema
+|Name|Description|Schema
 |**aboutMe** +
-__optional__|string
+__optional__||string
+|**birthdate** +
+__optional__|**Example** : `"yyyy-MM-dd"`|string
 |**breed** +
-__optional__|<<_breed,Breed>>
+__optional__||<<_breed,Breed>>
 |**energyLevel** +
-__optional__|enum (MIN, LOW, MED, HIGH, EXTREME)
+__optional__||enum (MIN, LOW, MED, HIGH, EXTREME)
 |**id** +
-__optional__|integer (int64)
+__optional__||integer (int64)
 |**lifeStage** +
-__optional__|enum (PUPPY, YOUNG, ADULT, MATURE)
+__optional__||enum (PUPPY, YOUNG, ADULT, MATURE)
+|**names** +
+__optional__||string
 |**numDogs** +
-__optional__|integer (int32)
+__optional__||integer (int32)
 |**profileImage** +
-__optional__|string
+__optional__||string
 |**score** +
-__optional__|number (float)
+__optional__||number (float)
+|**sex** +
+__optional__||string
 |**size** +
-__optional__|enum (TOY, SMALL, MID, LARGE, XLARGE)
+__optional__||enum (TOY, SMALL, MID, LARGE, XLARGE)
 |**userProfile** +
-__optional__|<<_userprofile,UserProfile>>
+__optional__||<<_userprofile,UserProfile>>
 |===
 
 
@@ -130,7 +136,7 @@ __optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 2
 |**id** +
 __optional__||integer (int64)
 |**lastUpdateToMatchResult** +
-__optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
+__optional__|**Example** : `"yyyy-MM-dd"`|string
 |**matchForProfileOne** +
 __optional__||boolean
 |**matchForProfileTwo** +
@@ -139,6 +145,61 @@ __optional__||boolean
 __optional__||<<_matchprofile,MatchProfile>>
 |**matchProfileTwo** +
 __optional__||<<_matchprofile,MatchProfile>>
+|===
+
+
+[[_matcherdatarequest]]
+=== MatcherDataRequest
+
+[options="header", cols=".^3a,.^11a,.^4a"]
+|===
+|Name|Description|Schema
+|**matchResultMap** +
+__optional__||< string, boolean > map
+|**playerId** +
+__optional__||integer (int64)
+|**timestamp** +
+__optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
+|===
+
+
+[[_matcherdataresponse]]
+=== MatcherDataResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**matcherData** +
+__optional__|< <<_profilecard,ProfileCard>> > array
+|**playerId** +
+__optional__|integer (int64)
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|===
+
+
+[[_matcherresponse]]
+=== MatcherResponse
+
+[options="header", cols=".^3a,.^4a"]
+|===
+|Name|Schema
+|**description** +
+__optional__|string
+|**isSuccess** +
+__optional__|boolean
+|**matchResults** +
+__optional__|< <<_matchresult,MatchResult>> > array
+|**responseCode** +
+__optional__|integer (int32)
+|**status** +
+__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
 |===
 
 
@@ -161,41 +222,30 @@ __optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 2
 |===
 
 
-[[_puppermatcherrequest]]
-=== PupperMatcherRequest
-
-[options="header", cols=".^3a,.^11a,.^4a"]
-|===
-|Name|Description|Schema
-|**isLike** +
-__optional__||boolean
-|**like** +
-__optional__||boolean
-|**matchingProfile** +
-__optional__||<<_matchprofile,MatchProfile>>
-|**pupperMatch** +
-__optional__||<<_matchprofile,MatchProfile>>
-|**timestamp** +
-__optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
-|===
-
-
-[[_puppermatcherresponse]]
-=== PupperMatcherResponse
+[[_profilecard]]
+=== ProfileCard
 
 [options="header", cols=".^3a,.^4a"]
 |===
 |Name|Schema
-|**description** +
+|**aboutMe** +
 __optional__|string
-|**isSuccess** +
-__optional__|boolean
-|**matchResults** +
-__optional__|< <<_matchresult,MatchResult>> > array
-|**responseCode** +
-__optional__|integer (int32)
-|**status** +
-__optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511)
+|**ageWithUnits** +
+__optional__|string
+|**breedName** +
+__optional__|string
+|**lastActive** +
+__optional__|string
+|**location** +
+__optional__|string
+|**name** +
+__optional__|string
+|**profileId** +
+__optional__|integer (int64)
+|**profileImage** +
+__optional__|string
+|**sex** +
+__optional__|string
 |===
 
 
@@ -313,10 +363,12 @@ __optional__||string
 |**id** +
 __optional__||integer (int64)
 |**lastLogin** +
-__optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
+__optional__|**Example** : `"yyyy-MM-dd"`|string
 |**lastName** +
 __optional__||string
 |**maritalStatus** +
+__optional__||string
+|**profileImage** +
 __optional__||string
 |**sex** +
 __optional__||string

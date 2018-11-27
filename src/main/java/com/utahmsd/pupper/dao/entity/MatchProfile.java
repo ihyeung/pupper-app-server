@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
@@ -11,6 +12,7 @@ import javax.validation.constraints.*;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 /**
@@ -42,9 +44,23 @@ public class MatchProfile implements Serializable {
     @Valid
     private UserProfile userProfile;
 
+    @Column(name = "names")
+    @NotBlank
+    private String names;
+
     @DefaultValue("1")
     @Column(name = "num_dogs")
     private int numDogs;
+
+    @Max(1)
+    @Column(name = "sex")
+    private char sex; //M or F
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Column(name = "birthdate")
+    @Past
+    private Date birthdate;
+
 
     @ManyToOne //Many match profiles can belong to a type of breed, but a match profile can only be one breed
     @JoinColumn(name = "breed_id_fk")
@@ -83,6 +99,7 @@ public class MatchProfile implements Serializable {
             matchProfile.setId((Long) entityObject.get("id"));
             matchProfile.setUserProfile(
                     UserProfile.createFromObject(entityObject.get("userProfile")));
+            matchProfile.setNames((String) entityObject.get("names"));
             matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
             matchProfile.setBreed(Breed.createFromObject(entityObject.get("breed")));
             matchProfile.setSize(Size.valueOf((String) entityObject.get("size")));
@@ -112,12 +129,36 @@ public class MatchProfile implements Serializable {
         this.userProfile = userProfile;
     }
 
+    public String getNames() {
+        return names;
+    }
+
+    public void setNames(String names) {
+        this.names = names;
+    }
+
     public int getNumDogs() {
         return numDogs;
     }
 
     public void setNumDogs(int numDogs) {
         this.numDogs = numDogs;
+    }
+
+    public char getSex() {
+        return sex;
+    }
+
+    public void setSex(char sex) {
+        this.sex = sex;
+    }
+
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
     }
 
     public Breed getBreed() {

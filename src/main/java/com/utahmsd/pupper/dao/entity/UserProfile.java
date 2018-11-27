@@ -26,7 +26,7 @@ public class UserProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_account_id_fk")
     @Valid
     private UserAccount userAccount;
@@ -63,27 +63,34 @@ public class UserProfile implements Serializable {
     @PastOrPresent
     private Date dateJoin;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "last_login")
     @PastOrPresent
     private Date lastLogin;
 
+    @Column(name = "profile_image")
+    @javax.validation.constraints.Size(max = 100)
+    private String profileImage;
+
     public UserProfile(){}
 
-    public static UserProfile createFromObject(Object object) throws ParseException {
+    static UserProfile createFromObject(Object object) throws ParseException {
         if (object != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
+
             UserProfile userProfile = new UserProfile();
             userProfile.setId((Long) entityObject.get("id"));
             userProfile.setUserAccount(UserAccount.createFromObject(entityObject.get("userAccount")));
             userProfile.setFirstName((String) entityObject.get("firstName"));
             userProfile.setLastName((String) entityObject.get("lastName"));
             userProfile.setSex((String) entityObject.get("sex"));
-            userProfile.setBirthdate(new SimpleDateFormat("yyyy-MM-dd").parse((String) entityObject.get("birthdate")));
+            userProfile.setBirthdate(dateFormat.parse((String) entityObject.get("birthdate")));
             userProfile.setMaritalStatus((String) entityObject.get("maritalStatus"));
             userProfile.setZip((String) entityObject.get("zip"));
-            userProfile.setDateJoin(new SimpleDateFormat("yyyy-MM-dd").parse((String) entityObject.get("dateJoin")));
-            userProfile.setLastLogin(new SimpleDateFormat("yyyy-MM-dd HH:mm a").parse((String) entityObject.get("lastLogin")));
+            userProfile.setDateJoin(dateFormat.parse((String) entityObject.get("dateJoin")));
+            userProfile.setLastLogin(dateFormat.parse((String) entityObject.get("lastLogin")));
+            userProfile.setProfileImage((String) entityObject.get("profileImage"));
 
             return userProfile;
         }
@@ -161,4 +168,12 @@ public class UserProfile implements Serializable {
     public Date getLastLogin() { return lastLogin; }
 
     public void setLastLogin(Date lastLogin) { this.lastLogin = lastLogin; }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
 }

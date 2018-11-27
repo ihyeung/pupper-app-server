@@ -2,7 +2,7 @@ package com.utahmsd.pupper.controller;
 
 import com.utahmsd.pupper.dao.entity.PupperMessage;
 import com.utahmsd.pupper.dto.MessageResponse;
-import com.utahmsd.pupper.service.PupperMessageService;
+import com.utahmsd.pupper.service.MessageService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,21 +15,21 @@ import java.util.List;
 @RequestMapping("/message")
 public class MessageController {
 
-    private final PupperMessageService pupperMessageService;
+    private final MessageService messageService;
 
     @Autowired
-    public MessageController (PupperMessageService pupperMessageService) {
-        this.pupperMessageService = pupperMessageService;
+    public MessageController (MessageService messageService) {
+        this.messageService = messageService;
     }
 
     @GetMapping()
     public List<PupperMessage> getAllMessages() {
-        return pupperMessageService.getAllMessages();
+        return messageService.getAllMessages();
     }
 
     @GetMapping(params = {"limit"})
     public List<PupperMessage> getAllMessagesWithLimit(@RequestParam("limit") int messageLimit) {
-        return pupperMessageService.getMessagesWithLimit(messageLimit);
+        return messageService.getMessagesWithLimit(messageLimit);
     }
 
     /*
@@ -37,7 +37,7 @@ public class MessageController {
      */
     @GetMapping(path="/matchProfile/{matchProfileId}")
     public List<PupperMessage> getAllMessagesByMatchProfileId(@PathVariable("matchProfileId") Long matchProfileId) {
-        return pupperMessageService.getAllMessagesByMatchProfileId(matchProfileId);
+        return messageService.getAllMessagesByMatchProfileId(matchProfileId);
     }
 
     /*
@@ -46,7 +46,7 @@ public class MessageController {
     @GetMapping(path="/matchProfile/{matchProfileId1}/matchProfile/{matchProfileId2}")
     public List<PupperMessage> getMessageHistory(@PathVariable("matchProfileId1") Long matchProfileId1,
                                              @PathVariable("matchProfileId2") Long matchProfileId2) {
-        return pupperMessageService.getMessageHistoryByMatchProfileIds(matchProfileId1, matchProfileId2);
+        return messageService.getMessageHistoryByMatchProfileIds(matchProfileId1, matchProfileId2);
     }
 
     /*
@@ -66,22 +66,22 @@ public class MessageController {
     /*
     Creates pupper_message record containing a message sent from fromMatchProfileId to toMatchProfileId.
      */
-    @PostMapping(path="/matchProfile/{fromMatchProfileId}/matchProfile/{toMatchProfileId}")
+    @PostMapping(path="/matchProfile/{fromMatchProfileId}", params = {"sendTo"})
     public MessageResponse sendMessageToMatch(@PathVariable("fromMatchProfileId") Long senderId,
-                                              @PathVariable("toMatchProfileId") Long receiverId,
+                                              @RequestParam("sendTo") Long receiverId,
                                               @RequestBody @Valid final PupperMessage pupperMessage) {
 
-        return pupperMessageService.sendMessage(senderId, receiverId, pupperMessage);
+        return messageService.sendMessage(senderId, receiverId, pupperMessage);
     }
 
     /*
     Delete endpoint that removes all pupper_message messages between a given pair of matchProfiles.
     Use case: A matchProfile unmatches with another matchProfile.
      */
-    @DeleteMapping(path="/matchProfile/{matchProfileId1}/matchProfile/{matchProfileId2}")
+    @DeleteMapping(path="/matchProfile/{matchProfileId1}", params = {"messageFor"})
     public MessageResponse deleteAllMessagesBetweenMatchProfilesById(@PathVariable("matchProfileId1") Long matchProfileId1,
-                                                                     @PathVariable("matchProfileId2") Long matchProfileId2) {
-        return pupperMessageService.deleteMessageHistoryByMatchProfileIds(matchProfileId1, matchProfileId2);
+                                                                     @RequestParam("messageFor") Long matchProfileId2) {
+        return messageService.deleteMessageHistoryByMatchProfileIds(matchProfileId1, matchProfileId2);
     }
 
     /*
@@ -90,6 +90,6 @@ public class MessageController {
     */
     @DeleteMapping(path="/matchProfile/{matchProfileId}")
     public MessageResponse deleteAllMessagesByMatchProfileId(@PathVariable("matchProfileId") Long matchProfileId) {
-        return pupperMessageService.deleteAllMessagesByMatchProfileId(matchProfileId);
+        return messageService.deleteAllMessagesByMatchProfileId(matchProfileId);
     }
 }

@@ -1,7 +1,6 @@
 package com.utahmsd.pupper.util;
 
 import com.utahmsd.pupper.dto.pupper.LifeStage;
-import com.utahmsd.pupper.service.UserProfileService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,25 +12,23 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 
-import static com.utahmsd.pupper.util.Constants.PUPPER_AGE;
-
 public class PupperUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PupperUtils.class);
+    static final String DEFAULT_AGE = "0 years old";
+    private static final String PUPPER_AGE = "%d %s old";
 
     public static LifeStage ageToStage(String age) throws ValidationException {
-        CharSequence ageUnits = "DWMY";
+        CharSequence ageUnits = "YMD";
         if (!StringUtils.containsAny(ageUnits, age.toUpperCase())) {
             throw new ValidationException("Age field is missing units");
         }
-        //if units contains 'D', trim, replace to get ageInDays,
-        //if units contains 'W', trim, replace to get ageInWeeks,
-        //if units contains 'M', trim, replace to get ageInMonths,
+        //TODO
         return null;
     }
 
     public static LifeStage dobToLifeStage(Date date) {
-        String ageString = calculateAge(date);
+        String ageString = createAgeStringFromDate(date);
         try {
             return ageToStage(ageString);
         } catch (ValidationException e) {
@@ -40,28 +37,42 @@ public class PupperUtils {
         return null;
     }
 
-    public static String calculateAge(Date dob) {
-        if (dob == null) {
-            return String.format(PUPPER_AGE, 0, 0, 0, 0);
-        }
+    /**
+     * Converts a Date object to a displayable age string. e.g. "4 years old" or "12 weeks old".
+     * @param dob
+     * @return
+     */
+    public static String createAgeStringFromDate(Date dob) {
         Date currentDate = Date.from(Instant.now());
+        if (dob == null) {
+            LOGGER.error("Null birthdate.");
+            return DEFAULT_AGE;
+        }
         LocalDate now = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate birhdate = dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        int years = Period.between(birhdate, now).getYears();
-        int months = Period.between(birhdate, now).getMonths();
-        int weeks = Period.between(birhdate, now).getDays()/7;
-        int days = Period.between(birhdate, now).getDays() % 7;
 
-        if (years < 0 || months < 0 || weeks < 0 || days < 0) {
-            LOGGER.error("Invalid future date was entered for birthdate: {}", dob);
-            return String.format(PUPPER_AGE, 0, 0, 0, 0);
-        }
-        System.out.println("Years: " + years);
-        System.out.println("Months: " + months);
-        System.out.println("Weeks: " + weeks);
-        System.out.println("Days: " + days);
-
-        return String.format(PUPPER_AGE, years, months, weeks, days);
-
+        Period agePeriod = Period.between(birhdate, now);
+        return createAgeStringFromPeriod(agePeriod);
     }
+
+    private static String createAgeStringFromPeriod(Period period) {
+        if (period.isZero() || period.isNegative()) {
+            return DEFAULT_AGE;
+        }
+        if (period.getYears() > 0) {
+            return String.format(PUPPER_AGE, period.getYears(), "years");
+        } else {
+            if (period.getMonths() >= 4) {
+                return String.format(PUPPER_AGE, period.getMonths(), "months");
+            }
+            int weeks = period.getMonths() * 4  + period.getDays()/7;
+            int days = period.getDays() % 7;
+
+            return weeks > 0 ? String.format(PUPPER_AGE, weeks, "weeks") : days > 0 ?
+            String.format(PUPPER_AGE, period.getDays(), "days") : DEFAULT_AGE;
+
+        }
+    }
+
+
 }

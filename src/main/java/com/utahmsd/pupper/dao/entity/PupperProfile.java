@@ -70,7 +70,6 @@ public class PupperProfile implements Serializable {
     @Column(name = "is_fixed")
     private boolean isFixed;
 
-
     public Long getId() {
         return id;
     }

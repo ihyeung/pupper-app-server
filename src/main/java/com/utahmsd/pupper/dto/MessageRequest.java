@@ -19,7 +19,7 @@ public class MessageRequest {
 
     @JsonProperty("timestamp")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
-    private Date timestamp;
+    private String timestamp;
 
     @JsonProperty("messageContents")
     private String messageContents;
@@ -40,11 +40,11 @@ public class MessageRequest {
         this.receiverMatchProfileId = receiverMatchProfileId;
     }
 
-    public Date getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 

@@ -9,13 +9,13 @@ import com.utahmsd.pupper.dao.entity.MatchProfile;
 import java.util.Date;
 
 /**
- * DTO representing requests that will sent when a user is using the PupperMatcher using a given (selected)
+ * DTO representing a single request that will sent when a user is using the PupperMatcher using a given (selected)
  * matching profile and clicks either yes or no button
  * for another matching profile.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class PupperMatcherRequest {
+public class MatcherRequest {
 
     @JsonProperty("matchingProfile")
     private MatchProfile matchProfile; //The match profile of the user who is doing the swiping/clicking
@@ -27,7 +27,7 @@ public class PupperMatcherRequest {
     private boolean isLike; // Whether the yes/like button was clicked by the user
 
     @JsonProperty("timestamp")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date date;
 
     public MatchProfile getMatchProfile() {

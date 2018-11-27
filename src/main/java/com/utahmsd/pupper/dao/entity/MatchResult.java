@@ -43,7 +43,7 @@ public class MatchResult implements Serializable {
 
     @Column(name = "last_update_match_result")
     @PastOrPresent
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date lastUpdateToMatchResult; //Date that match result was last updated
 
     public Long getId() { return id; }

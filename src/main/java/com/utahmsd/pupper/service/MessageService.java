@@ -23,10 +23,10 @@ import static java.util.Collections.emptyList;
 
 @Named
 @Singleton
-public class PupperMessageService {
+public class MessageService {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PupperMessageService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
     private final String DEFAULT_SORT_ORDER = "timestamp";
 
@@ -34,7 +34,7 @@ public class PupperMessageService {
     private final MatchResultRepo matchResultRepo;
 
     @Autowired
-    PupperMessageService(MessageRepo messageRepo, MatchResultRepo matchResultRepo) {
+    MessageService(MessageRepo messageRepo, MatchResultRepo matchResultRepo) {
         this.messageRepo = messageRepo;
         this.matchResultRepo = matchResultRepo;
     }
