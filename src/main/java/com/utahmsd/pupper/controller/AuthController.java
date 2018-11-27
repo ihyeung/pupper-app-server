@@ -53,8 +53,8 @@ public class AuthController {
 //        return userCredentialsService.authenticateUser(request);
 //    }
 
-    @GetMapping(path="/user/{userId}/account")
-    public UserAuthenticationResponse getCredentialsByUserId(@PathVariable("userId") Long userProfileId) {
+    @GetMapping(path="/account", params = {"userId"})
+    public UserAuthenticationResponse getCredentialsByUserId(@RequestParam("userId") Long userProfileId) {
         return userAccountService.getUserAccountByUserProfileId(userProfileId);
     }
 }
