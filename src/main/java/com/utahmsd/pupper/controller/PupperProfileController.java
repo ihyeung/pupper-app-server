@@ -30,6 +30,13 @@ public class PupperProfileController {
         return pupperProfileService.getAllPupperProfiles();
     }
 
+    @GetMapping(path="/pupper", params = {"sortBy", "limit"})
+    public PupperProfileResponse getAllPupperProfiles(@RequestParam("sortBy") String sort,
+                                                      @RequestParam("limit") int limit) {
+
+        return pupperProfileService.getAllPupperProfiles(sort, limit);
+    }
+
     @GetMapping(path ="/pupper/breed")
     public BreedResponse getPupperBreedList() {
         return pupperProfileService.getBreeds();
@@ -40,9 +47,19 @@ public class PupperProfileController {
         return pupperProfileService.getPupperProfilesByBreedId(breedId);
     }
 
+    @GetMapping(path ="/pupper", params = {"breed"})
+    public PupperProfileResponse getPupperProfilesByBreedId(@PathVariable("breed") String breed) {
+        return pupperProfileService.getPupperProfilesByBreedName(breed);
+    }
+
     @GetMapping(path ="/user/{userId}/pupper")
     public PupperProfileResponse getPupperProfilesByUserId(@PathVariable("userId") Long userId) {
         return pupperProfileService.findAllPupperProfilesByUserId(userId);
+    }
+
+    @GetMapping(path ="/pupper", params = {"userEmail"})
+    public PupperProfileResponse getPupperProfilesByUserEmail(@RequestParam("userEmail") String userEmail) {
+        return pupperProfileService.findAllPupperProfilesByUserEmail(userEmail);
     }
 
     @GetMapping(path ="/user/{userId}/matchProfile/{matchProfileId}/pupper")

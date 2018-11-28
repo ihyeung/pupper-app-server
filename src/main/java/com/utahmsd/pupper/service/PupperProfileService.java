@@ -6,6 +6,7 @@ import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
+import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.BreedResponse;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.BreedResponse.createBreedResponse;
 import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileResponse;
+import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
 import static com.utahmsd.pupper.util.PupperUtils.dobToLifeStage;
 import static java.util.Collections.emptyList;
@@ -56,10 +58,25 @@ public class PupperProfileService {
         Iterable<PupperProfile> puppers = pupperProfileRepo.findAll(sortCriteria);
         List<PupperProfile> pupperProfileList = new ArrayList<>();
         if (puppers.iterator().hasNext()) {
-            puppers.forEach(pupperProfile -> {
-                pupperProfileList.add(pupperProfile);
-            });
+            puppers.forEach(pupperProfileList::add);
         }
+        return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public PupperProfileResponse getAllPupperProfiles(String sort, int limit) {
+        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, sort));
+        Iterable<PupperProfile> puppers = pupperProfileRepo.findAll(sortCriteria);
+        List<PupperProfile> pupperProfileList = new ArrayList<>();
+        if (!puppers.iterator().hasNext()) {
+            return createPupperProfileResponse(false, pupperProfileList, HttpStatus.OK,
+                    "No profiles match your search criteria.");
+        }
+
+        puppers.forEach(pupperProfile -> {
+            if (pupperProfileList.size() < limit) {
+                pupperProfileList.add(pupperProfile);
+            }
+        });
         return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -81,6 +98,14 @@ public class PupperProfileService {
 
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
+    }
+
+    public PupperProfileResponse findAllPupperProfilesByUserEmail(String userEmail) {
+        List<PupperProfile> pupperProfileList = pupperProfileRepo.findAllByMatchProfile_UserProfile_UserAccount_Username(userEmail);
+        if (pupperProfileList == null || pupperProfileList.isEmpty()) {
+            return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
+        }
+        return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public PupperProfileResponse findPupperProfileById(Long userId, Long matchProfileId, Long pupperId) {
@@ -181,6 +206,15 @@ public class PupperProfileService {
         }
 
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public PupperProfileResponse getPupperProfilesByBreedName(String breedName) {
+        List<PupperProfile> results = pupperProfileRepo.findAllByBreedName(breedName);
+        if (results == null || results.isEmpty()) {
+            return createPupperProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
+        }
+
+        return createPupperProfileResponse(true, results, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public PupperProfileResponse getPupperProfilesByMatchProfileId(Long userId, Long matchProfileId) {
