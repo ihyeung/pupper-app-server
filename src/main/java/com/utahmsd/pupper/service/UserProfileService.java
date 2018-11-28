@@ -9,6 +9,8 @@ import com.utahmsd.pupper.dto.UserProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
@@ -17,6 +19,7 @@ import javax.inject.Singleton;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
@@ -29,6 +32,7 @@ import static java.util.Collections.emptyList;
 public class UserProfileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
+    private static final String DEFAULT_SORT_ORDER = "lastName";
 
     private final UserProfileRepo userProfileRepo;
     private final UserAccountRepo userAccountRepo;
@@ -41,7 +45,7 @@ public class UserProfileService {
 
     public UserProfileResponse getAllUserProfiles(String sortBy, String limit) {
         int resultLimit = StringUtils.isNullOrEmpty(limit) ? 100 : Integer.valueOf(limit);
-        String sortParam = StringUtils.isNullOrEmpty(sortBy) ? "lastName" : sortBy;
+        String sortParam = StringUtils.isNullOrEmpty(sortBy) ? DEFAULT_SORT_ORDER : sortBy;
         Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, sortParam));
         Iterable<UserProfile> users = userProfileRepo.findAll(sortCriteria);
         ArrayList<UserProfile> userList = new ArrayList<>();
@@ -54,6 +58,19 @@ public class UserProfileService {
             }
         });
         return createUserProfileResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserProfileResponse getUserProfilesByZip(String zipCode) {
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER));
+        Page<UserProfile> results = userProfileRepo.findByZip(zipCode, PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, sort));
+        long numResults = results.getTotalElements();
+        LOGGER.info("Number of results with zipcode {}: {}", zipCode,  numResults);
+        if (numResults > 0) {
+            return createUserProfileResponse(true, results.getContent(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+        return createUserProfileResponse(true, Collections.emptyList(),
+                HttpStatus.NO_CONTENT, String.format("No users found with zipcode %s", zipCode));
+
     }
 
     public UserProfileResponse findUserProfileById(Long id) {

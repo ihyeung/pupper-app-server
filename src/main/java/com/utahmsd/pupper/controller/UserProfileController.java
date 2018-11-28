@@ -3,7 +3,6 @@ package com.utahmsd.pupper.controller;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserProfileResponse;
 import com.utahmsd.pupper.service.UserProfileService;
-import com.utahmsd.pupper.service.filter.UserProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +15,10 @@ import javax.validation.Valid;
 public class UserProfileController {
 
     private final UserProfileService userProfileService;
-    private final UserProfileFilterService userProfileFilterService;
 
     @Autowired
-    UserProfileController(UserProfileService userProfileService, UserProfileFilterService userProfileFilterService) {
+    UserProfileController(UserProfileService userProfileService) {
         this.userProfileService = userProfileService;
-        this.userProfileFilterService = userProfileFilterService;
     }
 
     @GetMapping(params = {"sortBy", "limit"})
@@ -67,11 +64,9 @@ public class UserProfileController {
         return userProfileService.deleteUserProfileById(userId);
     }
 
-    //Search result query filter endpoints
-
     @GetMapping(params = {"zip"})
     public UserProfileResponse getUserProfilesWithZip(@RequestParam(value = "zip") String zip) {
-        return userProfileFilterService.filterUserProfilesByZip(zip);
+        return userProfileService.getUserProfilesByZip(zip);
     }
 
 }
