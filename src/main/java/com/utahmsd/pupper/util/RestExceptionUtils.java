@@ -7,7 +7,7 @@ import javax.validation.ValidationException;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
-public class RestUtils {
+public class RestExceptionUtils {
     public static RuntimeException mapException(final Throwable th) {
         if (th instanceof ValidationException) {
             return new RestException(

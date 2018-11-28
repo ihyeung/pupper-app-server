@@ -99,7 +99,7 @@ public class UserProfileService {
     public UserProfileResponse updateUserProfile(Long userId, final UserProfile userProfile) {
         Optional<UserProfile> result = userProfileRepo.findById(userId);
         if (!result.isPresent()) {
-            LOGGER.error("Error updating user profile for userId {}: invalid request", userId);
+            LOGGER.error("Error updating user profile for id={}: invalid request", userId);
 
             return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
                     String.format("UpdateUserProfile error: %s", NOT_FOUND));
@@ -109,7 +109,7 @@ public class UserProfileService {
         }
         userProfileRepo.save(userProfile);
 
-        LOGGER.info("User profile with id {} was found, updating existing profile", userId);
+        LOGGER.info("User profile with id={} was found, updating existing profile", userId);
         return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -127,12 +127,12 @@ public class UserProfileService {
         public UserProfileResponse deleteUserProfileById(Long id) {
         Optional<UserProfile> result = userProfileRepo.findById(id);
         if (!result.isPresent()) {
-            LOGGER.error("Error deleting user profile: user profile with id {} not found", id);
+            LOGGER.error("Error: user profile with id={} not found", id);
             return createUserProfileResponse( false, emptyList(), HttpStatus.NOT_FOUND,
                     String.format(USER_NOT_FOUND, id));
         }
         userProfileRepo.deleteById(id);
-        LOGGER.info("User profile with id {} was deleted successfully", id);
+        LOGGER.info("User profile with id={} was deleted successfully", id);
 
         return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }

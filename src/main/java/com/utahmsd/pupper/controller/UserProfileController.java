@@ -59,9 +59,7 @@ public class UserProfileController {
 
     /*
     Delete endpoint for deleting a userProfile.
-
     This endpoint will only ever be called when coupled with the following calls (in order of occurrence):
-    -
     -AuthController deleteAccount endpoint to delete the UserAccount
      */
     @DeleteMapping(path ="/{userId}")

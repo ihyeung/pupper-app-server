@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.UserAuthenticationResponse.createUserAuthResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
+import static com.utahmsd.pupper.util.Constants.INVALID_PATH_VARIABLE;
 import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
 import static java.util.Collections.emptyList;
 
@@ -43,7 +44,7 @@ public class UserAccountService implements UserDetailsService {
         this.userProfileRepo = userProfileRepo;
     }
 
-    public UserAuthenticationResponse getAllUserCredentials() {
+    public UserAuthenticationResponse getAllUserAccounts() {
         Iterable<UserAccount> resultList = userAccountRepo.findAll();
         List<UserAccount> userList = new ArrayList<>();
         if (resultList.iterator().hasNext()) {
@@ -52,19 +53,29 @@ public class UserAccountService implements UserDetailsService {
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAuthenticationResponse findUserCredentialsByAccountId(Long userAccountId) {
+    public UserAuthenticationResponse findUserAccountById(Long userAccountId) {
         Optional<UserAccount> result = userAccountRepo.findById(userAccountId);
         if (!result.isPresent()) {
-            LOGGER.error("User credentials with id {} not found", userAccountId);
+            LOGGER.error("User account with id {} not found", userAccountId);
             return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND,
                     String.format("User credentials with id = %d not found", userAccountId));
         }
 
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
-
     }
 
-    public UserAuthenticationResponse createUserCredentials(UserAccount userAccount) {
+    public UserAuthenticationResponse findUserAccountByEmail(String email) {
+        UserAccount result = userAccountRepo.findByUsername(email);
+        if (result == null) {
+            LOGGER.error("User account with email '{}' not found", email);
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND,
+                    String.format("User account with email = '%s' not found", email));
+        }
+
+        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserAuthenticationResponse createUserAccount(UserAccount userAccount) {
         if (loadUserByUsername(userAccount.getUsername()) != null) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.CONFLICT,
                     "An account with that username already exists.");
@@ -72,25 +83,21 @@ public class UserAccountService implements UserDetailsService {
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         UserAccount savedUser = userAccountRepo.save(userAccount);
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(savedUser)), HttpStatus.OK, DEFAULT_DESCRIPTION);
-//        request.getUser()
+
 //        UserCredentials userCredentials = new UserCredentials();
 //        userCredentials.setUser(request.getUser());
 //        String salt = generateSaltString(NUM_SALT_BYTES);
 //        userCredentials.setSalt(salt);
 //        userCredentials.setDateJoined(Date.valueOf(LocalDate.now()));
-//        System.out.println("PASSWORD CLEARTEXT: " + userCredentials.getUser().getPassword());
-//        System.out.println("PASSWORD ENCRYPTED: " + bCryptPasswordEncoder.encode(userCredentials.getUser().getPassword()));
-//
 //        userCredentials.setComputedHash(generateHash(request.getUser().getPassword(), salt.getBytes()));
 //        UserCredentials userCredentialsResult = userAccountRepo.save(userCredentials);
-
     }
 
-    public UserAuthenticationResponse updateUserCredentialsById(Long accountId, UserAccount userAccount) {
+    public UserAuthenticationResponse updateUserAccountById(Long accountId, UserAccount userAccount) {
         //First check to make sure email is registered as an existing account, and that the path param id and the request body id match
         if (loadUserByUsername(userAccount.getUsername()) == null || accountId != userAccount.getId()) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
-                    "Invalid updateCredentialsById request.");
+                    "Invalid updateAccountById request.");
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         userAccountRepo.save(userAccount);
@@ -98,13 +105,37 @@ public class UserAccountService implements UserDetailsService {
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAuthenticationResponse deleteUserCredentialsById(Long accountId) {
+    public UserAuthenticationResponse updateUserAccountByEmail(String email, UserAccount userAccount) {
+        if (!userAccount.getUsername().equals(email)) {
+            LOGGER.error("Email does not match.");
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        }
+        UserAccount result = userAccountRepo.findByUsername(email);
+        if (result == null) {
+            LOGGER.error("A user account with username = {} was not found.", email);
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
+        }
+        userAccountRepo.save(userAccount);
+        return createUserAuthResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserAuthenticationResponse deleteUserAccountById(Long accountId) {
         Optional<UserAccount> result = userAccountRepo.findById(accountId);
         if (!result.isPresent()) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND,
                     "Invalid deleteCredentialsById request.");
         }
         userAccountRepo.deleteById(accountId);
+        return createUserAuthResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserAuthenticationResponse deleteUserAccountByEmail(String email) {
+        UserAccount result = userAccountRepo.findByUsername(email);
+        if (result == null) {
+            LOGGER.error("A user account with username = {} was not found.", email);
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
+        }
+        userAccountRepo.deleteById(result.getId());
         return createUserAuthResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 

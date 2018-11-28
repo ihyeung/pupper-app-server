@@ -13,6 +13,7 @@ import static com.utahmsd.pupper.security.SecurityConstants.REGISTER_ENDPOINT;
 
 @RestController
 @Api(value = "UserAccount/Auth Controller For Testing UserAccount")
+@RequestMapping("/account")
 public class AuthController {
 
     private final UserAccountService userAccountService;
@@ -22,39 +23,50 @@ public class AuthController {
         this.userAccountService = userAccountService;
     }
 
-    @GetMapping(path="/account")
-    public UserAuthenticationResponse getAllCredentials() {
-        return userAccountService.getAllUserCredentials();
+    @GetMapping()
+    public UserAuthenticationResponse getAllAccounts() {
+        return userAccountService.getAllUserAccounts();
     }
 
-    @GetMapping(path="/account/{accountId}")
-    public UserAuthenticationResponse getCredentialsByAccountId(@PathVariable("accountId") Long accountId) {
-        return userAccountService.findUserCredentialsByAccountId(accountId);
+    @GetMapping(path="/{accountId}")
+    public UserAuthenticationResponse getAccountById(@PathVariable("accountId") Long accountId) {
+        return userAccountService.findUserAccountById(accountId);
+    }
+
+    @GetMapping(params = {"email"})
+    public UserAuthenticationResponse getAccountByEmail(@RequestParam("email") String email) {
+        return userAccountService.findUserAccountByEmail(email);
     }
 
     @PostMapping(path = REGISTER_ENDPOINT)
     public UserAuthenticationResponse registerUser(@RequestBody @Valid final UserAccount userAccount) {
-        return userAccountService.createUserCredentials(userAccount);
+        return userAccountService.createUserAccount(userAccount);
     }
 
-    @PutMapping(path = "/account/{accountId}")
-    public UserAuthenticationResponse updateCredentialsById(@PathVariable("accountId") Long accountId,
-                                                            @RequestBody @Valid final UserAccount userAccount) {
-        return userAccountService.updateUserCredentialsById(accountId, userAccount);
+    @PutMapping(path = "/{accountId}")
+    public UserAuthenticationResponse updateAccountById(@PathVariable("accountId") Long accountId,
+                                                        @RequestBody @Valid final UserAccount userAccount) {
+        return userAccountService.updateUserAccountById(accountId, userAccount);
     }
 
-    @DeleteMapping(path = "/account/{accountId}")
+    @PutMapping(params = {"email"})
+    public UserAuthenticationResponse updateAccountByEmail(@RequestParam("email") String email,
+                                                           @RequestBody @Valid final UserAccount userAccount) {
+        return userAccountService.updateUserAccountByEmail(email, userAccount);
+    }
+
+    @DeleteMapping(path = "/{accountId}")
     public UserAuthenticationResponse deleteCredentialsById(@PathVariable("accountId") Long accountId) {
-        return userAccountService.deleteUserCredentialsById(accountId);
+        return userAccountService.deleteUserAccountById(accountId);
     }
 
-//    @PostMapping(path = "auth/login")
-//    public UserCredentialsResponse authenticateUser(@RequestBody UserCredentialsRequest request) {
-//        return userCredentialsService.authenticateUser(request);
-//    }
+    @DeleteMapping(params = {"email"})
+    public UserAuthenticationResponse deleteAccountByEmail(@RequestParam("email") String email) {
+        return userAccountService.deleteUserAccountByEmail(email);
+    }
 
-    @GetMapping(path="/account", params = {"userId"})
-    public UserAuthenticationResponse getCredentialsByUserId(@RequestParam("userId") Long userProfileId) {
+    @GetMapping(params = {"userId"})
+    public UserAuthenticationResponse getAccountByUserProfileId(@RequestParam("userId") Long userProfileId) {
         return userAccountService.getUserAccountByUserProfileId(userProfileId);
     }
 }
