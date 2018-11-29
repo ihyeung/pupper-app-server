@@ -75,6 +75,7 @@ public class PupperProfileService {
         return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
+    //TODO: TEST THIS METHOD POST REFACTORING
     public PupperProfileResponse findAllPupperProfilesByUserProfileId(Long userProfileId) {
         List<PupperProfile> pupperProfiles = pupperProfileRepo.findAllByMatchProfile_UserProfile_Id(userProfileId);
         if (pupperProfiles == null || pupperProfiles.isEmpty()) {
