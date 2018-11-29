@@ -23,35 +23,33 @@ public class PupperProfileController {
 
     @GetMapping(path="/pupper")
     public PupperProfileResponse getAllPupperProfiles() {
-
         return pupperProfileService.getAllPupperProfiles();
     }
 
     @GetMapping(path="/pupper", params = {"sortBy", "limit"})
     public PupperProfileResponse getAllPupperProfiles(@RequestParam("sortBy") String sort,
                                                       @RequestParam("limit") int limit) {
-
         return pupperProfileService.getAllPupperProfiles(sort, limit);
     }
 
     @GetMapping(path ="/pupper/breed")
-    public BreedResponse getPupperBreedList() {
+    public BreedResponse getAllPupperBreeds() {
         return pupperProfileService.getBreeds();
     }
 
     @GetMapping(path ="/pupper/breed/{breedId}")
-    public PupperProfileResponse getPupperProfilesByBreedId(@PathVariable("breedId") Long breedId) {
+    public PupperProfileResponse findPupperProfilesByBreedId(@PathVariable("breedId") Long breedId) {
         return pupperProfileService.getPupperProfilesByBreedId(breedId);
     }
 
     @GetMapping(path ="/pupper", params = {"breed"})
-    public PupperProfileResponse getPupperProfilesByBreedId(@PathVariable("breed") String breed) {
+    public PupperProfileResponse findPupperProfilesByBreedName(@RequestParam("breed") String breed) {
         return pupperProfileService.getPupperProfilesByBreedName(breed);
     }
 
     @GetMapping(path ="/user/{userId}/pupper")
-    public PupperProfileResponse getPupperProfilesByUserId(@PathVariable("userId") Long userId) {
-        return pupperProfileService.findAllPupperProfilesByUserId(userId);
+    public PupperProfileResponse getPupperProfilesByUserId(@PathVariable("userId") Long userProfileId) {
+        return pupperProfileService.findAllPupperProfilesByUserProfileId(userProfileId);
     }
 
     @GetMapping(path ="/pupper", params = {"userEmail"})
@@ -60,38 +58,36 @@ public class PupperProfileController {
     }
 
     @GetMapping(path ="/user/{userId}/matchProfile/{matchProfileId}/pupper")
-    public PupperProfileResponse getPupperProfilesByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
+    public PupperProfileResponse getPupperProfilesByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userProfileId,
                                                                                    @PathVariable("matchProfileId") Long matchProfileId) {
-        return pupperProfileService.getPupperProfilesByMatchProfileId(userId, matchProfileId);
+        return pupperProfileService.getPupperProfilesByMatchProfileId(userProfileId, matchProfileId);
     }
 
     @PostMapping(path="/user/{userId}/matchProfile/{matchProfileId}/pupper")
-    public PupperProfileResponse createPupperProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
+    public PupperProfileResponse createPupperProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userProfileId,
                                                                     @PathVariable("matchProfileId") Long matchProfileId,
                                                                     @RequestBody @Valid final PupperProfile pupperProfile) {
-        return pupperProfileService.createNewPupperProfileForMatchProfile(userId, matchProfileId, pupperProfile);
+        return pupperProfileService.createNewPupperProfileForMatchProfile(userProfileId, matchProfileId, pupperProfile);
     }
 
     @GetMapping(path ="/user/{userId}/matchProfile/{matchProfileId}/pupper/{pupperId}")
-    public PupperProfileResponse findPupperProfileById(@PathVariable("userId") Long userId,
+    public PupperProfileResponse findPupperProfileById(@PathVariable("userId") Long userProfileId,
                                                        @PathVariable("matchProfileId") Long matchProfileId,
                                                        @PathVariable("pupperId") Long pupId) {
-
-        return pupperProfileService.findPupperProfileById(userId, matchProfileId, pupId);
+        return pupperProfileService.findPupperProfileById(userProfileId, matchProfileId, pupId);
     }
 
     @PutMapping(path ="/user/{userId}/pupper/{pupperId}")
-    public PupperProfileResponse updatePupperProfileById(@PathVariable("userId") Long userId,
+    public PupperProfileResponse updatePupperProfileById(@PathVariable("userId") Long userProfileId,
                                                          @PathVariable("pupperId") Long pupId,
                                                          @RequestBody @Valid final PupperProfile pupperProfile) {
-        return pupperProfileService.updatePupperProfile(userId, pupId, pupperProfile);
+        return pupperProfileService.updatePupperProfile(userProfileId, pupId, pupperProfile);
     }
 
     @DeleteMapping(path ="/user/{userId}/pupper/{pupperId}")
-    public PupperProfileResponse deletePupperProfileById(@PathVariable("userId") Long userId,
+    public PupperProfileResponse deletePupperProfileById(@PathVariable("userId") Long userProfileId,
                                                          @PathVariable("pupperId") Long pupperId) {
-
-        return pupperProfileService.deletePupperProfileById(userId, pupperId);
+        return pupperProfileService.deletePupperProfileById(userProfileId, pupperId);
     }
 
 }

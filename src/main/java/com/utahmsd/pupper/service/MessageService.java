@@ -25,7 +25,6 @@ import static java.util.Collections.emptyList;
 @Singleton
 public class MessageService {
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
     private final String DEFAULT_SORT_ORDER = "timestamp";
@@ -42,10 +41,8 @@ public class MessageService {
     public List<PupperMessage> getAllMessages() {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER)); //Sorts messages from oldest to newest
         Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, sort));
-        ArrayList<PupperMessage> pupperMessages = new ArrayList<>();
-        results.forEach(pupperMessages::add);
 
-        return pupperMessages;
+        return results.getContent();
     }
 
     public List<PupperMessage> getMessagesWithLimit(int limit) {
@@ -61,12 +58,11 @@ public class MessageService {
         Optional<List<PupperMessage>> messageList =
                 messageRepo.findAllByMatchProfileSender_IdOrMatchProfileReceiver_Id(matchProfileId, matchProfileId);
         if (!messageList.isPresent()) {
-            LOGGER.info("No messages were found for matchProfileId={}", matchProfileId);
+            LOGGER.error("No messages were found for matchProfileId={}", matchProfileId);
             return emptyList();
         }
 
         LOGGER.info("{} messages were found that were sent/received by matchProfileId={}", messageList.get().size(), matchProfileId);
-
         return messageList.get();
     }
 
@@ -77,7 +73,7 @@ public class MessageService {
                 messageRepo.findAllByMatchProfileSender_IdAndMatchProfileReceiver_Id(matchProfileId2, matchProfileId1);
 
         if (!messagesFrom1To2.isPresent() && !messagesFrom2To1.isPresent()) {
-            LOGGER.info("No messages were exchanged between matchProfileId={} and received by matchProfileId={}", matchProfileId1, matchProfileId2);
+            LOGGER.error("No messages were exchanged between matchProfileId={} and received by matchProfileId={}", matchProfileId1, matchProfileId2);
             return emptyList();
         }
 
@@ -144,7 +140,6 @@ public class MessageService {
             LOGGER.error("No match result outcome exists between matchProfileId={} and matchProfileId={}", matchProfileId1, matchProfileId2);
             return false;
         }
-
         return matchResult1
                 .map(m1 -> m1.isMatchForProfileOne() && m1.isMatchForProfileTwo())
                 .orElseGet(() -> matchResult2.get().isMatchForProfileOne() && matchResult2.get().isMatchForProfileTwo());

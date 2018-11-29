@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.utahmsd.pupper.security.SecurityConstants.REGISTER_ENDPOINT;
-
 @RestController
 @Api(value = "UserAccount/Auth Controller For Testing UserAccount")
 @RequestMapping("/account")
@@ -33,7 +31,7 @@ public class AuthController {
         return userAccountService.findUserAccountById(accountId);
     }
 
-    @PostMapping(path = REGISTER_ENDPOINT)
+    @PostMapping("/register")
     public UserAuthenticationResponse registerUser(@RequestBody @Valid final UserAccount userAccount) {
         return userAccountService.createUserAccount(userAccount);
     }

@@ -34,7 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //    @Value("${spring.security.user.role:}")
 //    private String userRole;
 
-
     @Autowired
     public SecurityConfig(UserAccountService userAccountService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userAccountService = userAccountService;

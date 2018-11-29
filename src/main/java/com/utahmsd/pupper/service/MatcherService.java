@@ -17,9 +17,9 @@ import javax.inject.Singleton;
 @Singleton
 public class MatcherService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
     private static final int DEFAULT_BATCH_SIZE = 50; //Number of match profiles to retrieve for a user per batch
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
 
     private final MatchProfileRepo matchProfileRepo;
     private final PupperProfileRepo pupperProfileRepo;

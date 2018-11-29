@@ -28,8 +28,8 @@ public class UserProfileController {
     }
 
     @GetMapping(path ="/{userId}")
-    public UserProfileResponse findUserProfileById(@PathVariable("userId") Long userId) {
-        return userProfileService.findUserProfileById(userId);
+    public UserProfileResponse findUserProfileById(@PathVariable("userId") Long userProfileId) {
+        return userProfileService.findUserProfileById(userProfileId);
     }
 
     @GetMapping(params = {"email"})
@@ -43,15 +43,15 @@ public class UserProfileController {
     }
 
     @PutMapping(path ="/{userId}")
-    public UserProfileResponse updateUserProfile(@PathVariable("userId") Long userId,
+    public UserProfileResponse updateUserProfile(@PathVariable("userId") Long userProfileId,
                                                  @RequestBody @Valid final UserProfile userProfile) {
-        return userProfileService.updateUserProfile(userId, userProfile);
+        return userProfileService.updateUserProfileByUserProfileId(userProfileId, userProfile);
     }
 
     @PutMapping(path = "/{userId}", params = {"lastLogin"})
-    public UserProfileResponse updateLastLogin(@PathVariable("userId") Long userId,
+    public UserProfileResponse updateLastLogin(@PathVariable("userId") Long userProfileId,
                                                @RequestParam(value = "lastLogin") String lastLogin) {
-        return userProfileService.updateLastLoginForUserProfile(userId, lastLogin);
+        return userProfileService.updateLastLoginForUserProfile(userProfileId, lastLogin);
     }
 
     /*
@@ -60,8 +60,8 @@ public class UserProfileController {
     -AuthController deleteAccount endpoint to delete the UserAccount
      */
     @DeleteMapping(path ="/{userId}")
-    public UserProfileResponse deleteUserProfileById(@PathVariable("userId") Long userId) {
-        return userProfileService.deleteUserProfileById(userId);
+    public UserProfileResponse deleteUserProfileById(@PathVariable("userId") Long userProfileId) {
+        return userProfileService.deleteUserProfileById(userProfileId);
     }
 
     @GetMapping(params = {"zip"})

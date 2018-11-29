@@ -38,9 +38,9 @@ public class MatchProfileController {
     }
 
     @GetMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
-    public MatchProfileResponse getMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
+    public MatchProfileResponse getMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userProfileId,
                                                     @PathVariable("matchProfileId") Long matchProfileId) {
-        return matchProfileService.getMatchProfileById(userId, matchProfileId);
+        return matchProfileService.getMatchProfileById(userProfileId, matchProfileId);
     }
 
     @PostMapping(path="/user/{userId}/matchProfile")
