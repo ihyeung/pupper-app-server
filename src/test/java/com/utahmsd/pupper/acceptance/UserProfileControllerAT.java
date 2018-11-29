@@ -7,13 +7,13 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import io.restassured.parsing.Parser;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 
@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @TestPropertySource("classpath:application-test.properties")
 public class UserProfileControllerAT {
 
-    private static final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:5000/");
+    private static final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:5000");
 
     private static UserAccount userAccount= new UserAccount();
     private static String accessToken = null;
@@ -39,8 +39,7 @@ public class UserProfileControllerAT {
 
         userAccount.setUsername("createUserProfileTest@test.com");
         userAccount.setPassword("TESTPASSWORD");
-        userAccount.setId(10); //Id for userAccount entry in current database, will need to be updated
-//        userAccount.setId(3); //FIXME: Uncomment this once database migration to AWS has been completed
+        userAccount.setId(3);
 
         if (accessToken == null) {
             accessToken =
@@ -56,16 +55,34 @@ public class UserProfileControllerAT {
                     statusCode(200).
                     extract().response().header("Authorization");
         }
-
     }
 
     @Test
-    public void testGetAllUsers() {
+    public void testGetUserProfiles() {
         given().
                 relaxedHTTPSValidation().
                 log().all().
                 contentType(ContentType.JSON).
                 header(new Header("Authorization", accessToken)).
+                param("limit", 1).
+                param("sortBy", "lastName").
+        when().
+                get("/user").
+        then().
+                log().all().
+                statusCode(200).
+                body("isSuccess", equalTo(true)).
+                body("userProfiles", notNullValue());
+    }
+
+    @Test
+    public void testGetUserProfileByEmail() {
+        given().
+                relaxedHTTPSValidation().
+                log().all().
+                contentType(ContentType.JSON).
+                header(new Header("Authorization", accessToken)).
+                param("email", "createUserProfileTest@test.com").
         when().
                 get("/user").
         then().
@@ -91,15 +108,49 @@ public class UserProfileControllerAT {
                 body("userProfiles", notNullValue());
     }
 
-    @Ignore
     @Test
-    public void testUpdateUserProfile() {
+    public void testUpdateUserProfileByAccountEmail() {
 
+        UserProfile profileToUpdate = createUserProfile();
+        profileToUpdate.setId(3L);
+        profileToUpdate.getUserAccount(). //When doing updateUserProfile, don't want to modify hash of userAccount password in the process
+                setPassword("$2a$04$vb9A83WYIyo1Ny7qFI8V3.AbKWZ2bz1G14kzJNj5d6bI1wbp47siu");
+
+        given().
+                relaxedHTTPSValidation().
+                log().all().
+                contentType(ContentType.JSON).
+                body(profileToUpdate).
+                header(new Header("Authorization", accessToken)).
+                param("email", userAccount.getUsername()).
+        when().
+                put("/user").
+        then().
+                log().all().
+                statusCode(200).
+                body("isSuccess", equalTo(true));
     }
 
+    @Test
+    public void testUpdateUserProfileLastLogin() {
+
+        String lastLogin = new SimpleDateFormat("yyyy-MM-dd").format(Date.from(Instant.now()));
+        given().
+                relaxedHTTPSValidation().
+                log().all().
+                contentType(ContentType.JSON).
+                header(new Header("Authorization", accessToken)).
+                param("lastLogin", lastLogin).
+        when().
+                put("/user/3").
+        then().
+                log().all().
+                statusCode(200).
+                body("isSuccess", equalTo(true));
+    }
 
     @Test
-    public void testCreateUserProfile() {
+    public void testCreateOrUpdateUserProfile() {
         given().
                 relaxedHTTPSValidation().
                 log().all().
@@ -113,12 +164,6 @@ public class UserProfileControllerAT {
                 statusCode(200).
                 body("isSuccess", equalTo(true)).
                 body("userProfiles", notNullValue());
-    }
-
-    @Ignore
-    @Test
-    public void testDeleteUserProfileById() {
-
     }
 
     private UserProfile createUserProfile() {

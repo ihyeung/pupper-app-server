@@ -32,26 +32,15 @@ public class UserProfileController {
         return userProfileService.findUserProfileById(userProfileId);
     }
 
-    @GetMapping(params = {"email"})
-    public UserProfileResponse findUserProfileByUserAccountEmail(@RequestParam(value = "email", required = false) String email) {
-        return userProfileService.findUserProfileByUserAccountEmail(email);
-    }
-
     @PostMapping()
-    public UserProfileResponse createUserProfile(@RequestBody @Valid final UserProfile userProfile) {
-        return userProfileService.createNewUserProfile(userProfile);
+    public UserProfileResponse createOrInsertUserProfile(@RequestBody @Valid UserProfile userProfile) {
+        return userProfileService.createOrUpdateUserProfile(userProfile);
     }
 
     @PutMapping(path ="/{userId}")
-    public UserProfileResponse updateUserProfile(@PathVariable("userId") Long userProfileId,
-                                                 @RequestBody @Valid final UserProfile userProfile) {
+    public UserProfileResponse updateUserProfileById(@PathVariable("userId") Long userProfileId,
+                                                 @RequestBody @Valid UserProfile userProfile) {
         return userProfileService.updateUserProfileByUserProfileId(userProfileId, userProfile);
-    }
-
-    @PutMapping(path = "/{userId}", params = {"lastLogin"})
-    public UserProfileResponse updateLastLogin(@PathVariable("userId") Long userProfileId,
-                                               @RequestParam(value = "lastLogin") String lastLogin) {
-        return userProfileService.updateLastLoginForUserProfile(userProfileId, lastLogin);
     }
 
     /*
@@ -67,6 +56,23 @@ public class UserProfileController {
     @GetMapping(params = {"zip"})
     public UserProfileResponse getUserProfilesWithZip(@RequestParam(value = "zip") String zip) {
         return userProfileService.getUserProfilesByZip(zip);
+    }
+
+    @GetMapping(params = {"email"})
+    public UserProfileResponse findUserProfileByUserAccountEmail(@RequestParam(value = "email") String email) {
+        return userProfileService.findUserProfileByUserAccountEmail(email);
+    }
+
+    @PutMapping(params = {"email"})
+    public UserProfileResponse updateUserProfileByUserAccountEmail(@RequestParam(value = "email") String email,
+                                                 @RequestBody @Valid UserProfile userProfile) {
+        return userProfileService.updateUserProfileByUserAccountEmail(email, userProfile);
+    }
+
+    @PutMapping(path = "/{userId}", params = {"lastLogin"})
+    public UserProfileResponse updateLastLogin(@PathVariable("userId") Long userProfileId,
+                                               @RequestParam(value = "lastLogin") String lastLogin) {
+        return userProfileService.updateLastLoginForUserProfile(userProfileId, lastLogin);
     }
 
 }

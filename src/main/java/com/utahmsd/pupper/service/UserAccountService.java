@@ -73,10 +73,14 @@ public class UserAccountService implements UserDetailsService {
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAuthenticationResponse createUserAccount(final UserAccount userAccount) {
-        if (loadUserByUsername(userAccount.getUsername()) != null) {
-            return createUserAuthResponse(false, null, HttpStatus.CONFLICT,
-                    "An account with that username already exists.");
+    public UserAuthenticationResponse createOrUpdateUserAccount(UserAccount userAccount) {
+        UserAccount result = userAccountRepo.findByUsername(userAccount.getUsername());
+        if (result != null) {
+            LOGGER.info("Account exists: performing update");
+            userAccount.setId(result.getId());
+            userAccountRepo.save(userAccount);
+            return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)),
+                    HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         UserAccount savedUser = userAccountRepo.save(userAccount);
@@ -91,19 +95,20 @@ public class UserAccountService implements UserDetailsService {
 //        UserCredentials userCredentialsResult = userAccountRepo.save(userCredentials);
     }
 
-    public UserAuthenticationResponse updateUserAccountById(Long accountId, final UserAccount userAccount) {
+    public UserAuthenticationResponse updateUserAccountById(Long accountId, UserAccount userAccount) {
+        UserAccount result = userAccountRepo.findByUsername(userAccount.getUsername());
         //First check to make sure email is registered as an existing account, and that the path param id and the request body id match
         if (loadUserByUsername(userAccount.getUsername()) == null || accountId != userAccount.getId()) {
             return createUserAuthResponse(false, null, HttpStatus.BAD_REQUEST,
                     String.format(EMAIL_NOT_FOUND, "User account", userAccount.getUsername()));
         }
-        userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
+        userAccount.setId(result.getId());
         userAccountRepo.save(userAccount);
 
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAuthenticationResponse updateUserAccountByEmail(String email, final UserAccount userAccount) {
+    public UserAuthenticationResponse updateUserAccountByEmail(String email, UserAccount userAccount) {
         if (!userAccount.getUsername().equals(email)) {
             LOGGER.error("Email does not match.");
             return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
@@ -114,8 +119,9 @@ public class UserAccountService implements UserDetailsService {
             return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND,
                     String.format(EMAIL_NOT_FOUND, "User account", email));
         }
+        userAccount.setId(result.getId());
         userAccountRepo.save(userAccount);
-        return createUserAuthResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse deleteUserAccountById(Long accountId) {

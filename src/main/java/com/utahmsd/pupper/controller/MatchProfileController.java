@@ -45,9 +45,9 @@ public class MatchProfileController {
 
     @PostMapping(path="/user/{userId}/matchProfile")
     public MatchProfileResponse createMatchProfileForUserByUserProfileId(@PathVariable("userId") Long userId,
-                                                              @RequestBody @Valid final MatchProfile matchProfile) {
+                                                              @RequestBody @Valid MatchProfile matchProfile) {
 
-        return matchProfileService.createMatchProfileForUser(userId, matchProfile);
+        return matchProfileService.createOrUpdateMatchProfileForUser(userId, matchProfile);
     }
 
     @PostMapping(path="/user/{userId}/matchProfile/{matchProfileId}", params = {"profilePic"})
@@ -61,7 +61,7 @@ public class MatchProfileController {
     @PutMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
     public MatchProfileResponse updateMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
                                                                         @PathVariable("matchProfileId") Long matchProfileId,
-                                                                        @RequestBody @Valid final MatchProfile matchProfile) {
+                                                                        @RequestBody @Valid MatchProfile matchProfile) {
         return matchProfileService.updateMatchProfile(userId, matchProfileId, matchProfile);
     }
 

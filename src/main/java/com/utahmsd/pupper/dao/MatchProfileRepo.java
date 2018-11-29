@@ -21,6 +21,7 @@ public interface MatchProfileRepo extends JpaRepository<MatchProfile, Long> {
     Optional<List<MatchProfile>> findAllByUserProfile_Id (Long userProfileId);
     Optional<MatchProfile> findByUserProfileIdAndBreedAndEnergyLevelAndLifeStage(Long userId, Breed breed, Energy energy,
                                                                                   LifeStage lifeStage);
+    MatchProfile findByNamesEquals(String names);
     void deleteAllByUserProfile_Id(Long userProfileId);
 
 }

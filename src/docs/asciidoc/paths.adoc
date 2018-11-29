@@ -2,11 +2,21 @@
 [[_paths]]
 == Paths
 
-[[_getallaccountsusingget]]
-=== getAllAccounts
+[[_getaccountbyuserprofileidusingget]]
+=== getAccountByUserProfileId
 ....
 GET /account
 ....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**userId** +
+__required__|userId|string
+|===
 
 
 ==== Responses
@@ -110,7 +120,7 @@ __required__|email|string
 [[_registeruserusingpost]]
 === registerUser
 ....
-POST /account/account/register
+POST /account/register
 ....
 
 
@@ -227,8 +237,8 @@ __required__|userAccount|<<_useraccount,UserAccount>>
 * auth-controller
 
 
-[[_deletecredentialsbyidusingdelete]]
-=== deleteCredentialsById
+[[_deleteaccountbyidusingdelete]]
+=== deleteAccountById
 ....
 DELETE /account/{accountId}
 ....
@@ -287,6 +297,44 @@ GET /matchProfile
 ==== Tags
 
 * match-profile-controller
+
+
+[[_fetchmatcherdatausingget_1]]
+=== fetchMatcherData
+....
+GET /matcher
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**distance** +
+__required__|distance|string
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_matcherdataresponse,MatcherDataResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* matcher-controller
 
 
 [[_fetchmatcherdatausingget]]
@@ -525,11 +573,21 @@ __required__|matchProfileId|integer (int64)
 * matcher-controller
 
 
-[[_getallmessagesusingget]]
-=== getAllMessages
+[[_getallmessageswithlimitusingget]]
+=== getAllMessagesWithLimit
 ....
 GET /message
 ....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**limit** +
+__required__|limit|string
+|===
 
 
 ==== Responses
@@ -744,11 +802,21 @@ __required__|matchProfileId|integer (int64)
 * message-controller
 
 
-[[_getallpupperprofilesusingget]]
-=== getAllPupperProfiles
+[[_getpupperprofilesbyuseremailusingget]]
+=== getPupperProfilesByUserEmail
 ....
 GET /pupper
 ....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**userEmail** +
+__required__|userEmail|string
+|===
 
 
 ==== Responses
@@ -770,8 +838,8 @@ GET /pupper
 * pupper-profile-controller
 
 
-[[_getpupperbreedlistusingget]]
-=== getPupperBreedList
+[[_getallpupperbreedsusingget]]
+=== getAllPupperBreeds
 ....
 GET /pupper/breed
 ....
@@ -796,8 +864,8 @@ GET /pupper/breed
 * pupper-profile-controller
 
 
-[[_getpupperprofilesbybreedidusingget]]
-=== getPupperProfilesByBreedId
+[[_findpupperprofilesbybreedidusingget]]
+=== findPupperProfilesByBreedId
 ....
 GET /pupper/breed/{breedId}
 ....
@@ -875,8 +943,8 @@ __required__|requestBody|<<_imageuploadrequest,ImageUploadRequest>>
 * image-controller
 
 
-[[_createuserprofileusingpost]]
-=== createUserProfile
+[[_createorinsertuserprofileusingpost]]
+=== createOrInsertUserProfile
 ....
 POST /user
 ....
@@ -916,8 +984,8 @@ __required__|userProfile|<<_userprofile,UserProfile>>
 * user-profile-controller
 
 
-[[_getalluserprofilesusingget]]
-=== getAllUserProfiles
+[[_getuserprofileswithzipusingget]]
+=== getUserProfilesWithZip
 ....
 GET /user
 ....
@@ -928,10 +996,8 @@ GET /user
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
-|**Query**|**sortBy** +
-__required__|sortBy|string
+|**Query**|**zip** +
+__required__|zip|string
 |===
 
 
@@ -942,6 +1008,49 @@ __required__|sortBy|string
 |HTTP Code|Description|Schema
 |**200**|OK|<<_userprofileresponse,UserProfileResponse>>
 |===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* user-profile-controller
+
+
+[[_updateuserprofilebyuseraccountemailusingput]]
+=== updateUserProfileByUserAccountEmail
+....
+PUT /user
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**email** +
+__required__|email|string
+|**Body**|**userProfile** +
+__required__|userProfile|<<_userprofile,UserProfile>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_userprofileresponse,UserProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
 
 
 ==== Produces

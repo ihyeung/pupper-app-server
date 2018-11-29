@@ -67,9 +67,7 @@ public class UserProfileService {
         if (numResults > 0) {
             return createUserProfileResponse(true, results.getContent(), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-
-        LOGGER.error("No user profiles found with zipcode '%d'", zipCode);
-
+        LOGGER.info("No user profiles found with zipcode '%d'", zipCode);
         return createUserProfileResponse(true, null, HttpStatus.OK, NO_QUERY_RESULTS);
 
     }
@@ -100,25 +98,24 @@ public class UserProfileService {
     }
 
 
-        public UserProfileResponse createNewUserProfile(final UserProfile userProfile) {
-        Optional<UserProfile> result =
-                userProfileRepo.findByFirstNameAndLastNameAndBirthdate(
-                        userProfile.getFirstName(),
-                        userProfile.getLastName(),
-                        userProfile.getBirthdate()); //Generally First Name/Last Name/DOB combo is unique
-        if (result.isPresent()) {
-            LOGGER.error("User profile already exists.");
+        public UserProfileResponse createOrUpdateUserProfile(UserProfile userProfile) {
+        UserProfile result = userProfileRepo.findByUserAccount_Username(userProfile.getUserAccount().getUsername());
+        if (result != null) {
+            LOGGER.info("User profile already exists. Updating existing user profile with id={}", result.getId());
 
-            return createUserProfileResponse(false, null, HttpStatus.CONFLICT,
-                    ("Error: a userProfile with data matching the request already exists."));
+            userProfile.setUserAccount(result.getUserAccount());
+            userProfile.setId(result.getId());
+            userProfileRepo.save(userProfile);
 
+            return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-        UserProfile profile = userProfileRepo.save(userProfile);
+            LOGGER.info("Creating a new user profile.");
+            UserProfile profile = userProfileRepo.save(userProfile);
 
         return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserProfileResponse updateUserProfileByUserProfileId(Long userId, final UserProfile userProfile) {
+    public UserProfileResponse updateUserProfileByUserProfileId(Long userId, UserProfile userProfile) {
         Optional<UserProfile> result = userProfileRepo.findById(userId);
         if (!result.isPresent()) {
             LOGGER.error(ID_NOT_FOUND, "User profile", userId);
@@ -126,12 +123,30 @@ public class UserProfileService {
             return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         else if (!userId.equals(userProfile.getId())) {
+            LOGGER.error(IDS_MISMATCH);
             return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
+        userProfile.setUserAccount(result.get().getUserAccount());
+        userProfile.setId(result.get().getId());
         userProfileRepo.save(userProfile);
 
         LOGGER.info("User profile with id={} was found, updating existing profile", userId);
-        return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserProfileResponse updateUserProfileByUserAccountEmail(String email, UserProfile userProfile) {
+        UserProfile result = userProfileRepo.findByUserAccount_Username(email);
+        if (result == null) {
+            LOGGER.error(EMAIL_NOT_FOUND, "User profile", email);
+
+            return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND,
+                    String.format(EMAIL_NOT_FOUND, "User profile", email));
+        }
+        userProfile.setUserAccount(result.getUserAccount()); //Reuse userAccount reference to avoid TransientObjectException caused by unintentionally trying to modify the userAccount too
+        userProfile.setId(result.getId());
+        userProfileRepo.save(userProfile);
+
+        return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserProfileResponse updateLastLoginForUserProfile(Long userProfileId, String lastLogin) {
@@ -146,7 +161,6 @@ public class UserProfileService {
         return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
     }
 
-
         public UserProfileResponse deleteUserProfileById(Long id) {
         Optional<UserProfile> result = userProfileRepo.findById(id);
         if (!result.isPresent()) {
@@ -156,14 +170,6 @@ public class UserProfileService {
         }
         userProfileRepo.deleteById(id);
         LOGGER.info("User profile with id={} was deleted successfully", id);
-
         return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
-
-    private boolean userProfileFailsNullPointerCheck(UserProfile userProfile) {
-        return userProfile == null ||
-                userProfile.getId() == null ||
-                userProfile.getUserAccount() == null;
-    }
-
 }

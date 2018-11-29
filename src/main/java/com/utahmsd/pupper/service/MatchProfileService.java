@@ -69,21 +69,25 @@ public class MatchProfileService {
 
     }
 
-    public MatchProfileResponse createMatchProfileForUser(Long userId, MatchProfile matchProfile) {
-        Optional<MatchProfile> result = matchProfileRepo.findByUserProfileIdAndBreedAndEnergyLevelAndLifeStage(
-                matchProfile.getUserProfile().getId(), matchProfile.getBreed(), matchProfile.getEnergyLevel(), matchProfile.getLifeStage());
-        if (result.isPresent()) {
-            return createMatchProfileResponse(false, null, HttpStatus.CONFLICT,
-                    String.format("A matchProfile for userProfileId=%d " +
-                    " with data matching the request parameters already exists.", userId));
-
-        }
-        else if (!userId.equals(matchProfile.getUserProfile().getId())) {
+    public MatchProfileResponse createOrUpdateMatchProfileForUser(Long userId, MatchProfile matchProfile) {
+        if (!userId.equals(matchProfile.getUserProfile().getId())) {
             LOGGER.error(IDS_MISMATCH);
             return createMatchProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
-        matchProfileRepo.save(matchProfile);
-        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(matchProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        MatchProfile result = matchProfileRepo.findByNamesEquals(matchProfile.getNames());
+
+//        Optional<MatchProfile> result = matchProfileRepo.findByUserProfileIdAndBreedAndEnergyLevelAndLifeStage(
+//                matchProfile.getUserProfile().getId(), matchProfile.getBreed(), matchProfile.getEnergyLevel(), matchProfile.getLifeStage());
+
+        if (result != null) {
+            LOGGER.info("Match profile for user exists.");
+            matchProfile.setId(result.getId());
+            matchProfileRepo.save(matchProfile);
+            return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(matchProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+
+        MatchProfile profile = matchProfileRepo.save(matchProfile);
+        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     //TODO: Test updateMatchProfile and deleteMatchProfile methods
@@ -99,6 +103,7 @@ public class MatchProfileService {
                     String.format("UpdateMatchProfile Error: A matchProfile with userProfileId=%d and matchProfileId=%d " +
                             "does not exist and cannot be updated.", userId, matchProfileId));
         }
+        matchProfile.setId(result.get().getId());
         matchProfileRepo.save(matchProfile);
         return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(matchProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
@@ -134,6 +139,7 @@ public class MatchProfileService {
         result.get().setProfileImage(imageUrl); //Update image_url
         matchProfileRepo.save(result.get());
 
-        return createMatchProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(result.get())),
+                HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 }

@@ -33,7 +33,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public UserAuthenticationResponse registerUser(@RequestBody @Valid final UserAccount userAccount) {
-        return userAccountService.createUserAccount(userAccount);
+        return userAccountService.createOrUpdateUserAccount(userAccount);
     }
 
     @PutMapping(path = "/{accountId}")
