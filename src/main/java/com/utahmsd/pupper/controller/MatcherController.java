@@ -28,9 +28,20 @@ public class MatcherController {
 
     /*
     Retrieves next batch of profile cards to display to the user.
+
      */
     @GetMapping(path="/matchProfile/{matchProfileId}")
     public MatcherDataResponse fetchMatcherData(@PathVariable("matchProfileId") Long matchProfileId) {
+        return null;
+    }
+
+    /*
+    Retrieves batch of profile cards to display to the user that fall within a given distance of the user.
+
+     */
+    @GetMapping(params = {"matchProfileId", "distance"})
+    public MatcherDataResponse fetchMatcherData(@RequestParam("matchProfileId") Long matchProfileId,
+                                                @RequestParam(value = "distance", required = false) int distance) {
         return null;
     }
 

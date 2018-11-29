@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserProfileResponse extends BaseResponse {
@@ -20,7 +21,7 @@ public class UserProfileResponse extends BaseResponse {
 
         UserProfileResponse response = new UserProfileResponse();
         response.setSuccess(success);
-        response.setUserProfileList(users);
+        response.setUserProfileList(users == null ? new ArrayList<>() : users);
         response.setStatus(code);
         response.setResponseCode(code.value());
         response.setDescription(description);

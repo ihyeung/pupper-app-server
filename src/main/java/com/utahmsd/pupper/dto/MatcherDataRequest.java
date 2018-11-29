@@ -19,7 +19,7 @@ public class MatcherDataRequest {
     @JsonProperty("playerId")
     private Long profileIdForPlayer;
 
-    @JsonProperty("matchResultMap")
+    @JsonProperty("matcherResults")
     private Map<Long, Boolean> map;
 
     @JsonProperty("timestamp")

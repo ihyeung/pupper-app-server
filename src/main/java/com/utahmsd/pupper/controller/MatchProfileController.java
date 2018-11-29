@@ -30,6 +30,13 @@ public class MatchProfileController {
         return matchProfileService.getAllMatchProfilesByUserId(userId);
     }
 
+    @GetMapping(path="/matchProfile", params = {"userEmail"})
+    public MatchProfileResponse getMatchProfilesByUserEmail(@PathVariable("userId") Long userId,
+                                                            @RequestParam("userEmail") String email) {
+//        return matchProfileService.getAllMatchProfilesByEmail(userId, email);
+        return null;
+    }
+
     @GetMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
     public MatchProfileResponse getMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
                                                     @PathVariable("matchProfileId") Long matchProfileId) {

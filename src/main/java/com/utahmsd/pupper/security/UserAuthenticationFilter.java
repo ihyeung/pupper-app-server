@@ -72,7 +72,7 @@ public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilt
             if (expiresIn > 0) {
                 LOGGER.info("Access token is valid and will expire in {} ms.", expiresIn);
             } else {
-                LOGGER.info("Access token is expired.");
+                LOGGER.error("Access token is expired.");
                 expiresIn = AUTH_TOKEN_EXPIRATION; //Reset expiresInMilliseconds value
                 sessionAuthSuccess = null; //Reset auth session timestamp
                 sessionAuthExpires = null;

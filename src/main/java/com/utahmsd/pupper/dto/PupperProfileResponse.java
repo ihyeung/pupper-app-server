@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PupperProfileResponse extends BaseResponse {
@@ -20,7 +21,7 @@ public class PupperProfileResponse extends BaseResponse {
                                                                     String description) {
         PupperProfileResponse response = new PupperProfileResponse();
         response.setSuccess(success);
-        response.setPupperProfileList(puppers);
+        response.setPupperProfileList(puppers == null ? new ArrayList<>() : puppers);
         response.setStatus(code);
         response.setResponseCode(code.value());
         response.setDescription(description);

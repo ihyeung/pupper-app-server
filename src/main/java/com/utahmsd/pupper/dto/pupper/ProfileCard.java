@@ -1,10 +1,14 @@
 package com.utahmsd.pupper.dto.pupper;
 
+import com.amazonaws.util.StringUtils;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import static com.utahmsd.pupper.util.Constants.DEFAULT_ABOUT_ME;
 import static com.utahmsd.pupper.util.PupperUtils.createAgeStringFromDate;
 
 /**
@@ -18,12 +22,19 @@ public class ProfileCard {
     private char sex;
     private String breedName;
     private String location;
+    private String distance;
     private String aboutMe;
     private String lastActive;
     private String profileImage;
 //    private String energyLevel;
 //    private boolean isFixed;
 //    private int numDogs;
+
+    public static ArrayList<ProfileCard> listFromMatchProfiles(List<MatchProfile> matchProfileList) {
+        ArrayList<ProfileCard> profileCards = new ArrayList<>();
+        matchProfileList.forEach(matchProfile -> profileCards.add(createFromMatchProfile(matchProfile)));
+        return profileCards;
+    }
 
     //Main implementation
     public static ProfileCard createFromMatchProfile(MatchProfile matchProfile) {
@@ -34,7 +45,7 @@ public class ProfileCard {
         card.setAgeWithUnits(createAgeStringFromDate(matchProfile.getBirthdate()));
         card.setBreedName(matchProfile.getBreed().getName());
         card.setLocation("SOUTH JORDAN, UTAH");
-        card.setAboutMe(matchProfile.getAboutMe());
+        card.setAboutMe(StringUtils.isNullOrEmpty(matchProfile.getAboutMe()) ? DEFAULT_ABOUT_ME : matchProfile.getAboutMe());
         card.setLastActive(new SimpleDateFormat("yyyy-MM-dd").format(matchProfile.getUserProfile().getLastLogin()));
         card.setProfileImage(matchProfile.getProfileImage());
 //        card.setNumDogs(matchProfile.getNumDogs());
@@ -45,18 +56,19 @@ public class ProfileCard {
     //Potential simplified implementation for mvp
     public static ProfileCard createFromPupperProfile(PupperProfile pupperProfile) {
         ProfileCard card = new ProfileCard();
-//        card.setNumDogs(1);
         card.setProfileId(pupperProfile.getId());
         card.setName(pupperProfile.getName());
         card.setSex(pupperProfile.getSex());
         card.setAgeWithUnits(createAgeStringFromDate(pupperProfile.getBirthdate()));
         card.setBreedName(pupperProfile.getBreed().getName());
         card.setLocation("SOUTH JORDAN, UTAH");
-        card.setAboutMe(card.getAgeWithUnits() + " " + pupperProfile.getSex() + " " + pupperProfile.getBreed() +
-                " with " + pupperProfile.getEnergy().value() + " energy, i am fixed: " + Boolean.toString(pupperProfile.isFixed()));
+//        card.setAboutMe(card.getAgeWithUnits() + " " + pupperProfile.getSex() + " " + pupperProfile.getBreed() +
+//                " with " + pupperProfile.getEnergy().value() + " energy, i am fixed: " + Boolean.toString(pupperProfile.isFixed()));
+        card.setAboutMe(DEFAULT_ABOUT_ME);
         card.setLastActive(new SimpleDateFormat("yyyy-MM-dd").format(pupperProfile.getMatchProfile()
                 .getUserProfile().getLastLogin()));
         card.setProfileImage(pupperProfile.getMatchProfile().getProfileImage());
+        //        card.setNumDogs(1);
 
         return card;
     }
@@ -107,6 +119,14 @@ public class ProfileCard {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 
     public String getAboutMe() { return aboutMe; }

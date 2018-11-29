@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MatchProfileResponse extends BaseResponse {
@@ -17,7 +18,7 @@ public class MatchProfileResponse extends BaseResponse {
                                                                   String description) {
         MatchProfileResponse response = new MatchProfileResponse();
         response.setSuccess(success);
-        response.setMatchProfileList(matchProfiles);
+        response.setMatchProfileList(matchProfiles == null ? new ArrayList<>() : matchProfiles);
         response.setStatus(code);
         response.setResponseCode(code.value());
         response.setDescription(description);

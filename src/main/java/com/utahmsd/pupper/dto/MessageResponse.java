@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.PupperMessage;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageResponse extends BaseResponse {
 
-    @JsonProperty("pupperMessages")
+    @JsonProperty("messages")
     public List<PupperMessage> messages;
 
     public MessageResponse() {}
@@ -19,7 +20,7 @@ public class MessageResponse extends BaseResponse {
                                                         String description) {
         MessageResponse response = new MessageResponse();
         response.setSuccess(success);
-        response.setMessages(messages);
+        response.setMessages(messages == null ? new ArrayList<>() : messages);
         response.setStatus(code);
         response.setResponseCode(code.value());
         response.setDescription(description);

@@ -33,11 +33,6 @@ public class AuthController {
         return userAccountService.findUserAccountById(accountId);
     }
 
-    @GetMapping(params = {"email"})
-    public UserAuthenticationResponse getAccountByEmail(@RequestParam("email") String email) {
-        return userAccountService.findUserAccountByEmail(email);
-    }
-
     @PostMapping(path = REGISTER_ENDPOINT)
     public UserAuthenticationResponse registerUser(@RequestBody @Valid final UserAccount userAccount) {
         return userAccountService.createUserAccount(userAccount);
@@ -49,15 +44,20 @@ public class AuthController {
         return userAccountService.updateUserAccountById(accountId, userAccount);
     }
 
+    @DeleteMapping(path = "/{accountId}")
+    public UserAuthenticationResponse deleteAccountById(@PathVariable("accountId") Long accountId) {
+        return userAccountService.deleteUserAccountById(accountId);
+    }
+
+    @GetMapping(params = {"email"})
+    public UserAuthenticationResponse getAccountByEmail(@RequestParam("email") String email) {
+        return userAccountService.findUserAccountByEmail(email);
+    }
+
     @PutMapping(params = {"email"})
     public UserAuthenticationResponse updateAccountByEmail(@RequestParam("email") String email,
                                                            @RequestBody @Valid final UserAccount userAccount) {
         return userAccountService.updateUserAccountByEmail(email, userAccount);
-    }
-
-    @DeleteMapping(path = "/{accountId}")
-    public UserAuthenticationResponse deleteCredentialsById(@PathVariable("accountId") Long accountId) {
-        return userAccountService.deleteUserAccountById(accountId);
     }
 
     @DeleteMapping(params = {"email"})

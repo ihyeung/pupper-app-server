@@ -21,9 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.UserAuthenticationResponse.createUserAuthResponse;
-import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
-import static com.utahmsd.pupper.util.Constants.INVALID_PATH_VARIABLE;
-import static com.utahmsd.pupper.util.Constants.NOT_FOUND;
+import static com.utahmsd.pupper.util.Constants.*;
+import static com.utahmsd.pupper.util.ValidationUtils.isValidEmail;
 import static java.util.Collections.emptyList;
 
 @Named
@@ -56,26 +55,32 @@ public class UserAccountService implements UserDetailsService {
     public UserAuthenticationResponse findUserAccountById(Long userAccountId) {
         Optional<UserAccount> result = userAccountRepo.findById(userAccountId);
         if (!result.isPresent()) {
-            LOGGER.error("User account with id {} not found", userAccountId);
+            LOGGER.error("User account with id='{}' not found", userAccountId);
             return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND,
-                    String.format("User credentials with id = %d not found", userAccountId));
+                    String.format("User account with id = %d not found", userAccountId));
         }
 
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse findUserAccountByEmail(String email) {
+        if (!isValidEmail(email)) {
+            return createUserAuthResponse(false, emptyList(), HttpStatus.UNPROCESSABLE_ENTITY, INVALID_INPUT);
+        }
         UserAccount result = userAccountRepo.findByUsername(email);
         if (result == null) {
-            LOGGER.error("User account with email '{}' not found", email);
+            LOGGER.error(String.format(EMAIL_NOT_FOUND, "User account", email));
             return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND,
-                    String.format("User account with email = '%s' not found", email));
+                    String.format(EMAIL_NOT_FOUND, "User account", email));
         }
 
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse createUserAccount(UserAccount userAccount) {
+        if (userAccount.getUsername() == null || !isValidEmail(userAccount.getUsername())) {
+            return createUserAuthResponse(false, emptyList(), HttpStatus.UNPROCESSABLE_ENTITY, INVALID_INPUT);
+        }
         if (loadUserByUsername(userAccount.getUsername()) != null) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.CONFLICT,
                     "An account with that username already exists.");
@@ -97,7 +102,7 @@ public class UserAccountService implements UserDetailsService {
         //First check to make sure email is registered as an existing account, and that the path param id and the request body id match
         if (loadUserByUsername(userAccount.getUsername()) == null || accountId != userAccount.getId()) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
-                    "Invalid updateAccountById request.");
+                    String.format(EMAIL_NOT_FOUND, "User account", userAccount.getUsername()));
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         userAccountRepo.save(userAccount);
@@ -112,8 +117,9 @@ public class UserAccountService implements UserDetailsService {
         }
         UserAccount result = userAccountRepo.findByUsername(email);
         if (result == null) {
-            LOGGER.error("A user account with username = {} was not found.", email);
-            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
+            LOGGER.error(String.format(EMAIL_NOT_FOUND, "User account", email));
+            return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND,
+                    String.format(EMAIL_NOT_FOUND, "User account", email));
         }
         userAccountRepo.save(userAccount);
         return createUserAuthResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
@@ -132,7 +138,7 @@ public class UserAccountService implements UserDetailsService {
     public UserAuthenticationResponse deleteUserAccountByEmail(String email) {
         UserAccount result = userAccountRepo.findByUsername(email);
         if (result == null) {
-            LOGGER.error("A user account with username = {} was not found.", email);
+            LOGGER.error(String.format(EMAIL_NOT_FOUND, "User account", email));
             return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         userAccountRepo.deleteById(result.getId());
@@ -163,8 +169,8 @@ public class UserAccountService implements UserDetailsService {
 
 //    }
 
-    public UserAuthenticationResponse getUserAccountByUserProfileId(Long userId) {
-        Optional<UserProfile> userProfileResult = userProfileRepo.findById(userId);
+    public UserAuthenticationResponse getUserAccountByUserProfileId(Long userProfileId) {
+        Optional<UserProfile> userProfileResult = userProfileRepo.findById(userProfileId);
         if (!userProfileResult.isPresent()) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, NOT_FOUND);
         }
@@ -173,7 +179,7 @@ public class UserAccountService implements UserDetailsService {
         if (!userAccountResult.isPresent()) {
             return createUserAuthResponse(false, emptyList(), HttpStatus.NOT_FOUND, String.format(
                     "Invalid getUserAccountByUserProfileId request -- " +
-                            "no valid UserAccount is associated with userProfileId {}.", userId));
+                            "no valid UserAccount is associated with userProfileId {}.", userProfileId));
         }
         return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccountResult.get())),
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
@@ -183,7 +189,7 @@ public class UserAccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         UserAccount userResult = userAccountRepo.findByUsername(username);
         if (userResult == null) {
-            LOGGER.error("A user account with that username was not found.");
+            LOGGER.error(String.format(EMAIL_NOT_FOUND, "User account", username));
             return null;
         }
         return new org.springframework.security.core.userdetails.User(

@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.utahmsd.pupper.dao.entity.UserAccount;
 import org.springframework.http.HttpStatus;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserAuthenticationResponse extends BaseResponse {
@@ -17,7 +16,7 @@ public class UserAuthenticationResponse extends BaseResponse {
                                                                         String description) {
         UserAuthenticationResponse response = new UserAuthenticationResponse();
         response.setSuccess(success);
-        response.setUsers(users);
+        response.setUsers(users == null ? new ArrayList<>() : users);
         response.setStatus(code);
         response.setResponseCode(code.value());
         response.setDescription(description);

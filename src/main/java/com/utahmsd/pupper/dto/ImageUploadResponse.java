@@ -8,12 +8,9 @@ public class ImageUploadResponse extends BaseResponse {
     @JsonProperty("imageUrl")
     private String imageUrl;
 
-    public ImageUploadResponse() {
-    }
+    public ImageUploadResponse() { }
 
-    public static ImageUploadResponse createImageUploadResponse(boolean success,
-                                                                  String imageUrl,
-                                                                  HttpStatus code,
+    public static ImageUploadResponse createImageUploadResponse(boolean success, String imageUrl, HttpStatus code,
                                                                   String description) {
         ImageUploadResponse response = new ImageUploadResponse();
         response.setSuccess(success);

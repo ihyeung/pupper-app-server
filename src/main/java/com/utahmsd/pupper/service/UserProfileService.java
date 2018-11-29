@@ -19,12 +19,11 @@ import javax.inject.Singleton;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
-import static java.util.Collections.emptyList;
+import static com.utahmsd.pupper.util.ValidationUtils.isValidDate;
 
 
 @Named
@@ -50,7 +49,7 @@ public class UserProfileService {
         Iterable<UserProfile> users = userProfileRepo.findAll(sortCriteria);
         ArrayList<UserProfile> userList = new ArrayList<>();
         if (!users.iterator().hasNext()) {
-            return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+            return createUserProfileResponse(true, null, HttpStatus.OK, "UserProfile table is empty.");
         }
         users.forEach(each -> {
             if (userList.size() < resultLimit) {
@@ -68,7 +67,10 @@ public class UserProfileService {
         if (numResults > 0) {
             return createUserProfileResponse(true, results.getContent(), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-        return createUserProfileResponse(true, Collections.emptyList(),
+
+        LOGGER.error("No user profiles found with zipcode '%d'", zipCode);
+
+        return createUserProfileResponse(true, null,
                 HttpStatus.NO_CONTENT, String.format("No users found with zipcode %s", zipCode));
 
     }
@@ -81,7 +83,7 @@ public class UserProfileService {
         }
         LOGGER.error("User profile with id={} not found", id);
 
-        return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, String.format(USER_NOT_FOUND, id));
+        return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, String.format(USER_PROFILE_NOT_FOUND, id));
     }
 
     public UserProfileResponse findUserProfileByUserAccountEmail(String email) {
@@ -90,10 +92,10 @@ public class UserProfileService {
         if (userProfile.isPresent()) {
             return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-        LOGGER.error("User profile with email={} not found", email);
+        LOGGER.error(String.format(EMAIL_NOT_FOUND, "User profile", email));
 
-        return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
-                String.format("User profile with email=%s not found", email));
+        return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND,
+                String.format(EMAIL_NOT_FOUND, "User profile", email));
     }
 
 
@@ -104,8 +106,10 @@ public class UserProfileService {
                         userProfile.getLastName(),
                         userProfile.getBirthdate()); //Generally First Name/Last Name/DOB combo is unique
         if (result.isPresent()) {
-            return createUserProfileResponse(false, emptyList(), HttpStatus.CONFLICT,
-                    ("CreateNewUserProfile request failed: a userProfile with data matching the request already exists."));
+            LOGGER.error("User profile already exists.");
+
+            return createUserProfileResponse(false, null, HttpStatus.CONFLICT,
+                    ("Error: a userProfile with data matching the request already exists."));
 
         }
         UserProfile profile = userProfileRepo.save(userProfile);
@@ -118,11 +122,10 @@ public class UserProfileService {
         if (!result.isPresent()) {
             LOGGER.error("Error updating user profile for id={}: invalid request", userId);
 
-            return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND,
-                    String.format("UpdateUserProfile error: %s", NOT_FOUND));
+            return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND);
         }
         else if (!userId.equals(userProfile.getId())) {
-            return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+            return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
         userProfileRepo.save(userProfile);
 
@@ -130,14 +133,16 @@ public class UserProfileService {
         return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserProfileResponse updateLastLoginForUserProfile(Long userId, String lastLogin) {
-        Optional<UserProfile> result = userProfileRepo.findById(userId);
-        if (result.isPresent() && lastLogin.matches("^\\d{4}-\\d{1,2}-\\d{1,2}$")) {
-            userProfileRepo.updateLastLogin(userId, Date.valueOf(lastLogin));
-
-            return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    public UserProfileResponse updateLastLoginForUserProfile(Long userProfileId, String lastLogin) {
+        if (!isValidDate(lastLogin)) {
+            return createUserProfileResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY, INVALID_INPUT);
         }
-        return createUserProfileResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        Optional<UserProfile> result = userProfileRepo.findById(userProfileId);
+        if (result.isPresent()) {
+            userProfileRepo.updateLastLogin(userProfileId, Date.valueOf(lastLogin));
+            return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+        return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
     }
 
 
@@ -145,13 +150,13 @@ public class UserProfileService {
         Optional<UserProfile> result = userProfileRepo.findById(id);
         if (!result.isPresent()) {
             LOGGER.error("Error: user profile with id={} not found", id);
-            return createUserProfileResponse( false, emptyList(), HttpStatus.NOT_FOUND,
-                    String.format(USER_NOT_FOUND, id));
+            return createUserProfileResponse( false, null, HttpStatus.NOT_FOUND,
+                    String.format(USER_PROFILE_NOT_FOUND, id));
         }
         userProfileRepo.deleteById(id);
         LOGGER.info("User profile with id={} was deleted successfully", id);
 
-        return createUserProfileResponse(true, emptyList(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     private boolean userProfileFailsNullPointerCheck(UserProfile userProfile) {
