@@ -1,7 +1,9 @@
 package com.utahmsd.pupper.service;
 
+import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.MessageRepo;
+import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dao.entity.PupperMessage;
 import com.utahmsd.pupper.dto.MessageResponse;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.*;
+import java.util.function.Function;
 
 import static com.utahmsd.pupper.dto.MessageResponse.createMessageResponse;
 import static com.utahmsd.pupper.util.Constants.*;
@@ -31,11 +34,13 @@ public class MessageService {
 
     private final MessageRepo messageRepo;
     private final MatchResultRepo matchResultRepo;
+    private final MatchProfileRepo matchProfileRepo;
 
     @Autowired
-    MessageService(MessageRepo messageRepo, MatchResultRepo matchResultRepo) {
+    MessageService(MessageRepo messageRepo, MatchResultRepo matchResultRepo, MatchProfileRepo matchProfileRepo) {
         this.messageRepo = messageRepo;
         this.matchResultRepo = matchResultRepo;
+        this.matchProfileRepo = matchProfileRepo;
     }
 
     public List<PupperMessage> getAllMessages() {
@@ -109,20 +114,35 @@ public class MessageService {
             return createMessageResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
                     "Error sending message: Not a valid matchResult.");
         }
-        messageRepo.save(pupperMessage);
+        PupperMessage insertedMessage = messageRepo.save(pupperMessage);
 
-        return createMessageResponse(true, new ArrayList<>(Arrays.asList(pupperMessage)),
+        return createMessageResponse(true, new ArrayList<>(Arrays.asList(insertedMessage)),
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    //TODO: Implement delete methods
-
     public MessageResponse deleteMessageHistoryByMatchProfileIds(Long matchProfileId1, Long matchProfileId2) {
-        return null;
+        Optional<MatchProfile> matchProfile1 = matchProfileRepo.findById(matchProfileId1);
+        Optional<MatchProfile> matchProfile2 = matchProfileRepo.findById(matchProfileId2);
+        if (!matchProfile1.isPresent() || !matchProfile2.isPresent()) {
+            return createMessageResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        }
+        messageRepo.deleteMessageHistoryBetweenMatchProfiles(matchProfile1.get(), matchProfile2.get());
+        return createMessageResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
+    /**
+     * Method that queries pupper_message for all records where either from_match_profile_id_fk or to_match_profile_id_fk
+     * matches the matchProfileId supplied.
+     * @param matchProfileId
+     * @return
+     */
     public MessageResponse deleteAllMessagesByMatchProfileId(Long matchProfileId) {
-        return null;
+        Optional<MatchProfile> matchProfile = matchProfileRepo.findById(matchProfileId);
+
+        matchProfile.ifPresent(messageRepo::deleteAllMessagesForMatchProfile);
+
+        return matchProfile.isPresent() ? createMessageResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION):
+                createMessageResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
     }
 
 

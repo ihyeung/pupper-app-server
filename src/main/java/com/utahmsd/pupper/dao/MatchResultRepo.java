@@ -24,4 +24,5 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
 //                            @Param("lastUpdate") String lastUpdate,
 //                            @Param("profileId") Long matchProfileOneId,
 //                            @Param("profileId2") Long matchProfileTwoId);
+
 }
