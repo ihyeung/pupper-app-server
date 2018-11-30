@@ -18,7 +18,7 @@ import static com.utahmsd.pupper.security.SecurityConstants.*;
 
 public class UserAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public UserAuthorizationFilter(AuthenticationManager authManager) {
+    UserAuthorizationFilter(AuthenticationManager authManager) {
         super(authManager);
     }
 

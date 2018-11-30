@@ -8,10 +8,20 @@ import java.time.Instant;
 
 import static com.utahmsd.pupper.util.ValidationUtils.isValidDate;
 import static com.utahmsd.pupper.util.ValidationUtils.isValidEmail;
+import static com.utahmsd.pupper.util.ValidationUtils.isValidZipcode;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ValidationUtilsTest {
+
+    @Test
+    public void testIsValidZipcode() {
+        assertTrue(isValidZipcode("84095"));
+        assertFalse(isValidZipcode("123456"));
+        assertFalse(isValidZipcode("hello"));
+        assertFalse(isValidZipcode("12345-6578")); //API doesn't support zip+4 zipcodes
+        assertFalse(isValidZipcode("$%@^1"));
+    }
 
     @Test
     public void isValidEmail_validEmailInput() {
@@ -30,12 +40,10 @@ public class ValidationUtilsTest {
         assertFalse(isValidEmail("1234"));
         assertFalse(isValidEmail("emailwith @ spaces.com"));
         assertFalse(isValidEmail("helloemail@test"));
-        assertFalse(isValidEmail("hello*email@test.com"));
-        assertFalse(isValidEmail("hello#email@test.com"));
-        assertFalse(isValidEmail("hello#email@test.com"));
+        assertFalse(isValidEmail("hello&#*email@test.com"));
+        assertFalse(isValidEmail("hello/;email@test.com"));
         assertFalse(isValidEmail("   123456789@test.com "));
         assertFalse(isValidEmail("hello.email@test..com"));
-
     }
 
     @Test

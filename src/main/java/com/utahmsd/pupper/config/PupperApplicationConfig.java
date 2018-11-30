@@ -10,18 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
-import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.Arrays;
-
 @Configuration
+@ComponentScan(lazyInit = true)
 @EnableJpaRepositories("com.utahmsd.pupper.dao")
 @EnableTransactionManagement
 public class PupperApplicationConfig {
@@ -43,18 +40,21 @@ public class PupperApplicationConfig {
     @Value("${amazonProperties.secretKey}")
     private String secretKey;
 
+    @Value("${zipCode.api.key}")
+    private String zipCodeApiKey;
+
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
 
-    @Bean
-    public CacheManager cacheManager() {
-        SimpleCacheManager cacheManager = new SimpleCacheManager();
-        cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("pupper")));
-
-        return cacheManager;
-    }
+//    @Bean
+//    public CacheManager cacheManager() {
+//        SimpleCacheManager cacheManager = new SimpleCacheManager();
+//        cacheManager.setCaches(Arrays.asList(new ConcurrentMapCache("pupper")));
+//
+//        return cacheManager;
+//    }
 
 //    @Bean
 //    public DataSource dataSource() {

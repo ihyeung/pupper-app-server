@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile, Long> {
@@ -22,6 +23,12 @@ public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile,
     @Modifying
     @Query("UPDATE UserProfile u SET u.lastLogin = :lastLogin WHERE u.id = :id")
     void updateLastLogin(@Param("id") Long userId, @Param("lastLogin") Date lastLogin);
+
+    @Query("FROM UserProfile u WHERE u.zip = :zip")
+    List<UserProfile> findAllByZip(@Param("zip") String zip);
+
+    @Query("FROM UserProfile u WHERE u.zip BETWEEN :zipMin AND :zipMax")
+    List<UserProfile> findAllByZipBetween(@Param("zipMin") String zipMin, @Param("zipMax") String zipMax);
 
 //    Optional<List<UserProfile>> findAllByPupperScore (float score);
 //    Optional<List<UserProfile>> findAllByLastLoginBetween (Date start, Date end);

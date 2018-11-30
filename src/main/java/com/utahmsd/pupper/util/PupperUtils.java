@@ -18,23 +18,37 @@ public class PupperUtils {
     static final String DEFAULT_AGE = "0 years old";
     private static final String PUPPER_AGE = "%d %s old";
 
-    public static LifeStage ageToStage(String age) throws ValidationException {
+    private static LifeStage ageToStage(String age) throws ValidationException {
+        if (age == null || age.length() < 2) {
+            throw new ValidationException("Invalid input format");
+        }
         CharSequence ageUnits = "YMD";
         if (!StringUtils.containsAny(ageUnits, age.toUpperCase())) {
-            throw new ValidationException("Age field is missing units");
+            throw new ValidationException("Missing Y/M/D units");
         }
-        //TODO: Implement this
+
         return null;
     }
 
     public static LifeStage dobToLifeStage(Date date) {
         String ageString = createAgeStringFromDate(date);
+
         try {
-            return ageToStage(ageString);
+            return ageToStage(formatAgeString(ageString));
         } catch (ValidationException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Shortens age string to abbreviated form. eg. "12 years old" to "12Y".
+     * @param ageString
+     * @return
+     */
+    private static String formatAgeString(String ageString) {
+        String [] ageWords = ageString.split(" ");
+        return ageWords[0] + ageWords[1].substring(0, 1).toUpperCase();
     }
 
     /**

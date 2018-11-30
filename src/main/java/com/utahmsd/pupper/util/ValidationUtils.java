@@ -5,6 +5,10 @@ import org.joda.time.DateTime;
 
 public class ValidationUtils {
 
+    public static boolean isValidZipcode(String input) {
+        return !StringUtils.isNullOrEmpty(input) && input.matches("^[0-9]{5}$");
+    }
+
     public static boolean isValidEmail(String input) {
         return !StringUtils.isNullOrEmpty(input) &&
                 input.matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");

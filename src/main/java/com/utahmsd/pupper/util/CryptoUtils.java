@@ -8,7 +8,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
-public class SecurityUtils {
+public class CryptoUtils {
 
     private static final int ITERATIONS = 65536;
     private static final int KEY_LENGTH = 256;

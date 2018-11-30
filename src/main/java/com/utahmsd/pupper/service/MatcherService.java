@@ -20,20 +20,20 @@ public class MatcherService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
     private static final int DEFAULT_BATCH_SIZE = 50; //Number of match profiles to retrieve for a user per batch
 
-
-    private final MatchProfileRepo matchProfileRepo;
-    private final PupperProfileRepo pupperProfileRepo;
-    private final UserProfileRepo userProfileRepo;
-    private final MatchResultRepo matchResultRepo;
-
-    @Autowired
-    public MatcherService(UserProfileRepo userProfileRepo, PupperProfileRepo pupperProfileRepo,
-                          MatchProfileRepo matchProfileRepo, MatchResultRepo matchResultRepo) {
-        this.matchProfileRepo = matchProfileRepo;
-        this.pupperProfileRepo = pupperProfileRepo;
-        this.userProfileRepo = userProfileRepo;
-        this.matchResultRepo = matchResultRepo;
-    }
+//
+//    private final MatchProfileRepo matchProfileRepo;
+//    private final PupperProfileRepo pupperProfileRepo;
+//    private final UserProfileRepo userProfileRepo;
+//    private final MatchResultRepo matchResultRepo;
+//
+//    @Autowired
+//    public MatcherService(UserProfileRepo userProfileRepo, PupperProfileRepo pupperProfileRepo,
+//                          MatchProfileRepo matchProfileRepo, MatchResultRepo matchResultRepo) {
+//        this.matchProfileRepo = matchProfileRepo;
+//        this.pupperProfileRepo = pupperProfileRepo;
+//        this.userProfileRepo = userProfileRepo;
+//        this.matchResultRepo = matchResultRepo;
+//    }
 
     //Called when #1 swipes left/right on #2 and #2 has not rated #1's profile yet
     public MatcherResponse insertNewMatchResult(MatcherRequest request) { return null;}

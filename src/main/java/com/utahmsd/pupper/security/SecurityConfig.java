@@ -3,6 +3,7 @@ package com.utahmsd.pupper.security;
 import com.utahmsd.pupper.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,6 +21,7 @@ import static com.utahmsd.pupper.security.SecurityConstants.SWAGGER_WHITELIST;
 
 @Configuration
 @EnableWebSecurity
+@ComponentScan(lazyInit = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserAccountService userAccountService;
@@ -50,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf()
                 .disable().authorizeRequests()
-                .antMatchers(HttpMethod.GET, SWAGGER_WHITELIST).permitAll()
+//                .antMatchers(HttpMethod.GET, SWAGGER_WHITELIST).permitAll()
 //                .and().authorizeRequests()
                 .antMatchers(HttpMethod.POST, REGISTER_ENDPOINT).permitAll()
                 .anyRequest().authenticated()
