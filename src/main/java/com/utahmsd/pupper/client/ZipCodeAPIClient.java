@@ -7,6 +7,7 @@ import com.utahmsd.pupper.util.ZipcodeResult;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,9 @@ public class ZipCodeAPIClient {
             return 0;
         }
         HttpGet httpGet = new HttpGet(String.format(DIST_BETWEEN_ZIPCODES, zipcode, zipcode1));
+        httpGet.setHeader("Content-Type", String.valueOf(ContentType.APPLICATION_JSON));
+        httpGet.setHeader("Accept", String.valueOf(ContentType.APPLICATION_JSON));
+
         HttpResponse response;
         try {
             response = httpClient.execute(httpGet);
@@ -67,6 +71,8 @@ public class ZipCodeAPIClient {
                 return zipCodes;
             }
             HttpGet httpGet = new HttpGet(String.format(ZIP_CODES_RADIUS, zipcode, radius));
+            httpGet.setHeader("Content-Type", String.valueOf(ContentType.APPLICATION_JSON));
+            httpGet.setHeader("Accept", String.valueOf(ContentType.APPLICATION_JSON));
             HttpResponse response;
             try {
                 response = httpClient.execute(httpGet);

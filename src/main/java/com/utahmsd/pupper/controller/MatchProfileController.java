@@ -3,21 +3,25 @@ package com.utahmsd.pupper.controller;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import com.utahmsd.pupper.service.MatchProfileService;
+import com.utahmsd.pupper.service.filter.MatchProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 
 @RestController
 @Api(value = "MatchProfile Controller for MatchProfile endpoints")
 public class MatchProfileController {
 
     private final MatchProfileService matchProfileService;
+    private final MatchProfileFilterService matchProfileFilterService;
 
     @Autowired
-    MatchProfileController(MatchProfileService matchProfileService) {
+    MatchProfileController(MatchProfileService matchProfileService, MatchProfileFilterService matchProfileFilterService) {
         this.matchProfileService = matchProfileService;
+        this.matchProfileFilterService = matchProfileFilterService;
     }
 
     @GetMapping(path="/matchProfile")
@@ -31,37 +35,35 @@ public class MatchProfileController {
     }
 
     @GetMapping(path="/matchProfile", params = {"userEmail"})
-    public MatchProfileResponse getMatchProfilesByUserEmail(@PathVariable("userId") Long userId,
-                                                            @RequestParam("userEmail") String email) {
-//        return matchProfileService.getAllMatchProfilesByEmail(userId, email);
-        return null;
+    public MatchProfileResponse getMatchProfilesByUserEmail(@RequestParam("userEmail") @Email String email) {
+        return matchProfileFilterService.getAllMatchProfilesByEmail(email);
     }
 
     @GetMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
     public MatchProfileResponse getMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userProfileId,
-                                                    @PathVariable("matchProfileId") Long matchProfileId) {
+                                                                                @PathVariable("matchProfileId") Long matchProfileId) {
         return matchProfileService.getMatchProfileById(userProfileId, matchProfileId);
     }
 
     @PostMapping(path="/user/{userId}/matchProfile")
     public MatchProfileResponse createMatchProfileForUserByUserProfileId(@PathVariable("userId") Long userId,
-                                                              @RequestBody @Valid MatchProfile matchProfile) {
+                                                                        @RequestBody @Valid MatchProfile matchProfile) {
 
         return matchProfileService.createOrUpdateMatchProfileForUser(userId, matchProfile);
     }
 
     @PostMapping(path="/user/{userId}/matchProfile/{matchProfileId}", params = {"profilePic"})
     public MatchProfileResponse updateProfileImageForMatchProfile(@PathVariable("userId") Long userId,
-                                                                         @PathVariable("matchProfileId") Long matchProfileId,
-                                                                         @RequestParam("profilePic") String profilePic) {
+                                                                 @PathVariable("matchProfileId") Long matchProfileId,
+                                                                 @RequestParam("profilePic") String profilePic) {
 
         return matchProfileService.updateProfileImageByMatchProfileId(userId, matchProfileId, profilePic);
     }
 
     @PutMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
     public MatchProfileResponse updateMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
-                                                                        @PathVariable("matchProfileId") Long matchProfileId,
-                                                                        @RequestBody @Valid MatchProfile matchProfile) {
+                                                                                   @PathVariable("matchProfileId") Long matchProfileId,
+                                                                                    @RequestBody @Valid MatchProfile matchProfile) {
         return matchProfileService.updateMatchProfile(userId, matchProfileId, matchProfile);
     }
 

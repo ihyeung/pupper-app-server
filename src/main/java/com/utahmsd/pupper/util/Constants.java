@@ -5,6 +5,7 @@ public class Constants {
     public static final int DEFAULT_PAGE_NUM = 0;
     public static final int DEFAULT_PAGE_SIZE = 10;
     public static final int DEFAULT_QUERY_LIMIT = 100;
+    public static final float DEFAULT_PROFILE_SCORE = 100.0F;
 
     public static final String DEFAULT_DESCRIPTION = "success";
 

@@ -4,6 +4,7 @@ import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dto.BreedResponse;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import com.utahmsd.pupper.service.PupperProfileService;
+import com.utahmsd.pupper.service.filter.PupperProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,12 @@ import javax.validation.Valid;
 public class PupperProfileController {
 
     private final PupperProfileService pupperProfileService;
+    private final PupperProfileFilterService pupperProfileFilterService;
 
     @Autowired
-    PupperProfileController(PupperProfileService pupperProfileService) {
+    PupperProfileController(PupperProfileService pupperProfileService, PupperProfileFilterService pupperProfileFilterService) {
         this.pupperProfileService = pupperProfileService;
+        this.pupperProfileFilterService = pupperProfileFilterService;
     }
 
     @GetMapping(path="/pupper")
@@ -29,7 +32,7 @@ public class PupperProfileController {
     @GetMapping(path="/pupper", params = {"sortBy", "limit"})
     public PupperProfileResponse getAllPupperProfiles(@RequestParam("sortBy") String sort,
                                                       @RequestParam("limit") int limit) {
-        return pupperProfileService.getAllPupperProfiles(sort, limit);
+        return pupperProfileFilterService.getPupperProfilesWithFilters(sort, limit);
     }
 
     @GetMapping(path ="/pupper/breed")
@@ -44,7 +47,7 @@ public class PupperProfileController {
 
     @GetMapping(path ="/pupper", params = {"breed"})
     public PupperProfileResponse findPupperProfilesByBreedName(@RequestParam("breed") String breed) {
-        return pupperProfileService.getPupperProfilesByBreedName(breed);
+        return pupperProfileFilterService.getPupperProfilesFilterByBreedName(breed);
     }
 
     @GetMapping(path ="/user/{userId}/pupper")
@@ -54,7 +57,7 @@ public class PupperProfileController {
 
     @GetMapping(path ="/pupper", params = {"userEmail"})
     public PupperProfileResponse getPupperProfilesByUserEmail(@RequestParam("userEmail") String userEmail) {
-        return pupperProfileService.findAllPupperProfilesByUserEmail(userEmail);
+        return pupperProfileFilterService.getPupperProfilesFilterByEmail(userEmail);
     }
 
     @GetMapping(path ="/user/{userId}/matchProfile/{matchProfileId}/pupper")

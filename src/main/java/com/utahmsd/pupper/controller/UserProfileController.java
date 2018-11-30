@@ -3,6 +3,7 @@ package com.utahmsd.pupper.controller;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.UserProfileResponse;
 import com.utahmsd.pupper.service.UserProfileService;
+import com.utahmsd.pupper.service.filter.UserProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,18 @@ import javax.validation.Valid;
 public class UserProfileController {
 
     private final UserProfileService userProfileService;
+    private final UserProfileFilterService userProfileFilterService;
 
     @Autowired
-    UserProfileController(UserProfileService userProfileService) {
+    UserProfileController(UserProfileService userProfileService, UserProfileFilterService userProfileFilterService) {
         this.userProfileService = userProfileService;
+        this.userProfileFilterService = userProfileFilterService;
     }
 
     @GetMapping(params = {"sortBy", "limit"})
     public UserProfileResponse getAllUserProfiles(@RequestParam(value = "sortBy") String sort,
                                                   @RequestParam(value = "limit") String limit) {
-        return userProfileService.getAllUserProfiles(sort, limit);
+        return userProfileFilterService.getUserProfilesWithFilters(sort, limit);
     }
 
     @GetMapping(path ="/{userId}")
@@ -39,7 +42,7 @@ public class UserProfileController {
 
     @PutMapping(path ="/{userId}")
     public UserProfileResponse updateUserProfileById(@PathVariable("userId") Long userProfileId,
-                                                 @RequestBody @Valid UserProfile userProfile) {
+                                                     @RequestBody @Valid UserProfile userProfile) {
         return userProfileService.updateUserProfileByUserProfileId(userProfileId, userProfile);
     }
 
@@ -55,18 +58,18 @@ public class UserProfileController {
 
     @GetMapping(params = {"zip"})
     public UserProfileResponse getUserProfilesWithZip(@RequestParam(value = "zip") String zip) {
-        return userProfileService.getUserProfilesByZip(zip);
+        return userProfileFilterService.getUserProfilesFilterByZip(zip);
     }
 
     @GetMapping(params = {"email"})
     public UserProfileResponse findUserProfileByUserAccountEmail(@RequestParam(value = "email") String email) {
-        return userProfileService.findUserProfileByUserAccountEmail(email);
+        return userProfileFilterService.getUserProfileFilterByEmail(email);
     }
 
     @PutMapping(params = {"email"})
     public UserProfileResponse updateUserProfileByUserAccountEmail(@RequestParam(value = "email") String email,
-                                                 @RequestBody @Valid UserProfile userProfile) {
-        return userProfileService.updateUserProfileByUserAccountEmail(email, userProfile);
+                                                                   @RequestBody @Valid UserProfile userProfile) {
+        return userProfileFilterService.updateUserProfileFilterByEmail(email, userProfile);
     }
 
     @PutMapping(path = "/{userId}", params = {"lastLogin"})

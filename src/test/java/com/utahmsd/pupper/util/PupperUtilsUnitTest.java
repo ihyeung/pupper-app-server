@@ -20,13 +20,10 @@ public class PupperUtilsUnitTest {
     private static final long SECONDS_WEEK = SECONDS_DAY * 7;
 
     @Test
-    public void testCreateAgeStringFromDate_birthdateIsToday() {
-        assertEquals(createAgeStringFromDate(Date.from(Instant.now())), DEFAULT_AGE);
-    }
-
-    @Test
-    public void testCreateAgeStringFromDate_invalidFutureBirthdate() {
+    public void testCreateAgeStringFromDate_invalidDate() {
+        assertEquals(DEFAULT_AGE, createAgeStringFromDate(Date.from(Instant.now())));
         assertEquals(DEFAULT_AGE, createAgeStringFromDate(Date.from(Instant.now().plusSeconds(SECONDS_WEEK*7))));
+        assertEquals(DEFAULT_AGE, createAgeStringFromDate(null));
     }
 
     @Test

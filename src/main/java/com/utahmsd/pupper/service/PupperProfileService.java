@@ -59,22 +59,6 @@ public class PupperProfileService {
         return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public PupperProfileResponse getAllPupperProfiles(String sort, int limit) {
-        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, sort));
-        Iterable<PupperProfile> puppers = pupperProfileRepo.findAll(sortCriteria);
-        List<PupperProfile> pupperProfileList = new ArrayList<>();
-        if (!puppers.iterator().hasNext()) {
-            return createPupperProfileResponse(false, pupperProfileList, HttpStatus.OK, NO_QUERY_RESULTS);
-        }
-
-        puppers.forEach(pupperProfile -> {
-            if (pupperProfileList.size() < limit) {
-                pupperProfileList.add(pupperProfile);
-            }
-        });
-        return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
-    }
-
     //TODO: TEST THIS METHOD POST REFACTORING
     public PupperProfileResponse findAllPupperProfilesByUserProfileId(Long userProfileId) {
         List<PupperProfile> pupperProfiles = pupperProfileRepo.findAllByMatchProfile_UserProfile_Id(userProfileId);
@@ -98,14 +82,6 @@ public class PupperProfileService {
 
         return createPupperProfileResponse(true, pupperProfiles, HttpStatus.OK, DEFAULT_DESCRIPTION);
 
-    }
-
-    public PupperProfileResponse findAllPupperProfilesByUserEmail(String userEmail) {
-        List<PupperProfile> pupperProfileList = pupperProfileRepo.findAllByMatchProfile_UserProfile_UserAccount_Username(userEmail);
-        if (pupperProfileList == null || pupperProfileList.isEmpty()) {
-            return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-        return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public PupperProfileResponse findPupperProfileById(Long userId, Long matchProfileId, Long pupperId) {
@@ -192,15 +168,6 @@ public class PupperProfileService {
         }
 
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
-    }
-
-    public PupperProfileResponse getPupperProfilesByBreedName(String breedName) {
-        List<PupperProfile> results = pupperProfileRepo.findAllByBreedName(breedName);
-        if (results == null || results.isEmpty()) {
-            return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-
-        return createPupperProfileResponse(true, results, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public PupperProfileResponse getPupperProfilesByMatchProfileId(Long userId, Long matchProfileId) {
