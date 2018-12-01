@@ -27,15 +27,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserAccountService userAccountService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-//    @Value("${spring.security.user.name:}")
-//    private String userName;
-//
-//    @Value("${spring.security.user.password:}")
-//    private String userPassword;
-//
-//    @Value("${spring.security.user.role:}")
-//    private String userRole;
-
     @Autowired
     public SecurityConfig(UserAccountService userAccountService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userAccountService = userAccountService;
@@ -52,8 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf()
                 .disable().authorizeRequests()
-//                .antMatchers(HttpMethod.GET, SWAGGER_WHITELIST).permitAll()
-//                .and().authorizeRequests()
+//                .antMatchers(HttpMethod.GET, SWAGGER_WHITELIST).permitAll() //Uncomment for swagger2markup tests
                 .antMatchers(HttpMethod.POST, REGISTER_ENDPOINT).permitAll()
                 .anyRequest().authenticated()
                 .and()

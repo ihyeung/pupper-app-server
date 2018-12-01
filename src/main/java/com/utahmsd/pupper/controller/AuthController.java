@@ -28,7 +28,7 @@ public class AuthController {
 
     @GetMapping(path="/{accountId}")
     public UserAuthenticationResponse getAccountById(@PathVariable("accountId") Long accountId) {
-        return userAccountService.findUserAccountById(accountId);
+        return userAccountService.findUserAccountByUserAccountId(accountId);
     }
 
     @PostMapping("/register")

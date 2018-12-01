@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.service;
 
+import com.amazonaws.util.StringUtils;
 import com.utahmsd.pupper.dao.BreedRepo;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
@@ -96,7 +97,7 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
-        return createPupperProfileResponse(true, new ArrayList<>(Arrays.asList(result.get())),
+        return createPupperProfileResponse(true, Arrays.asList(result.get()),
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -107,7 +108,7 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
-        if (pupperProfile.getLifeStage() == null) {
+        if (StringUtils.isNullOrEmpty(pupperProfile.getLifeStage().value())) {
             pupperProfile.setLifeStage(dobToLifeStage(pupperProfile.getBirthdate()));
         }
 
@@ -119,12 +120,12 @@ public class PupperProfileService {
             pupperProfile.setId(result.get().getId());
             pupperProfileRepo.save(pupperProfile);
 
-            return createPupperProfileResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK,
+            return createPupperProfileResponse(true, Arrays.asList(result.get()), HttpStatus.OK,
                     DEFAULT_DESCRIPTION);
         }
 
         PupperProfile profile = pupperProfileRepo.save(pupperProfile);
-        return createPupperProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK,
+        return createPupperProfileResponse(true, Arrays.asList(profile), HttpStatus.OK,
                 DEFAULT_DESCRIPTION);
     }
 
@@ -135,12 +136,12 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
-        if (pupperProfile.getLifeStage() == null) {
+        if (StringUtils.isNullOrEmpty(pupperProfile.getLifeStage().value())) {
             pupperProfile.setLifeStage(dobToLifeStage(pupperProfile.getBirthdate()));
         }
         PupperProfile profile = pupperProfileRepo.save(pupperProfile);
 
-        return createPupperProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK,
+        return createPupperProfileResponse(true, Arrays.asList(profile), HttpStatus.OK,
                 DEFAULT_DESCRIPTION);
 
     }
@@ -163,8 +164,7 @@ public class PupperProfileService {
     public PupperProfileResponse getPupperProfilesByBreedId(Long breedId) {
         Optional<List<PupperProfile>> results = pupperProfileRepo.findAllByBreedId(breedId);
         if (!results.isPresent()) {
-            return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND,
-                    INVALID_PATH_VARIABLE);
+            return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);

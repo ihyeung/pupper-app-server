@@ -15,8 +15,6 @@ import java.util.*;
 
 import static com.utahmsd.pupper.dto.MatchProfileResponse.createMatchProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 
 @Named
 @Singleton
@@ -75,23 +73,17 @@ public class MatchProfileService {
             return createMatchProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
         MatchProfile result = matchProfileRepo.findByNamesEquals(matchProfile.getNames());
-
-//        Optional<MatchProfile> result = matchProfileRepo.findByUserProfileIdAndBreedAndEnergyLevelAndLifeStage(
-//                matchProfile.getUserProfile().getId(), matchProfile.getBreed(), matchProfile.getEnergyLevel(), matchProfile.getLifeStage());
-
         if (result != null) {
             LOGGER.info("Match profile for user exists.");
             matchProfile.setScore(result.getScore()); //Reference existing score to prevent it from getting reset
             matchProfile.setId(result.getId()); //Reference existing id
-            matchProfileRepo.save(matchProfile);
-            return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(matchProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+            MatchProfile savedResult = matchProfileRepo.save(matchProfile);
+            return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(savedResult)), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-        matchProfile.setScore(DEFAULT_PROFILE_SCORE);
+        matchProfile.setScore(DEFAULT_SCORE);
         MatchProfile profile = matchProfileRepo.save(matchProfile);
         return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
-
-    //TODO: Test updateMatchProfile and deleteMatchProfile methods
 
     public MatchProfileResponse updateMatchProfile(Long userId, Long matchProfileId, MatchProfile matchProfile) {
         if (!matchProfile.getId().equals(matchProfileId) || !matchProfile.getUserProfile().getId().equals(userId)) {
@@ -106,8 +98,8 @@ public class MatchProfileService {
         }
         matchProfile.setId(result.get().getId());
         matchProfile.setScore(result.get().getScore()); //Don't allow the user to update their own score
-        matchProfileRepo.save(matchProfile);
-        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(matchProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        MatchProfile savedResult = matchProfileRepo.save(matchProfile);
+        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(savedResult)), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public MatchProfileResponse updateProfileImageByMatchProfileId(Long userId, Long matchProfileId, String imageUrl) {
@@ -117,9 +109,9 @@ public class MatchProfileService {
             return createMatchProfileResponse(false, null, HttpStatus.BAD_REQUEST, INVALID_PATH_VARIABLE);
         }
         result.get().setProfileImage(imageUrl); //Update image_url
-        matchProfileRepo.save(result.get());
+        MatchProfile savedResult = matchProfileRepo.save(result.get());
 
-        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(result.get())),
+        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(savedResult)),
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -135,12 +127,12 @@ public class MatchProfileService {
         return createMatchProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public MatchProfileResponse deleteMatchProfilesByUserId(Long userId) {
+    public MatchProfileResponse deleteMatchProfilesByUserProfileId(Long userId) {
         Optional<List<MatchProfile>> matchProfiles = matchProfileRepo.findAllByUserProfile_Id(userId);
         if (!matchProfiles.isPresent()) {
             return createMatchProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
-        matchProfileRepo.deleteAllByUserProfile_Id(userId);
+        matchProfileRepo.deleteMatchProfilesByUserProfile_Id(userId);
 
         return createMatchProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }

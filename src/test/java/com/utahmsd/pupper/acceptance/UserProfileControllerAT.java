@@ -39,7 +39,7 @@ public class UserProfileControllerAT {
 
         userAccount.setUsername("createUserProfileTest@test.com");
         userAccount.setPassword("TESTPASSWORD");
-        userAccount.setId(3);
+        userAccount.setId(3L);
 
         if (accessToken == null) {
             accessToken =

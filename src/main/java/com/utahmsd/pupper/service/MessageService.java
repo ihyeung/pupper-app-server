@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.*;
-import java.util.function.Function;
 
 import static com.utahmsd.pupper.dto.MessageResponse.createMessageResponse;
 import static com.utahmsd.pupper.util.Constants.*;
@@ -45,14 +44,14 @@ public class MessageService {
 
     public List<PupperMessage> getAllMessages() {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER)); //Sorts messages from oldest to newest
-        Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, sort));
+        Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(PAGE_NUM, PAGE_SIZE, sort));
 
         return results.getContent();
     }
 
     public List<PupperMessage> getMessagesWithLimit(int limit) {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER)); //Sorts messages from oldest to newest
-        Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(DEFAULT_PAGE_NUM, limit, sort));
+        Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(PAGE_NUM, limit, sort));
         int numResults = results.getNumberOfElements();
         LOGGER.info("Number of messages returned: {}", numResults);
 
@@ -64,10 +63,12 @@ public class MessageService {
                 messageRepo.findAllByMatchProfileSender_IdOrMatchProfileReceiver_Id(matchProfileId, matchProfileId);
         if (!messageList.isPresent()) {
             LOGGER.error("No messages were found for matchProfileId={}", matchProfileId);
+
             return emptyList();
         }
 
         LOGGER.info("{} messages were found that were sent/received by matchProfileId={}", messageList.get().size(), matchProfileId);
+
         return messageList.get();
     }
 
@@ -79,6 +80,7 @@ public class MessageService {
 
         if (!messagesFrom1To2.isPresent() && !messagesFrom2To1.isPresent()) {
             LOGGER.error("No messages were exchanged between matchProfileId={} and received by matchProfileId={}", matchProfileId1, matchProfileId2);
+
             return emptyList();
         }
 
@@ -116,8 +118,7 @@ public class MessageService {
         }
         PupperMessage insertedMessage = messageRepo.save(pupperMessage);
 
-        return createMessageResponse(true, new ArrayList<>(Arrays.asList(insertedMessage)),
-                HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createMessageResponse(true, Arrays.asList(insertedMessage), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public MessageResponse deleteMessageHistoryByMatchProfileIds(Long matchProfileId1, Long matchProfileId2) {
@@ -126,7 +127,9 @@ public class MessageService {
         if (!matchProfile1.isPresent() || !matchProfile2.isPresent()) {
             return createMessageResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
+
         messageRepo.deleteMessageHistoryBetweenMatchProfiles(matchProfile1.get(), matchProfile2.get());
+
         return createMessageResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -141,7 +144,8 @@ public class MessageService {
 
         matchProfile.ifPresent(messageRepo::deleteAllMessagesForMatchProfile);
 
-        return matchProfile.isPresent() ? createMessageResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION):
+        return matchProfile.isPresent() ?
+                createMessageResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION):
                 createMessageResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
     }
 

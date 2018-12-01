@@ -31,21 +31,18 @@ import static com.utahmsd.pupper.util.ValidationUtils.isValidDate;
 public class UserProfileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
-    private static final String DEFAULT_SORT_ORDER = "lastName";
 
     private final UserProfileRepo userProfileRepo;
-    private final UserAccountRepo userAccountRepo;
 
     @Autowired
-    UserProfileService(UserProfileRepo userProfileRepo, UserAccountRepo userAccountRepo) {
+    UserProfileService(UserProfileRepo userProfileRepo) {
         this.userProfileRepo = userProfileRepo;
-        this.userAccountRepo = userAccountRepo;
     }
 
     public UserProfileResponse findUserProfileById(Long id) {
         Optional<UserProfile> user = userProfileRepo.findById(id);
         if (user.isPresent()) {
-            return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(user.get())), HttpStatus.OK,
+            return createUserProfileResponse(true, Arrays.asList(user.get()), HttpStatus.OK,
                     DEFAULT_DESCRIPTION);
         }
         LOGGER.error(ID_NOT_FOUND, "User profile", id);
@@ -61,14 +58,14 @@ public class UserProfileService {
 
             userProfile.setUserAccount(result.getUserAccount());
             userProfile.setId(result.getId());
-            userProfileRepo.save(userProfile);
+            UserProfile savedResult = userProfileRepo.save(userProfile);
 
-            return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(userProfile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+            return createUserProfileResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         LOGGER.info("Creating a new user profile.");
         UserProfile profile = userProfileRepo.save(userProfile);
 
-        return createUserProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserProfileResponse(true, Arrays.asList(profile), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserProfileResponse updateUserProfileByUserProfileId(Long userId, UserProfile userProfile) {
@@ -84,10 +81,10 @@ public class UserProfileService {
         }
         userProfile.setUserAccount(result.get().getUserAccount());
         userProfile.setId(result.get().getId());
-        userProfileRepo.save(userProfile);
+        UserProfile savedResult = userProfileRepo.save(userProfile);
 
         LOGGER.info("User profile with id={} was found, updating existing profile", userId);
-        return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserProfileResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserProfileResponse updateLastLoginForUserProfile(Long userProfileId, String lastLogin) {

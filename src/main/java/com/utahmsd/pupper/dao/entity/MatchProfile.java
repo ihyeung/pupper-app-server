@@ -12,8 +12,7 @@ import javax.validation.constraints.*;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 /**
  * Entity representing each individual MatchProfile associated with a user (for 1-3 PupperProfiles).
@@ -39,7 +38,8 @@ public class MatchProfile implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) //A user can have multiple match profiles
+    @ManyToOne //A user can have multiple match profiles
+    // Removed FetchType.LAZY to resolve HttpMessageNotWritableException: Could not write content: could not initialize proxy - no Session
     @JoinColumn(name = "user_profile_id_fk")
     @Valid
     private UserProfile userProfile;
@@ -52,17 +52,17 @@ public class MatchProfile implements Serializable {
     @Column(name = "num_dogs")
     private int numDogs;
 
-    @Max(1)
     @Column(name = "sex")
-    private char sex; //M or F
+    @javax.validation.constraints.Size(min = 1, max = 1)
+    private String sex; //M or F
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "birthdate")
     @Past
     private Date birthdate;
 
-
     @ManyToOne //Many match profiles can belong to a type of breed, but a match profile can only be one breed
+    // Removed FetchType.LAZY to resolve HttpMessageNotWritableException: Could not write content: could not initialize proxy - no Session
     @JoinColumn(name = "breed_id_fk")
     @Valid
     private Breed breed;
@@ -92,6 +92,11 @@ public class MatchProfile implements Serializable {
     @javax.validation.constraints.Size(max = 100)
     private String profileImage;
 
+    public static List<String> matchProfileFieldList() {
+        return Arrays.asList("id", "numDogs", "names", "sex", "birthdate", "breed", "size", "energy", "lifeStage",
+                "score", "about", "profile_image");
+    }
+
     public static MatchProfile createFromObject(Object object) throws ParseException {
         if (object != null) {
             LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
@@ -100,6 +105,7 @@ public class MatchProfile implements Serializable {
             matchProfile.setUserProfile(
                     UserProfile.createFromObject(entityObject.get("userProfile")));
             matchProfile.setNames((String) entityObject.get("names"));
+            matchProfile.setSex((String) entityObject.get("sex"));
             matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
             matchProfile.setBreed(Breed.createFromObject(entityObject.get("breed")));
             matchProfile.setSize(Size.valueOf((String) entityObject.get("size")));
@@ -114,102 +120,55 @@ public class MatchProfile implements Serializable {
         return null;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
-    }
+    public UserProfile getUserProfile() { return userProfile; }
 
-    public String getNames() {
-        return names;
-    }
+    public void setUserProfile(UserProfile userProfile) { this.userProfile = userProfile; }
 
-    public void setNames(String names) {
-        this.names = names;
-    }
+    public String getNames() { return names; }
 
-    public int getNumDogs() {
-        return numDogs;
-    }
+    public void setNames(String names) { this.names = names; }
 
-    public void setNumDogs(int numDogs) {
-        this.numDogs = numDogs;
-    }
+    public int getNumDogs() { return numDogs; }
 
-    public char getSex() {
-        return sex;
-    }
+    public void setNumDogs(int numDogs) { this.numDogs = numDogs; }
 
-    public void setSex(char sex) {
-        this.sex = sex;
-    }
+    public String getSex() { return sex; }
 
-    public Date getBirthdate() {
-        return birthdate;
-    }
+    public void setSex(String sex) { this.sex = sex; }
 
-    public void setBirthdate(Date birthdate) {
-        this.birthdate = birthdate;
-    }
+    public Date getBirthdate() { return birthdate; }
 
-    public Breed getBreed() {
-        return breed;
-    }
+    public void setBirthdate(Date birthdate) { this.birthdate = birthdate; }
 
-    public void setBreed(Breed breed) {
-        this.breed = breed;
-    }
+    public Breed getBreed() { return breed; }
+
+    public void setBreed(Breed breed) { this.breed = breed; }
 
     public Size getSize() { return size; }
 
     public void setSize(Size size) { this.size = size; }
 
-    public Energy getEnergyLevel() {
-        return energyLevel;
-    }
+    public Energy getEnergyLevel() { return energyLevel; }
 
-    public void setEnergyLevel(Energy energyLevel) {
-        this.energyLevel = energyLevel;
-    }
+    public void setEnergyLevel(Energy energyLevel) { this.energyLevel = energyLevel; }
 
-    public LifeStage getLifeStage() {
-        return lifeStage;
-    }
+    public LifeStage getLifeStage() { return lifeStage; }
 
-    public void setLifeStage(LifeStage lifeStage) {
-        this.lifeStage = lifeStage;
-    }
+    public void setLifeStage(LifeStage lifeStage) { this.lifeStage = lifeStage; }
 
-    public float getScore() {
-        return score;
-    }
+    public float getScore() { return score; }
 
-    public void setScore(float score) {
-        this.score = score;
-    }
+    public void setScore(float score) { this.score = score; }
 
-    public String getAboutMe() {
-        return aboutMe;
-    }
+    public String getAboutMe() { return aboutMe; }
 
-    public void setAboutMe(String aboutMe) {
-        this.aboutMe = aboutMe;
-    }
+    public void setAboutMe(String aboutMe) { this.aboutMe = aboutMe; }
 
-    public String getProfileImage() {
-        return profileImage;
-    }
+    public String getProfileImage() { return profileImage; }
 
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
+    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
 }

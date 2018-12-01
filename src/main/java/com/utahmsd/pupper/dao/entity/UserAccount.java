@@ -11,12 +11,12 @@ import java.util.LinkedHashMap;
  * Entity containing user credentials/account information.
  */
 @Entity // reference to table defaults to table_name (i.e., reference database table MyTable using my_table)
-@Table (indexes = @Index(columnList = "username", name = "user_account_username_uindex"))
+@Table (name = "user_account", indexes = @Index(columnList = "username", name = "user_account_username_uindex"))
 public class UserAccount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private long id;
+    private Long id;
 
     @Size(max = 50)
     @Email(message = "Username should be a valid email")
@@ -41,11 +41,11 @@ public class UserAccount implements Serializable {
         return null;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) { this.id = id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getUsername() {
         return username;
@@ -59,8 +59,5 @@ public class UserAccount implements Serializable {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+    public void setPassword(String password) { this.password = password; }
 }

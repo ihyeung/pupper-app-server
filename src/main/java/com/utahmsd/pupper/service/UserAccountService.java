@@ -51,26 +51,39 @@ public class UserAccountService implements UserDetailsService {
         return createUserAuthResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAuthenticationResponse findUserAccountById(Long userAccountId) {
+    public UserAuthenticationResponse findUserAccountByUserAccountId(Long userAccountId) {
         Optional<UserAccount> result = userAccountRepo.findById(userAccountId);
-        if (!result.isPresent()) {
-            LOGGER.error("User account with id='{}' not found", userAccountId);
-            return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND,
-                    String.format("User account with id = %d not found", userAccountId));
-        }
-
-        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return !result.isPresent() ?
+                createUserAuthResponse(false, null, HttpStatus.NOT_FOUND,
+                    String.format("User account with id = %d not found", userAccountId)) :
+                createUserAuthResponse(true, Arrays.asList(result.get()), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse findUserAccountByEmail(String email) {
         UserAccount result = userAccountRepo.findByUsername(email);
         if (result == null) {
             LOGGER.error(String.format(EMAIL_NOT_FOUND, "User account", email));
+
             return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND,
                     String.format(EMAIL_NOT_FOUND, "User account", email));
         }
 
-        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(result)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserAuthResponse(true, Arrays.asList(result), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public UserAuthenticationResponse getUserAccountByUserProfileId(Long userProfileId) {
+        Optional<UserProfile> userProfileResult = userProfileRepo.findById(userProfileId);
+        if (!userProfileResult.isPresent()) {
+            return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND);
+        }
+        Long userAccountId = userProfileResult.get().getUserAccount().getId();
+        Optional<UserAccount> userAccountResult = userAccountRepo.findById(userAccountId);
+        if (!userAccountResult.isPresent()) {
+            return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND,
+                    String.format(ID_NOT_FOUND.replace("id", "user profile id"), "User account", userProfileId));
+        }
+        return createUserAuthResponse(true, Arrays.asList(userAccountResult.get()),
+                HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse createOrUpdateUserAccount(UserAccount userAccount) {
@@ -78,13 +91,12 @@ public class UserAccountService implements UserDetailsService {
         if (result != null) {
             LOGGER.info("Account exists: performing update");
             userAccount.setId(result.getId());
-            userAccountRepo.save(userAccount);
-            return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)),
-                    HttpStatus.OK, DEFAULT_DESCRIPTION);
+            UserAccount account = userAccountRepo.save(userAccount);
+            return createUserAuthResponse(true, Arrays.asList(account), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         UserAccount savedUser = userAccountRepo.save(userAccount);
-        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(savedUser)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserAuthResponse(true, Arrays.asList(savedUser), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
 //        UserCredentials userCredentials = new UserCredentials();
 //        userCredentials.setUser(request.getUser());
@@ -98,14 +110,14 @@ public class UserAccountService implements UserDetailsService {
     public UserAuthenticationResponse updateUserAccountById(Long accountId, UserAccount userAccount) {
         UserAccount result = userAccountRepo.findByUsername(userAccount.getUsername());
         //First check to make sure email is registered as an existing account, and that the path param id and the request body id match
-        if (loadUserByUsername(userAccount.getUsername()) == null || accountId != userAccount.getId()) {
+        if (result == null || !accountId.equals(userAccount.getId())) {
             return createUserAuthResponse(false, null, HttpStatus.BAD_REQUEST,
                     String.format(EMAIL_NOT_FOUND, "User account", userAccount.getUsername()));
         }
         userAccount.setId(result.getId());
-        userAccountRepo.save(userAccount);
+        UserAccount savedResult = userAccountRepo.save(userAccount);
 
-        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserAuthResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse updateUserAccountByEmail(String email, UserAccount userAccount) {
@@ -121,7 +133,7 @@ public class UserAccountService implements UserDetailsService {
         }
         userAccount.setId(result.getId());
         userAccountRepo.save(userAccount);
-        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccount)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createUserAuthResponse(true, Arrays.asList(userAccount), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse deleteUserAccountById(Long accountId) {
@@ -142,45 +154,6 @@ public class UserAccountService implements UserDetailsService {
         }
         userAccountRepo.deleteById(result.getId());
         return createUserAuthResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
-    }
-
-//    public UserAuthenticationResponse authenticateUser(UserCredentialsRequest request) {
-//        String email = request.getUser().getUsername();
-//        String password = request.getUser().getPassword();
-//        Optional<UserCredentials> result = userAccountRepo.findByEmail(email);
-//        if (!result.isPresent()) {
-//            LOGGER.error(String.format(INVALID_EMAIL, email));
-//
-//            return createUserCredentialsResponse(false, Collections.null, HttpStatus.NOT_FOUND, String.format(INVALID_EMAIL, email));
-//        }
-//        ArrayList<User> user = new ArrayList<>();
-//        user.add(new User(email, null));
-//
-//        UserCredentials userCredentials = result.get();
-//        String computedHashFromSubmittedPassword = generateHash(password, userCredentials.getSalt().getBytes());
-//        if (userCredentials.getComputedHash().equals(computedHashFromSubmittedPassword)) { //Login success
-//
-//            return createUserCredentialsResponse(true, user, HttpStatus.OK, DEFAULT_DESCRIPTION);
-//        }
-//        //Otherwise, invalid login credentials
-//        return createUserCredentialsResponse(false, user, HttpStatus.UNAUTHORIZED, INVALID_LOGIN);
-//        return null;
-
-//    }
-
-    public UserAuthenticationResponse getUserAccountByUserProfileId(Long userProfileId) {
-        Optional<UserProfile> userProfileResult = userProfileRepo.findById(userProfileId);
-        if (!userProfileResult.isPresent()) {
-            return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-        Long userAccountId = userProfileResult.get().getUserAccount().getId();
-        Optional<UserAccount> userAccountResult = userAccountRepo.findById(userAccountId);
-        if (!userAccountResult.isPresent()) {
-            return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND,
-                    String.format(ID_NOT_FOUND.replace("id", "user profile id"), "User account", userProfileId));
-        }
-        return createUserAuthResponse(true, new ArrayList<>(Arrays.asList(userAccountResult.get())),
-                HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     @Override

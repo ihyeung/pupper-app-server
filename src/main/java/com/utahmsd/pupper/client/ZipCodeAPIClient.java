@@ -28,7 +28,7 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 @Named
 @Singleton
 public class ZipCodeAPIClient {
-    private static final String apiKey = "yB2CXPwRWaX4K1ZqVAHYAPaT6FjSgYVZoJYAw2mQIexjio7L2xtWLboez3XgBp7Y";
+    private static final String apiKey = System.getProperty("zipcode.api.key", "");
 
     private static final Header[] HEADERS = {
             new BasicHeader("Content-Type", String.valueOf(APPLICATION_JSON)),

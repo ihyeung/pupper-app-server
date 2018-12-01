@@ -66,7 +66,6 @@ public class Swagger2MarkupTest {
     @Test
     public void convertRemoteSwaggerToAsciiDoc() throws MalformedURLException {
 //        Path path = Paths.get("src/docs/swagger/swagger.json");
-
         Swagger2MarkupConverter.from(new URL(TEST_URL + "v2/api-docs")).build()
                 .toFolder(Paths.get("src/docs/asciidoc"));
     }
@@ -77,15 +76,4 @@ public class Swagger2MarkupTest {
         account.setPassword("password");
         return new ObjectMapper().writeValueAsString(account);
     }
-
-
-//    @Ignore
-//    @Test
-//    public void registerUser() throws Exception {
-//        this.mockMvc.perform(post("/register").content(createUser())
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andDo(document("registerUserUsingPOST", preprocessResponse(prettyPrint())))
-//                .andExpect(status().isOk());
-//    }
-
 }

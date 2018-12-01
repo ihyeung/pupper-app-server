@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import java.util.List;
 
 @RestController
 @Api(value = "MatchProfile Controller for MatchProfile endpoints")
@@ -29,14 +30,29 @@ public class MatchProfileController {
         return matchProfileService.getAllMatchProfiles();
     }
 
+    @GetMapping(path="/matchProfile", params = {"sortBy", "limit"})
+    public List<MatchProfile> getAllMatchProfiles(@RequestParam("sortBy") String sort, @RequestParam("limit") String limit) {
+        return matchProfileFilterService.getMatchProfilesWithFilters(sort, limit);
+    }
+
     @GetMapping(path="/user/{userId}/matchProfile")
-    public MatchProfileResponse getMatchProfilesByUserId(@PathVariable("userId") Long userId) {
+    public MatchProfileResponse getMatchProfilesByUserProfileId(@PathVariable("userId") Long userId) {
         return matchProfileService.getAllMatchProfilesByUserId(userId);
     }
 
     @GetMapping(path="/matchProfile", params = {"userEmail"})
-    public MatchProfileResponse getMatchProfilesByUserEmail(@RequestParam("userEmail") @Email String email) {
-        return matchProfileFilterService.getAllMatchProfilesByEmail(email);
+    public List<MatchProfile> getMatchProfilesByUserEmail(@RequestParam("userEmail") @Email String email) {
+        return matchProfileFilterService.getMatchProfilesFilterByUserEmail(email);
+    }
+
+    @GetMapping(path="/matchProfile", params = {"zip"})
+    public List<MatchProfile> getMatchProfilesByUserZip(@RequestParam("zip") String zipcode) {
+        return matchProfileFilterService.getMatchProfilesFilterByUserProfileZip(zipcode);
+    }
+
+    @GetMapping(path="/matchProfile", params = {"breed"})
+    public List<MatchProfile> getMatchProfilesByBreed(@RequestParam("breed") String breed) {
+        return matchProfileFilterService.getMatchProfilesFilterByBreed(breed);
     }
 
     @GetMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
@@ -73,8 +89,8 @@ public class MatchProfileController {
         return matchProfileService.deleteMatchProfile(userId, matchProfileId);
     }
 
-    @DeleteMapping(path="/user/{userId}/matchProfile")
-    public MatchProfileResponse deleteMatchProfilesByUserProfileId(@PathVariable("userId") Long userId) {
-        return matchProfileService.deleteMatchProfilesByUserId(userId);
+    @DeleteMapping(path="/matchProfile", params = {"userId"})
+    public MatchProfileResponse deleteMatchProfilesByUserProfileId(@RequestParam("userId") Long userId) {
+        return matchProfileService.deleteMatchProfilesByUserProfileId(userId);
     }
 }

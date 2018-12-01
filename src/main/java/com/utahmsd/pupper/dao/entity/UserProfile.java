@@ -42,6 +42,7 @@ public class UserProfile implements Serializable {
 
     @Column(name = "sex")
     @Size(min = 1, max = 1)
+    @NotBlank
     private String sex; //M or F
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

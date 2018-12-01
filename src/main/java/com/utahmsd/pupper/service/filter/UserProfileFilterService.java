@@ -35,13 +35,14 @@ public class UserProfileFilterService {
     private final UserAccountRepo userAccountRepo;
 
     @Autowired
-    UserProfileFilterService(UserProfileRepo userProfileRepo, UserAccountRepo userAccountRepo) {
+    public UserProfileFilterService(UserProfileRepo userProfileRepo, UserAccountRepo userAccountRepo) {
         this.userProfileRepo = userProfileRepo;
         this.userAccountRepo = userAccountRepo;
     }
 
     public UserProfileResponse getUserProfilesWithFilters(String sortBy, String limit) {
-        int resultLimit = StringUtils.isNullOrEmpty(limit) ? DEFAULT_QUERY_LIMIT : Integer.valueOf(limit);
+        int resultLimit =
+                StringUtils.isNullOrEmpty(limit) || Integer.valueOf(limit) > MAX_RESULTS ? MAX_RESULTS : Integer.valueOf(limit);
         String sortParam = StringUtils.isNullOrEmpty(sortBy) ? DEFAULT_SORT_ORDER : sortBy;
         Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, sortParam));
         Iterable<UserProfile> users = userProfileRepo.findAll(sortCriteria);
@@ -59,7 +60,7 @@ public class UserProfileFilterService {
 
     public UserProfileResponse getUserProfilesFilterByZip(String zipCode) {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER));
-        Page<UserProfile> results = userProfileRepo.findByZip(zipCode, PageRequest.of(DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, sort));
+        Page<UserProfile> results = userProfileRepo.findByZip(zipCode, PageRequest.of(PAGE_NUM, PAGE_SIZE, sort));
         long numResults = results.getTotalElements();
         LOGGER.info("Number of results with zipcode {}: {}", zipCode,  numResults);
         if (numResults > 0) {

@@ -19,7 +19,7 @@ public class ProfileCard {
     private Long profileId;
     private String name;
     private String ageWithUnits;
-    private char sex;
+    private String sex;
     private String breedName;
     private String location;
     private String distance;
@@ -97,11 +97,11 @@ public class ProfileCard {
         this.ageWithUnits = ageWithUnits;
     }
 
-    public char getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(char sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
