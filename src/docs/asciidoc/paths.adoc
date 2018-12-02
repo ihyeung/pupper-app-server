@@ -345,8 +345,8 @@ __required__|userId|string
 * match-profile-controller
 
 
-[[_fetchmatcherdatausingget_1]]
-=== fetchMatcherData
+[[_findmatcherresultbyidusingget]]
+=== findMatcherResultById
 ....
 GET /matcher
 ....
@@ -357,10 +357,10 @@ GET /matcher
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**distance** +
-__required__|distance|string
-|**Query**|**matchProfileId** +
-__required__|matchProfileId|string
+|**Query**|**matchProfileId1** +
+__required__|matchProfileId1|string
+|**Query**|**matchProfileId2** +
+__required__|matchProfileId2|string
 |===
 
 
@@ -369,43 +369,7 @@ __required__|matchProfileId|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|<<_matcherdataresponse,MatcherDataResponse>>
-|===
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* matcher-controller
-
-
-[[_fetchmatcherdatausingget]]
-=== fetchMatcherData
-....
-GET /matcher/matchProfile/{matchProfileId}
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Path**|**matchProfileId** +
-__required__|matchProfileId|integer (int64)
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_matcherdataresponse,MatcherDataResponse>>
+|**200**|OK|<<_matchresult,MatchResult>>
 |===
 
 
@@ -422,7 +386,7 @@ __required__|matchProfileId|integer (int64)
 [[_submitmatcherresultsusingput]]
 === submitMatcherResults
 ....
-PUT /matcher/matchProfile/{matchProfileId}
+PUT /matcher
 ....
 
 
@@ -431,8 +395,8 @@ PUT /matcher/matchProfile/{matchProfileId}
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Path**|**matchProfileId** +
-__required__|matchProfileId|integer (int64)
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
 |**Body**|**matcherRequest** +
 __required__|matcherRequest|<<_matcherdatarequest,MatcherDataRequest>>
 |===
@@ -462,10 +426,10 @@ __required__|matcherRequest|<<_matcherdatarequest,MatcherDataRequest>>
 * matcher-controller
 
 
-[[_findmatcherresultbyidusingget]]
-=== findMatcherResultById
+[[_deleteallmatcherresultdataformatchprofileusingdelete]]
+=== deleteAllMatcherResultDataForMatchProfile
 ....
-GET /matcher/result/matchProfile/{matchProfileId1}
+DELETE /matcher
 ....
 
 
@@ -474,10 +438,8 @@ GET /matcher/result/matchProfile/{matchProfileId1}
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Path**|**matchProfileId1** +
-__required__|matchProfileId1|integer (int64)
-|**Query**|**resultFor** +
-__required__|resultFor|string
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
 |===
 
 
@@ -498,167 +460,12 @@ __required__|resultFor|string
 ==== Tags
 
 * matcher-controller
-
-
-[[_createorupdatematcherresultusingput]]
-=== createOrUpdateMatcherResult
-....
-PUT /matcher/result/matchProfile/{matchProfileId1}
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Path**|**matchProfileId1** +
-__required__|matchProfileId1|integer (int64)
-|**Query**|**isMatch** +
-__required__|isMatch|string
-|**Query**|**resultFor** +
-__required__|resultFor|string
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_matcherresponse,MatcherResponse>>
-|===
-
-
-==== Consumes
-
-* `application/json`
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* matcher-controller
-
-
-[[_getmatcherresultdatausingget]]
-=== getMatcherResultData
-....
-GET /matcher/result/matchProfile/{matchProfileId}
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Path**|**matchProfileId** +
-__required__|matchProfileId|integer (int64)
-|**Query**|**isSuccess** +
-__required__|isSuccess|string
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_matcherresponse,MatcherResponse>>
-|===
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* matcher-controller
-
-
-[[_deleteallmatcherresultdatausingdelete]]
-=== deleteAllMatcherResultData
-....
-DELETE /matcher/result/matchProfile/{matchProfileId}
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Path**|**matchProfileId** +
-__required__|matchProfileId|integer (int64)
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_matcherresponse,MatcherResponse>>
-|===
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* matcher-controller
-
-
-[[_getallmessageswithlimitusingget]]
-=== getAllMessagesWithLimit
-....
-GET /message
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|< <<_puppermessage,PupperMessage>> > array
-|===
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* message-controller
 
 
 [[_sendmessagetomatchusingpost]]
 === sendMessageToMatch
 ....
-POST /message/matchProfile/{fromMatchProfileId}
+POST /message
 ....
 
 
@@ -667,8 +474,8 @@ POST /message/matchProfile/{fromMatchProfileId}
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Path**|**fromMatchProfileId** +
-__required__|fromMatchProfileId|integer (int64)
+|**Query**|**sendFrom** +
+__required__|sendFrom|string
 |**Query**|**sendTo** +
 __required__|sendTo|string
 |**Body**|**pupperMessage** +
@@ -700,10 +507,10 @@ __required__|pupperMessage|<<_puppermessage,PupperMessage>>
 * message-controller
 
 
-[[_deleteallmessagesbetweenmatchprofilesbyidusingdelete]]
-=== deleteAllMessagesBetweenMatchProfilesById
+[[_getmessagehistoryusingget]]
+=== getMessageHistory
 ....
-DELETE /message/matchProfile/{matchProfileId1}
+GET /message
 ....
 
 
@@ -712,10 +519,48 @@ DELETE /message/matchProfile/{matchProfileId1}
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Path**|**matchProfileId1** +
-__required__|matchProfileId1|integer (int64)
-|**Query**|**messageFor** +
-__required__|messageFor|string
+|**Query**|**matchProfileId1** +
+__required__|matchProfileId1|string
+|**Query**|**matchProfileId2** +
+__required__|matchProfileId2|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|< <<_puppermessage,PupperMessage>> > array
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* message-controller
+
+
+[[_deleteallmessagesbetweenmatchprofilesbyidusingdelete]]
+=== deleteAllMessagesBetweenMatchProfilesById
+....
+DELETE /message
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**matchProfileId1** +
+__required__|matchProfileId1|string
+|**Query**|**matchProfileId2** +
+__required__|matchProfileId2|string
 |===
 
 
@@ -725,80 +570,6 @@ __required__|messageFor|string
 |===
 |HTTP Code|Description|Schema
 |**200**|OK|<<_messageresponse,MessageResponse>>
-|===
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* message-controller
-
-
-[[_getmessagehistoryusingget]]
-=== getMessageHistory
-....
-GET /message/matchProfile/{matchProfileId1}/matchProfile/{matchProfileId2}
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Path**|**matchProfileId1** +
-__required__|matchProfileId1|integer (int64)
-|**Path**|**matchProfileId2** +
-__required__|matchProfileId2|integer (int64)
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|< <<_puppermessage,PupperMessage>> > array
-|===
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* message-controller
-
-
-[[_getallmessagesbymatchprofileidusingget]]
-=== getAllMessagesByMatchProfileId
-....
-GET /message/matchProfile/{matchProfileId}
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Path**|**matchProfileId** +
-__required__|matchProfileId|integer (int64)
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|< <<_puppermessage,PupperMessage>> > array
 |===
 
 
@@ -848,21 +619,11 @@ __required__|matchProfileId|integer (int64)
 * message-controller
 
 
-[[_getpupperprofilesbyuseremailusingget]]
-=== getPupperProfilesByUserEmail
+[[_getallpupperprofilesusingget_1]]
+=== getAllPupperProfiles
 ....
 GET /pupper
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**userEmail** +
-__required__|userEmail|string
-|===
 
 
 ==== Responses
@@ -1030,8 +791,8 @@ __required__|userProfile|<<_userprofile,UserProfile>>
 * user-profile-controller
 
 
-[[_getuserprofileswithzipusingget]]
-=== getUserProfilesWithZip
+[[_getalluserprofilesusingget]]
+=== getAllUserProfiles
 ....
 GET /user
 ....
@@ -1042,8 +803,10 @@ GET /user
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**zip** +
-__required__|zip|string
+|**Query**|**limit** +
+__required__|limit|string
+|**Query**|**sortBy** +
+__required__|sortBy|string
 |===
 
 

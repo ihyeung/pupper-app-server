@@ -89,7 +89,7 @@ public class MessageService {
         return messages;
     }
 
-    public List<PupperMessage> getRecentMessageHistory(Long matchProfileId1, Long matchProfileId2) {
+    public List<PupperMessage> getRecentMessageHistory(Long matchProfileId1, Long matchProfileId2, int limit) {
         return null;
     }
 

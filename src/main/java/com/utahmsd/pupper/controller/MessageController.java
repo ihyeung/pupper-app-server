@@ -75,15 +75,16 @@ public class MessageController {
 //    }
 
     /**
-     * Retrieves the last 25 messages exchanged between two matchProfileIds.
+     * Retrieves the most recent messages exchanged between two matchProfileIds with limit.
      * @param matchProfileId1
      * @param matchProfileId2
      * @return
      */
-    @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
+    @GetMapping(params = {"matchProfileId1", "matchProfileId2", "limit"})
     public List<PupperMessage> getRecentMessageHistory(@RequestParam("matchProfileId1") Long matchProfileId1,
-                                                       @RequestParam("matchProfileId2") Long matchProfileId2) {
-        return messageService.getRecentMessageHistory(matchProfileId1, matchProfileId2);
+                                                       @RequestParam("matchProfileId2") Long matchProfileId2,
+                                                       @RequestParam("limit") int limit) {
+        return messageService.getRecentMessageHistory(matchProfileId1, matchProfileId2, limit);
     }
 
     /**
