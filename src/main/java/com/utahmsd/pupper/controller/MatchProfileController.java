@@ -63,7 +63,7 @@ public class MatchProfileController {
 
     @PostMapping(path="/user/{userId}/matchProfile")
     public MatchProfileResponse createMatchProfileForUserByUserProfileId(@PathVariable("userId") Long userId,
-                                                                        @RequestBody @Valid MatchProfile matchProfile) {
+                                                                         @RequestBody @Valid MatchProfile matchProfile) {
 
         return matchProfileService.createOrUpdateMatchProfileForUser(userId, matchProfile);
     }

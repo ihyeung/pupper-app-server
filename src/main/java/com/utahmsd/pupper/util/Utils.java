@@ -8,8 +8,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
+
+import static com.utahmsd.pupper.util.Constants.ISO_DATE_FORMAT;
 
 public class Utils {
 
@@ -25,33 +28,28 @@ public class Utils {
         return null;
     }
 
-    public static String getIsoFormatDate (final Date date) {
-        final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz";
+    public static String getIsoFormatTimestampFromDate(final Date date, String timezone) {
+//        final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz";
         final SimpleDateFormat formatter = new SimpleDateFormat(ISO_DATE_FORMAT);
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        formatter.setTimeZone(
+                TimeZone.getTimeZone(StringUtils.isNullOrEmpty(timezone) ? "UTC" : timezone));
         return formatter.format(date);
+    }
+
+    /**
+     * Generates a string representing the current ISO 8601 formatted timestamp in UTC.
+     * @return
+     */
+    public static String getIsoFormatTimestamp (Instant instant) {
+        final SimpleDateFormat f = new SimpleDateFormat(ISO_DATE_FORMAT);
+        f.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return f.format(Date.from(instant));
     }
 
     /**
      * Convenience method that returns a scaled instance of the
      * provided {@code File}.
      *
-     * @param fileToScale the original image file
-     * @param targetWidth the desired width of the scaled instance,
-     *    in pixels
-     * @param targetHeight the desired height of the scaled instance,
-     *    in pixels
-     * @param hint one of the rendering hints that corresponds to
-     *    {@code RenderingHints.KEY_INTERPOLATION} (e.g.
-     *    {@code RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
-     *    {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR},
-     *    {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
-     * @param higherQuality if true, this method will use a multi-step
-     *    scaling technique that provides higher quality than the usual
-     *    one-step technique (only useful in downscaling cases, where
-     *    {@code targetWidth} or {@code targetHeight} is
-     *    smaller than the original dimensions, and generally only when
-     *    the {@code BILINEAR} hint is specified)
      * @return a scaled version of the original {@code File}
      */
     public static File scaleImageFile(File fileToScale, int targetWidth, int targetHeight, Object hint, boolean higherQuality) {

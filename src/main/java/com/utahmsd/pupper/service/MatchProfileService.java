@@ -52,7 +52,7 @@ public class MatchProfileService {
             return createMatchProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
-        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(result.get())), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createMatchProfileResponse(true, Arrays.asList(result.get()), HttpStatus.OK, DEFAULT_DESCRIPTION);
 
     }
 
@@ -78,7 +78,7 @@ public class MatchProfileService {
             matchProfile.setScore(result.getScore()); //Reference existing score to prevent it from getting reset
             matchProfile.setId(result.getId()); //Reference existing id
             MatchProfile savedResult = matchProfileRepo.save(matchProfile);
-            return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(savedResult)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+            return createMatchProfileResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         matchProfile.setScore(DEFAULT_SCORE);
         MatchProfile profile = matchProfileRepo.save(matchProfile);
@@ -99,7 +99,7 @@ public class MatchProfileService {
         matchProfile.setId(result.get().getId());
         matchProfile.setScore(result.get().getScore()); //Don't allow the user to update their own score
         MatchProfile savedResult = matchProfileRepo.save(matchProfile);
-        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(savedResult)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createMatchProfileResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public MatchProfileResponse updateProfileImageByMatchProfileId(Long userId, Long matchProfileId, String imageUrl) {
@@ -111,8 +111,7 @@ public class MatchProfileService {
         result.get().setProfileImage(imageUrl); //Update image_url
         MatchProfile savedResult = matchProfileRepo.save(result.get());
 
-        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(savedResult)),
-                HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createMatchProfileResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
 

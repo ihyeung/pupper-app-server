@@ -8,11 +8,18 @@ import com.utahmsd.pupper.dto.pupper.Size;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import static com.utahmsd.pupper.util.Constants.DATE_FORMAT;
+import static com.utahmsd.pupper.util.Constants.DATE_FORMATTER;
 
 /**
  * Entity representing each individual MatchProfile associated with a user (for 1-3 PupperProfiles).
@@ -56,7 +63,7 @@ public class MatchProfile implements Serializable {
     @javax.validation.constraints.Size(min = 1, max = 1)
     private String sex; //M or F
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "birthdate")
     @Past
     private Date birthdate;
@@ -92,9 +99,13 @@ public class MatchProfile implements Serializable {
     @javax.validation.constraints.Size(max = 100)
     private String profileImage;
 
+    /**
+     * Returns a list of field names that are valid param keys to filter matchProfiles by.
+     * @return
+     */
     public static List<String> matchProfileFieldList() {
-        return Arrays.asList("id", "numDogs", "names", "sex", "birthdate", "breed", "size", "energy", "lifeStage",
-                "score", "about", "profile_image");
+        return Arrays.asList("id", "numDogs", "names", "sex", "birthdate", "breed", "size", "energyLevel", "lifeStage",
+                "score", "aboutMe", "profileImage", "userProfile");
     }
 
     public static MatchProfile createFromObject(Object object) throws ParseException {
@@ -102,9 +113,9 @@ public class MatchProfile implements Serializable {
             LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
             MatchProfile matchProfile = new MatchProfile();
             matchProfile.setId((Long) entityObject.get("id"));
-            matchProfile.setUserProfile(
-                    UserProfile.createFromObject(entityObject.get("userProfile")));
+            matchProfile.setUserProfile(UserProfile.createFromObject(entityObject.get("userProfile")));
             matchProfile.setNames((String) entityObject.get("names"));
+            matchProfile.setBirthdate(DATE_FORMATTER.parse((String) entityObject.get("birthdate")));
             matchProfile.setSex((String) entityObject.get("sex"));
             matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
             matchProfile.setBreed(Breed.createFromObject(entityObject.get("breed")));

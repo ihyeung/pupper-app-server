@@ -2,9 +2,15 @@ package com.utahmsd.pupper.util;
 
 import org.joda.time.DateTime;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Constants {
+
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+
 
     public static final int PAGE_NUM = 0;
     public static final int PAGE_SIZE = 10;

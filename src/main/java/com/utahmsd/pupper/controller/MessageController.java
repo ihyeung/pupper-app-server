@@ -27,26 +27,37 @@ public class MessageController {
         return messageService.getAllMessages();
     }
 
+    /**
+     * Retrieves a specified number of messages, returned in order from newest to oldest.
+     * @param messageLimit the number of messages to retrieve. If the limit specified exceeds a server-defined max,
+     *                     the server-defined max is the number of messages that are returned.
+     * @return the limit most recent messages
+     */
     @GetMapping(params = {"limit"})
     public List<PupperMessage> getAllMessagesWithLimit(@RequestParam("limit") int messageLimit) {
         return messageService.getMessagesWithLimit(messageLimit);
     }
 
-    /*
-    Gets all messages ever sent or received by a given matchProfileId.
+    /**
+     * Retrieves all messages ever sent or received by a given matchProfileId.
+     * @param matchProfileId
+     * @return
      */
-    @GetMapping(path="/matchProfile/{matchProfileId}")
-    public List<PupperMessage> getAllMessagesByMatchProfileId(@PathVariable("matchProfileId") Long matchProfileId) {
+    @GetMapping(params = {"matchProfileId"})
+    public List<PupperMessage> getMessagesByMatchProfileId(@RequestParam("matchProfileId") Long matchProfileId) {
         return messageService.getAllMessagesByMatchProfileId(matchProfileId);
     }
 
-    /*
-    Retrieves messages sent/received between matchProfileId1 and matchProfileId2.
+    /**
+     * Retrieves all messages exchanged between two matchProfileIds.
+     * @param matchProfileId1
+     * @param matchProfileId2
+     * @return
      */
-    @GetMapping(path="/matchProfile/{matchProfileId1}/matchProfile/{matchProfileId2}")
-    public List<PupperMessage> getMessageHistory(@PathVariable("matchProfileId1") Long matchProfileId1,
-                                             @PathVariable("matchProfileId2") Long matchProfileId2) {
-        return messageService.getMessageHistoryByMatchProfileIds(matchProfileId1, matchProfileId2);
+    @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
+    public List<PupperMessage> getMessageHistory(@RequestParam("matchProfileId1") Long matchProfileId1,
+                                                 @RequestParam("matchProfileId2") Long matchProfileId2) {
+        return messageService.getMessageHistory(matchProfileId1, matchProfileId2);
     }
 
     /*
@@ -63,31 +74,52 @@ public class MessageController {
 //        }
 //    }
 
-    /*
-    Creates pupper_message record containing a message sent from fromMatchProfileId to toMatchProfileId.
+    /**
+     * Retrieves the last 25 messages exchanged between two matchProfileIds.
+     * @param matchProfileId1
+     * @param matchProfileId2
+     * @return
      */
-    @PostMapping(path="/matchProfile/{fromMatchProfileId}", params = {"sendTo"})
-    public MessageResponse sendMessageToMatch(@PathVariable("fromMatchProfileId") Long senderId,
+    @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
+    public List<PupperMessage> getRecentMessageHistory(@RequestParam("matchProfileId1") Long matchProfileId1,
+                                                       @RequestParam("matchProfileId2") Long matchProfileId2) {
+        return messageService.getRecentMessageHistory(matchProfileId1, matchProfileId2);
+    }
+
+    /**
+     * Insert endpoint used to send a message from a given matchProfileId to another matchProfileId.
+     * @param senderId
+     * @param receiverId
+     * @param pupperMessage
+     * @return
+     */
+    @PostMapping(params = {"sendFrom", "sendTo"})
+    public MessageResponse sendMessageToMatch(@RequestParam("sendFrom") Long senderId,
                                               @RequestParam("sendTo") Long receiverId,
-                                              @RequestBody @Valid final PupperMessage pupperMessage) {
+                                              @RequestBody @Valid PupperMessage pupperMessage) {
 
         return messageService.sendMessage(senderId, receiverId, pupperMessage);
     }
 
-    /*
-    Delete endpoint that removes all pupper_message messages between a given pair of matchProfiles.
-    Use case: A matchProfile unmatches with another matchProfile.
+    /**
+     * Delete endpoint that removes all pupper_message messages between a given pair of matchProfiles.
+     * Use case: A matchProfile elects to unmatch with another matchProfile.
+     * @param matchProfileId1
+     * @param matchProfileId2
+     * @return
      */
-    @DeleteMapping(path="/matchProfile/{matchProfileId1}", params = {"messageFor"})
-    public MessageResponse deleteAllMessagesBetweenMatchProfilesById(@PathVariable("matchProfileId1") Long matchProfileId1,
-                                                                     @RequestParam("messageFor") Long matchProfileId2) {
+    @DeleteMapping(params = {"matchProfileId1", "matchProfileId2"})
+    public MessageResponse deleteAllMessagesBetweenMatchProfilesById(@RequestParam("matchProfileId1") Long matchProfileId1,
+                                                                     @RequestParam("matchProfileId2") Long matchProfileId2) {
         return messageService.deleteMessageHistoryByMatchProfileIds(matchProfileId1, matchProfileId2);
     }
 
-    /*
-   Delete endpoint that removes all pupper_message messages sent/received by a given matchProfileId.
-   Use case: A matchProfile or userProfile is deleted.
-    */
+    /**
+     * Delete endpoint that removes all pupper_message messages ever sent/received by a given matchProfileId.
+     * Use case: A matchProfile is deleted, or a user deletes their account.
+     * @param matchProfileId - matchProfileId to delete messages for
+     * @return
+     */
     @DeleteMapping(path="/matchProfile/{matchProfileId}")
     public MessageResponse deleteAllMessagesByMatchProfileId(@PathVariable("matchProfileId") Long matchProfileId) {
         return messageService.deleteAllMessagesByMatchProfileId(matchProfileId);

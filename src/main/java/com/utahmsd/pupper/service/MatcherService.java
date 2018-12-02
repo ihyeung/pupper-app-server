@@ -4,6 +4,7 @@ import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
+import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatcherRequest;
 import com.utahmsd.pupper.dto.MatcherResponse;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.List;
 
 @Named
 @Singleton
@@ -20,20 +22,20 @@ public class MatcherService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
     private static final int DEFAULT_BATCH_SIZE = 50; //Number of match profiles to retrieve for a user per batch
 
+
+    private final MatchProfileRepo matchProfileRepo;
+    private final PupperProfileRepo pupperProfileRepo;
+    private final UserProfileRepo userProfileRepo;
+    private final MatchResultRepo matchResultRepo;
 //
-//    private final MatchProfileRepo matchProfileRepo;
-//    private final PupperProfileRepo pupperProfileRepo;
-//    private final UserProfileRepo userProfileRepo;
-//    private final MatchResultRepo matchResultRepo;
-//
-//    @Autowired
-//    public MatcherService(UserProfileRepo userProfileRepo, PupperProfileRepo pupperProfileRepo,
-//                          MatchProfileRepo matchProfileRepo, MatchResultRepo matchResultRepo) {
-//        this.matchProfileRepo = matchProfileRepo;
-//        this.pupperProfileRepo = pupperProfileRepo;
-//        this.userProfileRepo = userProfileRepo;
-//        this.matchResultRepo = matchResultRepo;
-//    }
+    @Autowired
+    public MatcherService(UserProfileRepo userProfileRepo, PupperProfileRepo pupperProfileRepo,
+                          MatchProfileRepo matchProfileRepo, MatchResultRepo matchResultRepo) {
+        this.matchProfileRepo = matchProfileRepo;
+        this.pupperProfileRepo = pupperProfileRepo;
+        this.userProfileRepo = userProfileRepo;
+        this.matchResultRepo = matchResultRepo;
+    }
 
     //Called when #1 swipes left/right on #2 and #2 has not rated #1's profile yet
     public MatcherResponse insertNewMatchResult(MatcherRequest request) { return null;}
@@ -59,5 +61,13 @@ public class MatcherService {
 
     public MatcherResponse deleteAllPupperMatchResults(Long matchProfileId) { return null;} //Delete all match result data corresponding to a match profile
 
-
+    public MatchResult checkForMatch(Long matchProfileId, Long matchProfileId2) {
+        MatchResult result = matchResultRepo.findMatchResult(matchProfileId, matchProfileId2);
+        if (result == null || !result.isMatchForProfileOne() || !result.isMatchForProfileTwo()) {
+            LOGGER.info("Invalid match result.");
+        } else {
+            LOGGER.info("Valid match result.");
+        }
+        return result;
+    }
 }

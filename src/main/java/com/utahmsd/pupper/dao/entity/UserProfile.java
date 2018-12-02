@@ -12,9 +12,11 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
+
+import static com.utahmsd.pupper.util.Constants.DATE_FORMAT;
+import static com.utahmsd.pupper.util.Constants.DATE_FORMATTER;
 
 @Entity
 @Table(name = "user_profile", indexes = @Index(columnList = "user_account_id_fk", name = "user_profile_ibfk_1"))
@@ -45,7 +47,7 @@ public class UserProfile implements Serializable {
     @NotBlank
     private String sex; //M or F
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "birthdate")
     @Past
     private Date birthdate; //For profile age
@@ -59,12 +61,12 @@ public class UserProfile implements Serializable {
     @Size(max = 5)
     private String zip;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "date_join")
     @PastOrPresent
     private Date dateJoin;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "last_login")
     @PastOrPresent
     private Date lastLogin;
@@ -77,7 +79,6 @@ public class UserProfile implements Serializable {
 
     static UserProfile createFromObject(Object object) throws ParseException {
         if (object != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
 
             UserProfile userProfile = new UserProfile();
@@ -86,11 +87,11 @@ public class UserProfile implements Serializable {
             userProfile.setFirstName((String) entityObject.get("firstName"));
             userProfile.setLastName((String) entityObject.get("lastName"));
             userProfile.setSex((String) entityObject.get("sex"));
-            userProfile.setBirthdate(dateFormat.parse((String) entityObject.get("birthdate")));
+            userProfile.setBirthdate(DATE_FORMATTER.parse((String) entityObject.get("birthdate")));
             userProfile.setMaritalStatus((String) entityObject.get("maritalStatus"));
             userProfile.setZip((String) entityObject.get("zip"));
-            userProfile.setDateJoin(dateFormat.parse((String) entityObject.get("dateJoin")));
-            userProfile.setLastLogin(dateFormat.parse((String) entityObject.get("lastLogin")));
+            userProfile.setDateJoin(DATE_FORMATTER.parse((String) entityObject.get("dateJoin")));
+            userProfile.setLastLogin(DATE_FORMATTER.parse((String) entityObject.get("lastLogin")));
             userProfile.setProfileImage((String) entityObject.get("profileImage"));
 
             return userProfile;

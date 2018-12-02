@@ -4,9 +4,9 @@ import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.MessageRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
-import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dao.entity.PupperMessage;
 import com.utahmsd.pupper.dto.MessageResponse;
+import com.utahmsd.pupper.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.time.Instant;
 import java.util.*;
 
 import static com.utahmsd.pupper.dto.MessageResponse.createMessageResponse;
@@ -35,6 +37,9 @@ public class MessageService {
     private final MatchResultRepo matchResultRepo;
     private final MatchProfileRepo matchProfileRepo;
 
+    @Inject
+    MatcherService matcherService;
+
     @Autowired
     MessageService(MessageRepo messageRepo, MatchResultRepo matchResultRepo, MatchProfileRepo matchProfileRepo) {
         this.messageRepo = messageRepo;
@@ -50,8 +55,9 @@ public class MessageService {
     }
 
     public List<PupperMessage> getMessagesWithLimit(int limit) {
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER)); //Sorts messages from oldest to newest
-        Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(PAGE_NUM, limit, sort));
+        int messageLimit = limit > MAX_RESULTS ? MAX_RESULTS : limit;
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, DEFAULT_SORT_ORDER)); //Sorts messages from newest to oldest
+        Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(PAGE_NUM, messageLimit, sort));
         int numResults = results.getNumberOfElements();
         LOGGER.info("Number of messages returned: {}", numResults);
 
@@ -72,6 +78,22 @@ public class MessageService {
         return messageList.get();
     }
 
+    public List<PupperMessage> getMessageHistory(Long matchProfileId1, Long matchProfileId2) {
+        LOGGER.info("Retrieving messages between matchProfileId={} and matchProfileId={}, sorted from most recent " +
+                "to oldest.", matchProfileId1, matchProfileId2);
+
+        List<PupperMessage> messages = messageRepo.retrieveMessageHistoryNewestToOldest(matchProfileId1, matchProfileId2);
+
+        LOGGER.info("{} messages were exchanged between matchProfileId={} and matchProfileId={}", messages.size(),
+                matchProfileId1, matchProfileId2);
+        return messages;
+    }
+
+    public List<PupperMessage> getRecentMessageHistory(Long matchProfileId1, Long matchProfileId2) {
+        return null;
+    }
+
+    //Original implementation for retrieving message history, way more cluttered
     public List<PupperMessage> getMessageHistoryByMatchProfileIds(Long matchProfileId1, Long matchProfileId2) {
         Optional<List<PupperMessage>> messagesFrom1To2 =
                 messageRepo.findAllByMatchProfileSender_IdAndMatchProfileReceiver_Id(matchProfileId1, matchProfileId2);
@@ -104,17 +126,17 @@ public class MessageService {
         return messageHistory;
     }
 
-    public MessageResponse sendMessage(Long senderId, Long receiverId, final PupperMessage pupperMessage) {
+    public MessageResponse sendMessage(Long senderId, Long receiverId, PupperMessage pupperMessage) {
         if (!pupperMessage.getMatchProfileSender().getId().equals(senderId) ||
                 !pupperMessage.getMatchProfileReceiver().getId().equals(receiverId)) {
-            return createMessageResponse(false, emptyList(), HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+            return createMessageResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
-        else if (!isValidMatchResult(senderId, receiverId)) {
-            LOGGER.error("Error: message cannot be sent between the matchProfiles matchProfileId={} and matchProfileId={} " +
-                    "because they are not a mutual match.", senderId, receiverId);
-
-            return createMessageResponse(false, emptyList(), HttpStatus.BAD_REQUEST,
-                    "Error sending message: Not a valid matchResult.");
+        else if (matcherService.checkForMatch(senderId, receiverId) == null) {
+            return createMessageResponse(false, null, HttpStatus.BAD_REQUEST,
+                    "Error: not a valid match result.");
+        }
+        if (pupperMessage.getTimestamp() == null) {
+            pupperMessage.setTimestamp(Utils.getIsoFormatTimestamp(Instant.now()));
         }
         PupperMessage insertedMessage = messageRepo.save(pupperMessage);
 
@@ -150,22 +172,22 @@ public class MessageService {
     }
 
 
-    /**
-     * Helper method that verifies that two match profiles attempting to exchange messages are a match.
-     * @param matchProfileId1 match profile #1
-     * @param matchProfileId2 match profile #2
-     * @return
-     */
-    private boolean isValidMatchResult(Long matchProfileId1, Long matchProfileId2) {
-        Optional<MatchResult> matchResult1 = matchResultRepo.findByMatchProfileOne_IdAndMatchProfileTwo_Id(matchProfileId1, matchProfileId2);
-        Optional<MatchResult> matchResult2 = matchResultRepo.findByMatchProfileOne_IdAndMatchProfileTwo_Id(matchProfileId2, matchProfileId1);
-
-        if (!matchResult1.isPresent() && !matchResult2.isPresent()) {
-            LOGGER.error("No match result outcome exists between matchProfileId={} and matchProfileId={}", matchProfileId1, matchProfileId2);
-            return false;
-        }
-        return matchResult1
-                .map(m1 -> m1.isMatchForProfileOne() && m1.isMatchForProfileTwo())
-                .orElseGet(() -> matchResult2.get().isMatchForProfileOne() && matchResult2.get().isMatchForProfileTwo());
-    }
+//    /**
+//     * Helper method that verifies that two match profiles attempting to exchange messages are a match.
+//     * @param matchProfileId1 match profile #1
+//     * @param matchProfileId2 match profile #2
+//     * @return
+//     */
+////    private boolean isValidMatchResult(Long matchProfileId1, Long matchProfileId2) {
+////        Optional<MatchResult> matchResult1 = matchResultRepo.findByMatchProfileOne_IdAndMatchProfileTwo_Id(matchProfileId1, matchProfileId2);
+////        Optional<MatchResult> matchResult2 = matchResultRepo.findByMatchProfileOne_IdAndMatchProfileTwo_Id(matchProfileId2, matchProfileId1);
+////
+////        if (!matchResult1.isPresent() && !matchResult2.isPresent()) {
+////            LOGGER.error("No match result outcome exists between matchProfileId={} and matchProfileId={}", matchProfileId1, matchProfileId2);
+////            return false;
+////        }
+////        return matchResult1
+////                .map(m1 -> m1.isMatchForProfileOne() && m1.isMatchForProfileTwo())
+////                .orElseGet(() -> matchResult2.get().isMatchForProfileOne() && matchResult2.get().isMatchForProfileTwo());
+////    }
 }

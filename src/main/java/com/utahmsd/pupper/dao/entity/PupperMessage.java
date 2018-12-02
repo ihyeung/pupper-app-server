@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Date;
+
+import static com.utahmsd.pupper.util.Constants.ISO_DATE_FORMAT;
 
 @Entity
 @Table(name = "pupper_message",
@@ -31,8 +31,9 @@ public class PupperMessage implements Serializable {
     @Valid
     private MatchProfile matchProfileReceiver;
 
-    @PastOrPresent
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss a") //eg. '2018-12-01 11:42:05 PM'
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz") //Standard ISO date format
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ISO_DATE_FORMAT) //Standard ISO date format
     private String timestamp;
 
     @Size(max = 500)

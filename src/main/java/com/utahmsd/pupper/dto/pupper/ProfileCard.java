@@ -36,7 +36,6 @@ public class ProfileCard {
         return profileCards;
     }
 
-    //Main implementation
     public static ProfileCard createFromMatchProfile(MatchProfile matchProfile) {
         ProfileCard card = new ProfileCard();
         card.setProfileId(matchProfile.getId());
@@ -45,6 +44,7 @@ public class ProfileCard {
         card.setAgeWithUnits(createAgeStringFromDate(matchProfile.getBirthdate()));
         card.setBreedName(matchProfile.getBreed().getName());
         card.setLocation("SOUTH JORDAN, UTAH");
+        card.setDistance("20 miles away");
         card.setAboutMe(StringUtils.isNullOrEmpty(matchProfile.getAboutMe()) ? DEFAULT_ABOUT_ME : matchProfile.getAboutMe());
         card.setLastActive(new SimpleDateFormat("yyyy-MM-dd").format(matchProfile.getUserProfile().getLastLogin()));
         card.setProfileImage(matchProfile.getProfileImage());
@@ -53,7 +53,6 @@ public class ProfileCard {
         return card;
     }
 
-    //Potential simplified implementation for mvp
     public static ProfileCard createFromPupperProfile(PupperProfile pupperProfile) {
         ProfileCard card = new ProfileCard();
         card.setProfileId(pupperProfile.getId());
@@ -62,8 +61,6 @@ public class ProfileCard {
         card.setAgeWithUnits(createAgeStringFromDate(pupperProfile.getBirthdate()));
         card.setBreedName(pupperProfile.getBreed().getName());
         card.setLocation("SOUTH JORDAN, UTAH");
-//        card.setAboutMe(card.getAgeWithUnits() + " " + pupperProfile.getSex() + " " + pupperProfile.getBreed() +
-//                " with " + pupperProfile.getEnergy().value() + " energy, i am fixed: " + Boolean.toString(pupperProfile.isFixed()));
         card.setAboutMe(DEFAULT_ABOUT_ME);
         card.setLastActive(new SimpleDateFormat("yyyy-MM-dd").format(pupperProfile.getMatchProfile()
                 .getUserProfile().getLastLogin()));

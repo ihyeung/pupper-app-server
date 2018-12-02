@@ -1,8 +1,8 @@
 package com.utahmsd.pupper.controller;
 
+import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatcherDataRequest;
 import com.utahmsd.pupper.dto.MatcherDataResponse;
-import com.utahmsd.pupper.dto.MatcherRequest;
 import com.utahmsd.pupper.dto.MatcherResponse;
 import com.utahmsd.pupper.service.MatcherService;
 import io.swagger.annotations.Api;
@@ -26,18 +26,21 @@ public class MatcherController {
         this.matcherService = matcherService;
     }
 
-    /*
-    Retrieves next batch of profile cards to display to the user.
-
+    /**
+     * Retrieves next batch of profile cards to display to the user.
+     * @param matchProfileId
+     * @return
      */
-    @GetMapping(path="/matchProfile/{matchProfileId}")
-    public MatcherDataResponse fetchMatcherData(@PathVariable("matchProfileId") Long matchProfileId) {
+    @GetMapping(params = {"matchProfileId"})
+    public MatcherDataResponse fetchMatcherData(@RequestParam("matchProfileId") Long matchProfileId) {
         return null;
     }
 
-    /*
-    Retrieves batch of profile cards to display to the user that fall within a given distance of the user.
-
+    /**
+     * Retrieves batch of profile cards to display to the user that fall within a given distance of the user.
+     * @param matchProfileId
+     * @param distance
+     * @return
      */
     @GetMapping(params = {"matchProfileId", "distance"})
     public MatcherDataResponse fetchMatcherData(@RequestParam("matchProfileId") Long matchProfileId,
@@ -45,22 +48,28 @@ public class MatcherController {
         return null;
     }
 
-    /*
-    Helper endpoint for updating multiple match result data records for a given matchProfileId.
-    May use this later to batch updates to database to improve performance.
+    /**
+     * Helper endpoint for updating multiple match result data records for a given matchProfileId.
+     * May use this later to batch updates to database to improve performance.
+     * @param matchProfileId
+     * @param matcherRequest
+     * @return
      */
-    @PutMapping(path="/matchProfile/{matchProfileId}")
-    public MatcherDataResponse submitMatcherResults(@PathVariable("matchProfileId") Long matchProfileId,
+    @PutMapping(params = {"matchProfileId"})
+    public MatcherDataResponse submitMatcherResults(@RequestParam("matchProfileId") Long matchProfileId,
                                                     @RequestBody MatcherDataRequest matcherRequest) {
         return null;
     }
 
-    /*
-    Endpoint that retrieves a list of all matchProfiles that a matchProfileId has mutually matched with.
+    /**
+     * Retrieves all matchResult data relating to a given matchProfileId.
+     * @param matchProfileId
+     * @param getSuccessResultData boolean flag that can be optionally set to filter to retrieve only mutual matches.
+     * @return
      */
-    @GetMapping(path="/result/matchProfile/{matchProfileId}", params = {"isSuccess"})
-    public MatcherResponse getMatcherResultData(@PathVariable("matchProfileId") Long matchProfileId,
-                                              @RequestParam("isSuccess") boolean getSuccessResultData) {
+    @GetMapping(params = {"matchProfileId", "isSuccess"})
+    public MatcherResponse getMatcherResultData(@RequestParam("matchProfileId") Long matchProfileId,
+                                                @RequestParam("isSuccess") boolean getSuccessResultData) {
 
         return matcherService.getPupperMatcherResults(matchProfileId, getSuccessResultData);
     }
@@ -71,19 +80,23 @@ public class MatcherController {
      * @param matchProfileId2
      * @return
      */
-    @GetMapping(path="/result/matchProfile/{matchProfileId1}", params = {"resultFor"})
-    public MatcherResponse findMatcherResultById(@PathVariable("matchProfileId1") Long matchProfileId1,
-                                                @RequestParam("resultFor") Long matchProfileId2) {
-        return null;
+    @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
+    public MatchResult findMatcherResultById(@RequestParam("matchProfileId1") Long matchProfileId1,
+                                             @RequestParam("matchProfileId2") Long matchProfileId2) {
+        return matcherService.checkForMatch(matchProfileId1, matchProfileId2);
     }
 
-    /*
-     Endpoint that gets hit for a single matcherResult for any given user using the app's main matching/playing functionality.
-
-    Also will be used when a user decides to click unmatch with a previously established matchResult.
+    /**
+     *  Endpoint that gets hit for a single matcherResult for any given user using the app's main matching/playing functionality.
+     *
+     * Also may be used when a user decides to click unmatch with a previously established matchResult.
+     * @param matchProfileId1
+     * @param matchProfileId2
+     * @param isMatchForMatchProfileId1
+     * @return
      */
-    @PutMapping(path="/result/matchProfile/{matchProfileId1}", params = {"resultFor", "isMatch"})
-    public MatcherResponse createOrUpdateMatcherResult(@PathVariable("matchProfileId1") Long matchProfileId1,
+    @PutMapping(params = {"matchProfileId", "resultFor", "isMatch"})
+    public MatcherResponse createOrUpdateMatcherResult(@RequestParam("matchProfileId") Long matchProfileId1,
                                                        @RequestParam("resultFor") Long matchProfileId2,
                                                        @RequestParam("isMatch") boolean isMatchForMatchProfileId1) {
         return null;
@@ -92,15 +105,17 @@ public class MatcherController {
         //TODO: If a record exists between the two match profiles, update existing record.
     }
 
-    /*
-    Delete endpoint that should be used when a matchProfile or userProfile is deleted, which will remove all matchResult records
-    corresponding to a given matchProfileId.
-
-    This endpoint will likely be hit together with a call to the delete endpoint in MessageController that deletes all
-    messages sent/received by a given matchProfileId.
+    /**
+     * Delete endpoint that should be used when a matchProfile or userProfile is deleted, which will remove all matchResult records
+     * corresponding to a given matchProfileId.
+     *
+     * This endpoint will likely be hit together with a call to the delete endpoint in MessageController that deletes all
+     * messages sent/received by a given matchProfileId.
+     * @param matchProfileId
+     * @return
      */
-    @DeleteMapping(path="/result/matchProfile/{matchProfileId}")
-    public MatcherResponse deleteAllMatcherResultData(@PathVariable("matchProfileId") Long matchProfileId) {
+    @DeleteMapping(params = {"matchProfileId"})
+    public MatcherResponse deleteAllMatcherResultDataForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
         return null;
     }
 }

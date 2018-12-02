@@ -13,13 +13,17 @@ public class MatchProfileFilterServiceUnitTest {
         assertTrue(isValidMatchProfileSort("score"));
         assertTrue(isValidMatchProfileSort("birthdate"));
         assertTrue(isValidMatchProfileSort("breed"));
-        assertTrue(isValidMatchProfileSort("energy"));
+        assertTrue(isValidMatchProfileSort("energyLevel"));
+        assertTrue(isValidMatchProfileSort("lifeStage"));
+        assertTrue(isValidMatchProfileSort("aboutMe"));
+        assertTrue(isValidMatchProfileSort("profileImage"));
         assertTrue(isValidMatchProfileSort("id"));
         assertTrue(isValidMatchProfileSort("names"));
 
         assertFalse(isValidMatchProfileSort(null));
         assertFalse(isValidMatchProfileSort(""));
         assertFalse(isValidMatchProfileSort("num_dogs"));
-
+        assertFalse(isValidMatchProfileSort("profile_image"));
+        assertFalse(isValidMatchProfileSort("life_stage"));
     }
 }

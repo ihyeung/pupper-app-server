@@ -15,6 +15,28 @@ public interface MessageRepo extends PagingAndSortingRepository<PupperMessage, L
     Optional<List<PupperMessage>> findAllByMatchProfileSender_IdOrMatchProfileReceiver_Id(Long matchProfileId1, Long matchProfileId2);
     Optional<List<PupperMessage>> findAllByMatchProfileSender_IdAndMatchProfileReceiver_Id(Long matchProfileId1, Long matchProfileId2);
 
+
+    @Query("FROM PupperMessage p WHERE (p.matchProfileSender.id = :id1 OR p.matchProfileReceiver.id = :id1) AND " +
+            "(p.matchProfileSender.id = :id2 OR p.matchProfileReceiver.id = :id2) ORDER BY p.timestamp DESC")
+    List<PupperMessage> retrieveMessageHistoryNewestToOldest(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
+
+    /**
+     * Returns the 25 most recent messages sent from a given matchProfileId to a given matchProfileId.
+     * @param matchIdSender
+     * @param matchIdReceiver
+     * @return
+     */
+    List<PupperMessage> findTop25ByMatchProfileSender_IdAndMatchProfileReceiver_IdOrderByTimestampDesc(Long matchIdSender, Long matchIdReceiver);
+
+    /**
+     * Returns the 25 most recent messages exchanged to/from a given matchProfileId.
+     * @param matchIdSender
+     * @param matchIdReceiver
+     * @return
+     */
+    List<PupperMessage> findTop25ByMatchProfileSender_IdOrMatchProfileReceiver_IdOrderByTimestampDesc(Long matchIdSender, Long matchIdReceiver);
+
+
     void deleteAllByMatchProfileSender_IdOrMatchProfileReceiver_Id(Long matchProfileSenderId, Long matchProfileReceiverId);
 
     @Transactional

@@ -2,13 +2,9 @@ package com.utahmsd.pupper.dao;
 
 import com.utahmsd.pupper.dao.entity.MatchResult;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.Optional;
 
 public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
@@ -25,4 +21,7 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
 //                            @Param("profileId") Long matchProfileOneId,
 //                            @Param("profileId2") Long matchProfileTwoId);
 
+    @Query("FROM MatchResult m WHERE (m.matchProfileOne.id = :id1 AND m.matchProfileTwo.id = :id2) OR " +
+            "(m.matchProfileOne.id = :id2 AND m.matchProfileTwo.id = :id1) ")
+    MatchResult findMatchResult(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
 }

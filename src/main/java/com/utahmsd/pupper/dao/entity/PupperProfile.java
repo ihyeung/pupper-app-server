@@ -12,6 +12,8 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
+import static com.utahmsd.pupper.util.Constants.DATE_FORMAT;
+
 /**
  * Entity repesenting a profile belonging to each dog.
  * Multiple pupper profiles can belong to a single MatchProfile.
@@ -43,11 +45,12 @@ public class PupperProfile implements Serializable {
     @Column(name = "sex")
     private String sex; //M or F
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "birthdate")
     @Past
     private Date birthdate;
 
+    //TODO: change these field names to be consistent with matchProfile's field names
     @Enumerated(EnumType.STRING)
     @Column(name = "lifestage")
     private LifeStage lifeStage;

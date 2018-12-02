@@ -24,12 +24,12 @@ import static org.hamcrest.Matchers.notNullValue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-public class UserProfileControllerAT {
+public class UserProfileControllerAT extends BaseAcceptanceTest {
 
     private static final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:5000");
 
-    private static UserAccount userAccount= new UserAccount();
-    private static String accessToken = null;
+    private static UserAccount userAccount;
+    private static String accessToken;
 
     @Before
     public void init(){
@@ -37,24 +37,8 @@ public class UserProfileControllerAT {
         RestAssured.registerParser("text/plain", Parser.JSON);
         RestAssured.defaultParser = Parser.JSON;
 
-        userAccount.setUsername("createUserProfileTest@test.com");
-        userAccount.setPassword("TESTPASSWORD");
-        userAccount.setId(3L);
-
-        if (accessToken == null) {
-            accessToken =
-            given().
-                    relaxedHTTPSValidation().
-                    log().all().
-                    contentType(ContentType.JSON).
-                    body(userAccount).
-            when().
-                    post("/login").
-            then().
-                    log().all().
-                    statusCode(200).
-                    extract().response().header("Authorization");
-        }
+        userAccount = createUserAccountForTests();
+        accessToken = authenticateAndRetrieveAuthToken();
     }
 
     @Test
