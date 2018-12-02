@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.controller;
 
+import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dto.BreedResponse;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
@@ -46,8 +47,8 @@ public class PupperProfileController {
     }
 
     @GetMapping(path ="/pupper", params = {"breed"})
-    public PupperProfileResponse findPupperProfilesByBreedName(@RequestParam("breed") String breed) {
-        return pupperProfileFilterService.getPupperProfilesFilterByBreedName(breed);
+    public Breed findPupperBreedByName(@RequestParam("breed") String breedName) {
+        return pupperProfileFilterService.getPupperBreedByName(breedName);
     }
 
     @GetMapping(path ="/user/{userId}/pupper")

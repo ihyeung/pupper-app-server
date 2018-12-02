@@ -23,7 +23,6 @@ public interface PupperProfileRepo extends PagingAndSortingRepository<PupperProf
     Optional<PupperProfile> findByMatchProfileIdAndName (Long matchProfileId, String name);
     Optional<List<PupperProfile>> findAllByMatchProfileId (Long matchProfileId);
     Optional<List<PupperProfile>> findAllByBreedId(Long breedId);
-    List<PupperProfile> findAllByBreedName(String breedName);
     List<PupperProfile> findAllByMatchProfile_UserProfile_UserAccount_Username(String userEmail);
     List<PupperProfile> findAllByMatchProfile_UserProfile_Id(Long userProfileId);
     void deleteAllByMatchProfile_Id(Long matchProfileId);

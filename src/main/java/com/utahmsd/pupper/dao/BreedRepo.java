@@ -11,7 +11,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Optional;
 
 public interface BreedRepo extends PagingAndSortingRepository<Breed, Long> {
-//    Page<Breed> findAllBySize(Size size, Pageable pageable);
-//    Page<Breed> findAllByName(String breed, Pageable pageable);
-//    Iterable<Breed> findAllByName(String breed, Sort sort);
+
+    Breed findByName(String name);
 }

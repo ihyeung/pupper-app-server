@@ -2,21 +2,11 @@
 [[_paths]]
 == Paths
 
-[[_getaccountbyemailusingget]]
-=== getAccountByEmail
+[[_getallaccountsusingget]]
+=== getAllAccounts
 ....
 GET /account
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**email** +
-__required__|email|string
-|===
 
 
 ==== Responses
@@ -273,8 +263,8 @@ __required__|accountId|integer (int64)
 * auth-controller
 
 
-[[_getmatchprofilesbyuserzipusingget]]
-=== getMatchProfilesByUserZip
+[[_getmatchprofilesbybreedusingget]]
+=== getMatchProfilesByBreed
 ....
 GET /matchProfile
 ....
@@ -285,8 +275,8 @@ GET /matchProfile
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**zip** +
-__required__|zip|string
+|**Query**|**breed** +
+__required__|breed|string
 |===
 
 
@@ -345,8 +335,8 @@ __required__|userId|string
 * match-profile-controller
 
 
-[[_findmatcherresultbyidusingget]]
-=== findMatcherResultById
+[[_getmatcherresultdatausingget]]
+=== getMatcherResultData
 ....
 GET /matcher
 ....
@@ -357,10 +347,10 @@ GET /matcher
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**matchProfileId1** +
-__required__|matchProfileId1|string
-|**Query**|**matchProfileId2** +
-__required__|matchProfileId2|string
+|**Query**|**isSuccess** +
+__required__|isSuccess|string
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
 |===
 
 
@@ -369,7 +359,7 @@ __required__|matchProfileId2|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|<<_matchresult,MatchResult>>
+|**200**|OK|<<_matcherresponse,MatcherResponse>>
 |===
 
 
@@ -619,11 +609,23 @@ __required__|matchProfileId|integer (int64)
 * message-controller
 
 
-[[_getallpupperprofilesusingget_1]]
+[[_getallpupperprofilesusingget]]
 === getAllPupperProfiles
 ....
 GET /pupper
 ....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**limit** +
+__required__|limit|string
+|**Query**|**sortBy** +
+__required__|sortBy|string
+|===
 
 
 ==== Responses
@@ -791,8 +793,8 @@ __required__|userProfile|<<_userprofile,UserProfile>>
 * user-profile-controller
 
 
-[[_getalluserprofilesusingget]]
-=== getAllUserProfiles
+[[_getuserprofileswithzipusingget]]
+=== getUserProfilesWithZip
 ....
 GET /user
 ....
@@ -803,10 +805,8 @@ GET /user
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
-|**Query**|**sortBy** +
-__required__|sortBy|string
+|**Query**|**zip** +
+__required__|zip|string
 |===
 
 

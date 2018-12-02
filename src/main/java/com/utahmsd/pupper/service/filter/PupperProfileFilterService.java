@@ -1,7 +1,9 @@
 package com.utahmsd.pupper.service.filter;
 
+import com.utahmsd.pupper.dao.BreedRepo;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
+import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.utahmsd.pupper.dto.BreedResponse.createBreedResponse;
 import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
 
@@ -23,10 +26,12 @@ import static com.utahmsd.pupper.util.Constants.*;
 public class PupperProfileFilterService {
 
     private final PupperProfileRepo pupperProfileRepo;
+    private final BreedRepo breedRepo;
 
     @Autowired
-    public PupperProfileFilterService (PupperProfileRepo pupperProfileRepo) {
+    public PupperProfileFilterService (PupperProfileRepo pupperProfileRepo, BreedRepo breedRepo) {
         this.pupperProfileRepo = pupperProfileRepo;
+        this.breedRepo = breedRepo;
     }
 
     public PupperProfileResponse getPupperProfilesWithFilters(String sort, int limit) {
@@ -45,18 +50,15 @@ public class PupperProfileFilterService {
         return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public PupperProfileResponse getPupperProfilesFilterByBreedName(String breedName) {
-        List<PupperProfile> results = pupperProfileRepo.findAllByBreedName(breedName);
-        return results.isEmpty() ?
-                createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND):
-                createPupperProfileResponse(true, results, HttpStatus.OK, DEFAULT_DESCRIPTION);
-    }
-
     public PupperProfileResponse getPupperProfilesFilterByEmail(String userEmail) {
         List<PupperProfile> pupperProfileList =
                                 pupperProfileRepo.findAllByMatchProfile_UserProfile_UserAccount_Username(userEmail);
         return pupperProfileList.isEmpty() ?
                 createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND):
                 createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public Breed getPupperBreedByName(String breed) {
+        return breedRepo.findByName(breed);
     }
 }
