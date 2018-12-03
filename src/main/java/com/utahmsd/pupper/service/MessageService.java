@@ -36,15 +36,18 @@ public class MessageService {
     private final MessageRepo messageRepo;
     private final MatchResultRepo matchResultRepo;
     private final MatchProfileRepo matchProfileRepo;
+    private final MatchProfileService matchProfileService;
 
     @Inject
     MatcherService matcherService;
 
     @Autowired
-    MessageService(MessageRepo messageRepo, MatchResultRepo matchResultRepo, MatchProfileRepo matchProfileRepo) {
+    MessageService(MessageRepo messageRepo, MatchResultRepo matchResultRepo, MatchProfileRepo matchProfileRepo,
+                   MatchProfileService matchProfileService) {
         this.messageRepo = messageRepo;
         this.matchResultRepo = matchResultRepo;
         this.matchProfileRepo = matchProfileRepo;
+        this.matchProfileService = matchProfileService;
     }
 
     public List<PupperMessage> getAllMessages() {
@@ -91,6 +94,16 @@ public class MessageService {
 
     public List<PupperMessage> getRecentMessageHistory(Long matchProfileId1, Long matchProfileId2, int limit) {
         return null;
+    }
+
+    public List<List<PupperMessage>> getMessageHistoriesForAllMatches (Long matchProfileId) {
+        List<MatchProfile> matchProfiles = matchProfileService.retrieveMatchesForMatchProfile(matchProfileId);
+        List<List<PupperMessage>> allMessageHistories = new ArrayList<>(new ArrayList<>());
+        matchProfiles.forEach(each -> {
+            allMessageHistories.add(messageRepo.retrieveMessageHistoryNewestToOldest(matchProfileId, each.getId()));
+        });
+
+        return allMessageHistories;
     }
 
     //Original implementation for retrieving message history, way more cluttered

@@ -60,6 +60,17 @@ public class MessageController {
         return messageService.getMessageHistory(matchProfileId1, matchProfileId2);
     }
 
+    /**
+     * Retrieves all conversations between a given matchProfileId and its matches.
+     * @param matchProfileId1
+     * @return
+     */
+    @GetMapping(params = {"matchProfileId1"})
+    public List<List<PupperMessage>> getMessageHistoriesForAllMatches(@RequestParam("matchProfileId1") Long matchProfileId1) {
+        return messageService.getMessageHistoriesForAllMatches(matchProfileId1);
+    }
+
+
     /*
     Helper method to test that isValidMatchResult method is working.
      */

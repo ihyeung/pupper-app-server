@@ -43,6 +43,24 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
      * @param matchProfileId
      * @return
      */
-    @Query("select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id")
+    @Query(value = "select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id")
     List<MatchProfile> findPassiveMatcherResults(@Param("id") Long matchProfileId);
+
+    /**
+     * Finds all active matches for a given matchProfileId.
+     * @param matchProfileId
+     * @return
+     */
+    @Query(value = "select r.matchProfileTwo from MatchResult r where r.matchProfileOne.id = :id " +
+            "AND (r.matchForProfileOne = true AND r.matchForProfileTwo = true)")
+    List<MatchProfile> findActiveMatches(@Param("id") Long matchProfileId);
+
+    /**
+     * Finds all passive matches for a given matchProfileId.
+     * @param matchProfileId
+     * @return
+     */
+    @Query(value = "select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id " +
+            "AND (r.matchForProfileOne = true AND r.matchForProfileTwo = true)")
+    List<MatchProfile> findPassiveMatches(@Param("id") Long matchProfileId);
 }

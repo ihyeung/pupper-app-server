@@ -1,6 +1,7 @@
 package com.utahmsd.pupper.service;
 
 import com.utahmsd.pupper.dao.MatchProfileRepo;
+import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import org.slf4j.Logger;
@@ -25,10 +26,12 @@ public class MatchProfileService {
     private final String EMPTY_MATCH_PROFILE_LIST = "No match profiles belonging to user profile id %d were found.";
 
     private final MatchProfileRepo matchProfileRepo;
+    private final MatchResultRepo matchResultRepo;
 
     @Autowired
-    public MatchProfileService(MatchProfileRepo matchProfileRepo) {
+    public MatchProfileService(MatchProfileRepo matchProfileRepo, MatchResultRepo matchResultRepo) {
         this.matchProfileRepo = matchProfileRepo;
+        this.matchResultRepo = matchResultRepo;
     }
 
     public MatchProfileResponse getAllMatchProfiles() {
@@ -134,5 +137,15 @@ public class MatchProfileService {
         matchProfileRepo.deleteMatchProfilesByUserProfile_Id(userId);
 
         return createMatchProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public List<MatchProfile> retrieveMatchesForMatchProfile(Long matchProfileId) {
+        List<MatchProfile> activeMatches = matchResultRepo.findActiveMatches(matchProfileId);
+        List<MatchProfile> passiveMatches = matchResultRepo.findPassiveMatches(matchProfileId);
+
+        Set<MatchProfile> distinctMatchProfiles = new HashSet<>(activeMatches);
+        distinctMatchProfiles.addAll(passiveMatches);
+
+        return new ArrayList<>(distinctMatchProfiles);
     }
 }

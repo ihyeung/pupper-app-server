@@ -61,6 +61,11 @@ public class MatchProfileController {
         return matchProfileService.getMatchProfileById(userProfileId, matchProfileId);
     }
 
+    @GetMapping(path="/matches", params = {"matchProfileId"})
+    public List<MatchProfile> retrieveMatchesForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
+        return matchProfileService.retrieveMatchesForMatchProfile(matchProfileId);
+    }
+
     @PostMapping(path="/user/{userId}/matchProfile")
     public MatchProfileResponse createMatchProfileForUserByUserProfileId(@PathVariable("userId") Long userId,
                                                                          @RequestBody @Valid MatchProfile matchProfile) {
