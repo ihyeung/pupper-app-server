@@ -18,6 +18,20 @@ public class PupperUtils {
     static final String DEFAULT_AGE = "0 years old";
     private static final String PUPPER_AGE = "%d %s old";
 
+    public static String lastActivityFromLastLogin(Date lastLogin) {
+        LocalDate now = Instant.now().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate lastActive = lastLogin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        Period lastActivity = Period.between(lastActive, now);
+        if (lastActivity.getYears() > 0 || lastActivity.getMonths() > 3) {
+            return "No recent activity";
+        }
+        if (lastActivity.getMonths() > 0) {
+            return String.format("Last active %d months ago", lastActivity.getMonths());
+        }
+        return String.format("Last active %d days ago", lastActivity.getDays());
+    }
+
     private static LifeStage ageToStage(String age) throws ValidationException {
         if (age == null || age.length() < 2) {
             throw new ValidationException("Invalid input format");
@@ -83,7 +97,7 @@ public class PupperUtils {
             int days = period.getDays() % 7;
 
             return weeks > 0 ? String.format(PUPPER_AGE, weeks, "weeks") : days > 0 ?
-            String.format(PUPPER_AGE, period.getDays(), "days") : DEFAULT_AGE;
+                    String.format(PUPPER_AGE, period.getDays(), "days") : DEFAULT_AGE;
 
         }
     }

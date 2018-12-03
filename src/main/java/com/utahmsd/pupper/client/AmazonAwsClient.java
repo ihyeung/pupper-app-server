@@ -6,8 +6,10 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.StringUtils;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
+import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.ImageUploadRequest;
 import com.utahmsd.pupper.dto.ImageUploadResponse;
+import com.utahmsd.pupper.util.Utils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -36,6 +38,7 @@ import static com.amazonaws.regions.Regions.US_EAST_1;
 import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static com.utahmsd.pupper.util.Constants.INVALID_PATH_VARIABLE;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
@@ -45,7 +48,11 @@ public class AmazonAwsClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AmazonAwsClient.class);
     private final String MATCH_PROFILE_IMAGE_UPDATE_ENDPOINT = "/user/%d/matchProfile/%d?profilePic=%s";
+    private final String USER_PROFILE_IMAGE_UPDATE_ENDPOINT = "/user/%d?profilePic=%s";
+
     private final String MATCH_PROFILE_GET_ENDPOINT = "/user/%d/matchProfile/%d";
+    private final String USER_PROFILE_GET_ENDPOINT = "/user/%d";
+
 
     private final long MAX_IMAGE_BYTES = 1_048_576L;
 
@@ -70,7 +77,6 @@ public class AmazonAwsClient {
         String outputFilePath = String.format("%s/%s/%s", s3endpointUrl, bucketName, fileName);
         String imageUrl = outputFilePath.replace(US_EAST_1 + ".", "");
 
-        ImageUploadResponse response = createImageUploadResponse(true, imageUrl, OK, DEFAULT_DESCRIPTION);
         File inputFile = null;
         try {
             inputFile = convertMultiPartToFile(file);
@@ -82,18 +88,20 @@ public class AmazonAwsClient {
             s3client.putObject(new PutObjectRequest(bucketName, fileName, inputFile)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (Exception e) {
-            response.setSuccess(false);
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            response.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            response.setDescription(String.format("File upload to S3 bucket failed: '%s'", e.getMessage()));
-            response.setImageUrl("");
             LOGGER.error("File upload to S3 bucket failed: {}", e.getMessage());
             e.printStackTrace();
+            return createImageUploadResponse(false, "", INTERNAL_SERVER_ERROR,
+                    String.format("File upload to S3 bucket failed: '%s'", e.getMessage()));
         }
-        return response;
+        return  createImageUploadResponse(true, imageUrl, OK, DEFAULT_DESCRIPTION);
     }
 
     public ImageUploadResponse uploadFileByUserAndMatchProfile(MultipartFile multipartFile, Long userId, Long matchProfileId, String authToken) {
+        ImageUploadResponse invalidSizeResponse = processFileUploadsExceedingLimit(multipartFile);
+        if (invalidSizeResponse != null) {
+            return invalidSizeResponse;
+        }
+
         //Use http client to hit GET endpoint in matchProfileController to verify matchProfile exists
         Object getResponseObject= doGetRequest(userId, matchProfileId, authToken, "matchProfiles");
         MatchProfile matchProfile = null;
@@ -120,6 +128,41 @@ public class AmazonAwsClient {
             return createImageUploadResponse(false, response.getImageUrl(), postResponseStatus,
                     String.format("Error response %d returned when updating profilePic for userId=%d and matchProfile=%d",
                             postResponseStatus.value(), userId, matchProfileId));
+        }
+
+        return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
+                String.format("Failure response of '%d-%s' was returned when uploading profilePic to S3 bucket.",
+                        response.getResponseCode(), response.getDescription()));
+    }
+
+    public ImageUploadResponse uploadFileByUser(MultipartFile multipartFile, Long userId, String authToken) {
+        ImageUploadResponse invalidSizeResponse = processFileUploadsExceedingLimit(multipartFile);
+        if (invalidSizeResponse != null) {
+            return invalidSizeResponse;
+        }
+
+        Object getResponseObject= doGetRequest(userId, null, authToken, "userProfiles");
+        UserProfile userProfile = null;
+        try {
+            userProfile = UserProfile.createFromObject(getResponseObject);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (userProfile == null || !userProfile.getId().equals(userId)) {
+            LOGGER.error("User not found or user profile ids do not match.");
+            return createImageUploadResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        }
+
+        String fileName = generateFileNameByUser(userId, userProfile.getFirstName());
+        ImageUploadResponse response = uploadFileToS3(multipartFile, fileName);
+        if (response.getResponseCode() == 200) {
+            HttpStatus postResponseStatus = doPostRequest(userId, null, authToken, response.getImageUrl());
+            if (postResponseStatus.is2xxSuccessful()) {
+                return createImageUploadResponse(true, response.getImageUrl(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+            }
+            return createImageUploadResponse(false, response.getImageUrl(), postResponseStatus,
+                    String.format("Error response %d returned when updating profilePic for userId=%d",
+                            postResponseStatus.value(), userId));
         }
 
         return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
@@ -172,7 +215,11 @@ public class AmazonAwsClient {
     }
 
     private String generateFileNameByUserAndMatchProfileId(Long userId, Long matchProfileId) {
-        return "user_" + userId + "_match_" + matchProfileId + "_" + new Date().getTime();
+        return "user_" + userId + "_match_" + matchProfileId + "_" + Utils.getIsoFormatTimestampFromDate(new Date(), null);
+    }
+
+    private String generateFileNameByUser(Long userId, String name) {
+        return "user_" + userId + "_" + name.toLowerCase() + "_" + Utils.getIsoFormatTimestampFromDate(new Date(), null);
     }
 
 //    private String generateFileName(ImageUploadRequest request) {
@@ -215,7 +262,11 @@ public class AmazonAwsClient {
     }
 
     private HttpStatus doPostRequest(Long userId, Long matchProfileId, String authToken, String imageUrl) {
-        HttpPost httpPost = new HttpPost(baseUrl + String.format(MATCH_PROFILE_IMAGE_UPDATE_ENDPOINT, userId, matchProfileId, imageUrl));
+        String postEndpoint = matchProfileId == null ?
+                String.format(USER_PROFILE_IMAGE_UPDATE_ENDPOINT, userId, imageUrl) :
+                String.format(MATCH_PROFILE_IMAGE_UPDATE_ENDPOINT, userId, matchProfileId, imageUrl);
+
+        HttpPost httpPost = new HttpPost(baseUrl + postEndpoint);
         LOGGER.info("Making HTTP POST Request to '{}'", httpPost.getURI());
         httpPost.setHeader("Authorization", authToken);
         httpPost.setHeader("Content-type", "application/json");
@@ -231,7 +282,11 @@ public class AmazonAwsClient {
     }
 
     private Object doGetRequest(Long userId, Long matchProfileId, String authToken, String getObject) {
-        HttpGet httpGet = new HttpGet(baseUrl + String.format(MATCH_PROFILE_GET_ENDPOINT, userId, matchProfileId));
+        String getEndpoint = matchProfileId == null ?
+                String.format(USER_PROFILE_GET_ENDPOINT, userId) :
+                String.format(MATCH_PROFILE_GET_ENDPOINT, userId, matchProfileId);
+        HttpGet httpGet = new HttpGet(baseUrl + getEndpoint);
+
         LOGGER.info("Making HTTP GET Request to '{}'", httpGet.getURI());
         httpGet.setHeader("Authorization", authToken);
 
@@ -252,6 +307,7 @@ public class AmazonAwsClient {
         String responseBody = null;
         try {
             responseBody = EntityUtils.toString(response.getEntity());
+            LOGGER.info(responseBody);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -287,6 +343,15 @@ public class AmazonAwsClient {
                     (ArrayList<String>) responseMap.getOrDefault(entityName, null);
             // for single DTO lookup response gives array containing single DTO object
             return entityList == null || entityList.isEmpty() ? null : entityList.get(0);
+        }
+        return null;
+    }
+
+    private ImageUploadResponse processFileUploadsExceedingLimit(MultipartFile file) {
+        if (file.getSize() > MAX_IMAGE_BYTES) {
+            return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
+                    String.format("Error: image exceeds allowable upload size of %d bytes -- file is %d bytes",
+                            MAX_IMAGE_BYTES, file.getSize()));
         }
         return null;
     }

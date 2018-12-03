@@ -26,8 +26,6 @@ import static com.utahmsd.pupper.util.Constants.NULL_FIELD;
 @Api(value = "Image Controller")
 public class ImageController {
 
-    private static final Long MAX_UPLOAD_BYTES = 1_048_576L;
-
     private final AmazonAwsClient amazonClient;
 
     @Autowired
@@ -63,17 +61,20 @@ public class ImageController {
      * @param authToken authorization token for accessing endpoint called in AmazonAwsClient class.
      * @return imageUploadResponse
      */
-    @PutMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload", consumes = {"multipart/form-data"}, headers = {"Authorization"})
-    public ImageUploadResponse uploadFileForMatchProfile(@RequestPart(value = "profilePic") @NotNull MultipartFile file,
+    @PutMapping(path = "/upload/user/{userId}/matchProfile/{matchProfileId}", consumes = {"multipart/form-data"}, headers = {"Authorization"})
+    public ImageUploadResponse uploadProfileImageForMatchProfile(@RequestPart(value = "profilePic") @NotNull MultipartFile file,
                                                          @PathVariable("userId") Long userId,
                                                          @PathVariable("matchProfileId") Long matchProfileId,
                                                          @RequestHeader("Authorization") String authToken) {
-        if (file.getSize() > MAX_UPLOAD_BYTES) {
-            return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
-                    String.format("Error: image exceeds allowable upload size of %d bytes -- file is %d bytes",
-                            MAX_UPLOAD_BYTES, file.getSize()));
-        }
+
         return amazonClient.uploadFileByUserAndMatchProfile(file, userId, matchProfileId, authToken);
+    }
+
+    @PutMapping(path = "/upload/user/{userId}", consumes = {"multipart/form-data"}, headers = {"Authorization"})
+    public ImageUploadResponse uploadProfileImageForUserProfile(@RequestPart(value = "profilePic") @NotNull MultipartFile file,
+                                                         @PathVariable("userId") Long userId,
+                                                         @RequestHeader("Authorization") String authToken) {
+        return amazonClient.uploadFileByUser(file, userId, authToken);
     }
 
     /*

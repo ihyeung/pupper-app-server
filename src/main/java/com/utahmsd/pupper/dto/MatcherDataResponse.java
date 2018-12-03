@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.utahmsd.pupper.dto.pupper.ProfileCard.listFromMatchProfiles;
+import static com.utahmsd.pupper.dto.pupper.ProfileCard.matchProfileToProfileCardMapper;
 
 public class MatcherDataResponse extends BaseResponse {
 
@@ -22,7 +22,7 @@ public class MatcherDataResponse extends BaseResponse {
                                                                 HttpStatus code, String description) {
         MatcherDataResponse response = new MatcherDataResponse();
         response.setSuccess(success);
-        response.setNextMatcherDataBatch(matchProfiles == null ? new ArrayList<>() : listFromMatchProfiles(matchProfiles));
+        response.setNextMatcherDataBatch(matchProfiles == null ? new ArrayList<>() : matchProfileToProfileCardMapper(matchProfiles));
         response.setStatus(code);
         response.setResponseCode(code.value());
         response.setDescription(description);

@@ -51,7 +51,7 @@ public class MatchProfileFilterService {
         return matchProfileRepo.findMatchProfilesByBreed_Name(breed);
     }
 
-    static boolean isValidMatchProfileSort(String sort) {
+    public static boolean isValidMatchProfileSort(String sort) {
         return !StringUtils.isNullOrEmpty(sort) && matchProfileFieldList().contains(sort);
     }
 

@@ -30,6 +30,11 @@ public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile,
     @Query("FROM UserProfile u WHERE u.zip BETWEEN :zipMin AND :zipMax")
     List<UserProfile> findAllByZipBetween(@Param("zipMin") String zipMin, @Param("zipMax") String zipMax);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE UserProfile u SET u.profileImage = :url WHERE u.id = :id")
+    void updateProfileImage(@Param("id") Long userId, @Param("url") String imageUrl);
+
 //    Optional<List<UserProfile>> findAllByPupperScore (float score);
 //    Optional<List<UserProfile>> findAllByLastLoginBetween (Date start, Date end);
 //    Optional<List<UserProfile>> findAllByImage (String imageLocation);

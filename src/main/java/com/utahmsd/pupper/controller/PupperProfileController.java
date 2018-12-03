@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @Api(value = "PupperProfile Controller For PupperProfile Endpoints")
@@ -34,21 +35,6 @@ public class PupperProfileController {
     public PupperProfileResponse getAllPupperProfiles(@RequestParam("sortBy") String sort,
                                                       @RequestParam("limit") int limit) {
         return pupperProfileFilterService.getPupperProfilesWithFilters(sort, limit);
-    }
-
-    @GetMapping(path ="/pupper/breed")
-    public BreedResponse getAllPupperBreeds() {
-        return pupperProfileService.getBreeds();
-    }
-
-    @GetMapping(path ="/pupper/breed/{breedId}")
-    public PupperProfileResponse findPupperProfilesByBreedId(@PathVariable("breedId") Long breedId) {
-        return pupperProfileService.getPupperProfilesByBreedId(breedId);
-    }
-
-    @GetMapping(path ="/pupper", params = {"breed"})
-    public Breed findPupperBreedByName(@RequestParam("breed") String breedName) {
-        return pupperProfileFilterService.getPupperBreedByName(breedName);
     }
 
     @GetMapping(path ="/user/{userId}/pupper")
@@ -92,6 +78,30 @@ public class PupperProfileController {
     public PupperProfileResponse deletePupperProfileById(@PathVariable("userId") Long userProfileId,
                                                          @PathVariable("pupperId") Long pupperId) {
         return pupperProfileService.deletePupperProfileById(userProfileId, pupperId);
+    }
+
+    /*
+     *  Breed endpoints
+     */
+
+    @GetMapping(path ="/pupper/breed")
+    public BreedResponse getAllPupperBreeds() {
+        return pupperProfileService.getBreeds();
+    }
+
+    @GetMapping(path ="/pupper/breed/{breedId}")
+    public PupperProfileResponse findPupperProfilesByBreedId(@PathVariable("breedId") Long breedId) {
+        return pupperProfileService.getPupperProfilesByBreedId(breedId);
+    }
+
+    @GetMapping(path ="/pupper", params = {"breed"})
+    public Breed findPupperBreedByName(@RequestParam("breed") String breedName) {
+        return pupperProfileFilterService.getPupperBreedByName(breedName);
+    }
+
+    @GetMapping(path ="/pupper/breed", params = {"size"})
+    public List<Breed> findPupperBreedsBySize(@RequestParam("size") String size) {
+        return pupperProfileFilterService.getPupperBreedsBySize(size);
     }
 
 }

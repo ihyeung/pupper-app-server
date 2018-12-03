@@ -50,7 +50,7 @@ public class UserProfile implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "birthdate")
     @Past
-    private Date birthdate; //For profile age
+    private Date birthdate;
 
     @DefaultValue("single")
     @Column(name = "marital_status")
@@ -77,7 +77,7 @@ public class UserProfile implements Serializable {
 
     public UserProfile(){}
 
-    static UserProfile createFromObject(Object object) throws ParseException {
+    public static UserProfile createFromObject(Object object) throws ParseException {
         if (object != null) {
             LinkedHashMap<Object, Object> entityObject = (LinkedHashMap<Object, Object>) object;
 

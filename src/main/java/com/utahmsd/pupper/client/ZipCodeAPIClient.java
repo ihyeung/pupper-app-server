@@ -28,7 +28,7 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 @Named
 @Singleton
 public class ZipCodeAPIClient {
-    private static final String apiKey = System.getProperty("zipcode.api.key", "");
+    private static final String apiKey = System.getProperty("zipCode.api.key", "");
 
     private static final Header[] HEADERS = {
             new BasicHeader("Content-Type", String.valueOf(APPLICATION_JSON)),
@@ -48,7 +48,7 @@ public class ZipCodeAPIClient {
         this.objectMapper = objectMapper;
     }
 
-    Integer getDistanceBetweenZipcodes(String zipcode, String zipcode1) {
+    public Integer getDistanceBetweenZipcodes(String zipcode, String zipcode1) {
         if (!isValidZipcode(zipcode) || !isValidZipcode(zipcode1) || zipcode.equals(zipcode1)) {
             return 0;
         }
@@ -67,7 +67,7 @@ public class ZipCodeAPIClient {
         return null;
     }
 
-    List<String> getZipCodesInRadius(String zipcode, int radius) {
+    public List<String> getZipCodesInRadius(String zipcode, int radius) {
         List<String> zipCodes = new ArrayList<>();
         if (!isValidRadius(radius) || !isValidZipcode(zipcode) || radius == 0) {
             return zipCodes;

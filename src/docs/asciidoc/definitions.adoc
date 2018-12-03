@@ -130,21 +130,19 @@ __optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 2
 [[_matchresult]]
 === MatchResult
 
-[options="header", cols=".^3a,.^11a,.^4a"]
+[options="header", cols=".^3a,.^4a"]
 |===
-|Name|Description|Schema
+|Name|Schema
 |**id** +
-__optional__||integer (int64)
-|**lastUpdateToMatchResult** +
-__optional__|**Example** : `"yyyy-MM-dd"`|string
+__optional__|integer (int64)
 |**matchForProfileOne** +
-__optional__||boolean
+__optional__|boolean
 |**matchForProfileTwo** +
-__optional__||boolean
+__optional__|boolean
 |**matchProfileOne** +
-__optional__||<<_matchprofile,MatchProfile>>
+__optional__|<<_matchprofile,MatchProfile>>
 |**matchProfileTwo** +
-__optional__||<<_matchprofile,MatchProfile>>
+__optional__|<<_matchprofile,MatchProfile>>
 |===
 
 
@@ -235,8 +233,6 @@ __optional__|string
 |**distance** +
 __optional__|string
 |**lastActive** +
-__optional__|string
-|**location** +
 __optional__|string
 |**name** +
 __optional__|string

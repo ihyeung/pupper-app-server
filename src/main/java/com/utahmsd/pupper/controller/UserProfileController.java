@@ -30,7 +30,7 @@ public class UserProfileController {
         return userProfileFilterService.getUserProfilesWithFilters(sort, limit);
     }
 
-    @GetMapping(path ="/{userId}")
+    @GetMapping(path = "/{userId}")
     public UserProfileResponse findUserProfileById(@PathVariable("userId") Long userProfileId) {
         return userProfileService.findUserProfileById(userProfileId);
     }
@@ -40,7 +40,7 @@ public class UserProfileController {
         return userProfileService.createOrUpdateUserProfile(userProfile);
     }
 
-    @PutMapping(path ="/{userId}")
+    @PutMapping(path = "/{userId}")
     public UserProfileResponse updateUserProfileById(@PathVariable("userId") Long userProfileId,
                                                      @RequestBody @Valid UserProfile userProfile) {
         return userProfileService.updateUserProfileByUserProfileId(userProfileId, userProfile);
@@ -51,7 +51,7 @@ public class UserProfileController {
     This endpoint will only ever be called when coupled with the following calls (in order of occurrence):
     -AuthController deleteAccount endpoint to delete the UserAccount
      */
-    @DeleteMapping(path ="/{userId}")
+    @DeleteMapping(path = "/{userId}")
     public UserProfileResponse deleteUserProfileById(@PathVariable("userId") Long userProfileId) {
         return userProfileService.deleteUserProfileById(userProfileId);
     }
@@ -76,6 +76,12 @@ public class UserProfileController {
     public UserProfileResponse updateLastLogin(@PathVariable("userId") Long userProfileId,
                                                @RequestParam(value = "lastLogin") String lastLogin) {
         return userProfileService.updateLastLoginForUserProfile(userProfileId, lastLogin);
+    }
+
+    @PostMapping(path="/{userId}", params = {"profilePic"})
+    public UserProfileResponse updateProfileImageForMatchProfile(@PathVariable("userId") Long userId,
+                                                                  @RequestParam("profilePic") String profilePic) {
+        return userProfileService.updateProfileImageById(userId, profilePic);
     }
 
 }

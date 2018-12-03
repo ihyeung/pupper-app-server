@@ -1,4 +1,4 @@
-package com.utahmsd.pupper.service.filter;
+package com.utahmsd.pupper.unit.service;
 
 import org.junit.Test;
 

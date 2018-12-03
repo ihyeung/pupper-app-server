@@ -6,6 +6,7 @@ import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
+import com.utahmsd.pupper.dto.pupper.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,11 @@ public class PupperProfileFilterService {
     }
 
     public Breed getPupperBreedByName(String breed) {
-        return breedRepo.findByName(breed);
+        return breedRepo.findByNameOrAltName(breed, breed);
     }
+
+    public List<Breed> getPupperBreedsBySize(String size) {
+        return breedRepo.findAllBySize(Size.fromValue(size));
+    }
+
 }

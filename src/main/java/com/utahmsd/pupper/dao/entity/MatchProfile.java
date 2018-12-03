@@ -13,10 +13,7 @@ import javax.validation.constraints.Past;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.utahmsd.pupper.util.Constants.DATE_FORMAT;
 import static com.utahmsd.pupper.util.Constants.DATE_FORMATTER;

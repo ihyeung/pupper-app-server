@@ -4,10 +4,13 @@ import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatcherDataRequest;
 import com.utahmsd.pupper.dto.MatcherDataResponse;
 import com.utahmsd.pupper.dto.MatcherResponse;
+import com.utahmsd.pupper.dto.pupper.ProfileCard;
 import com.utahmsd.pupper.service.MatcherService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller for mobile app's main matching/playing functionality through calling methods contained in PupperMatcherService.
@@ -32,20 +35,8 @@ public class MatcherController {
      * @return
      */
     @GetMapping(params = {"matchProfileId"})
-    public MatcherDataResponse fetchMatcherData(@RequestParam("matchProfileId") Long matchProfileId) {
-        return null;
-    }
-
-    /**
-     * Retrieves batch of profile cards to display to the user that fall within a given distance of the user.
-     * @param matchProfileId
-     * @param distance
-     * @return
-     */
-    @GetMapping(params = {"matchProfileId", "distance"})
-    public MatcherDataResponse fetchMatcherData(@RequestParam("matchProfileId") Long matchProfileId,
-                                                @RequestParam(value = "distance", required = false) int distance) {
-        return null;
+    public List<ProfileCard> fetchMatcherData(@RequestParam("matchProfileId") Long matchProfileId) {
+        return matcherService.retrieveMatcherDataProfileCards(matchProfileId);
     }
 
     /**

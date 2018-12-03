@@ -22,6 +22,15 @@ public class ZipcodeResult {
     @JsonProperty("state")
     private String state;
 
+    public ZipcodeResult(){}
+
+    public ZipcodeResult(String zip, double distance, String city, String state) {
+        this.zipcode = zip;
+        this.distance = distance;
+        this.city = city;
+        this.state = state;
+    }
+
     public String getZipcode() {
         return zipcode;
     }

@@ -110,4 +110,9 @@ public class UserProfileService {
         LOGGER.info("User profile with id={} was deleted successfully", id);
         return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
+
+    public UserProfileResponse updateProfileImageById(Long userId, String imageUrl) {
+        userProfileRepo.updateProfileImage(userId, imageUrl);
+        return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
 }
