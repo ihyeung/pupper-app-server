@@ -53,10 +53,18 @@ public class PupperProfileFilterService {
 
     public PupperProfileResponse getPupperProfilesFilterByEmail(String userEmail) {
         List<PupperProfile> pupperProfileList =
-                                pupperProfileRepo.findAllByMatchProfile_UserProfile_UserAccount_Username(userEmail);
+                pupperProfileRepo.findAllByMatchProfile_UserProfile_UserAccount_Username(userEmail);
         return pupperProfileList.isEmpty() ?
                 createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND):
                 createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public List<PupperProfile> getPupperProfilesFilterByBreedName(String breed) {
+        return pupperProfileRepo.findAllByBreedName(breed);
+    }
+
+    public List<PupperProfile> getPupperProfilesFilterByLifeStage(String lifestage) {
+        return pupperProfileRepo.findAllByLifeStage(lifestage);
     }
 
     public Breed getPupperBreedByName(String breed) {

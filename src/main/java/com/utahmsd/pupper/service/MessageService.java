@@ -58,7 +58,7 @@ public class MessageService {
     }
 
     public List<PupperMessage> getMessagesWithLimit(int limit) {
-        int messageLimit = limit > MAX_RESULTS ? MAX_RESULTS : limit;
+        int messageLimit = !isWithinAcceptableMessageLimit(limit) ? MAX_MESSAGES : limit;
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, DEFAULT_SORT_ORDER)); //Sorts messages from newest to oldest
         Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(PAGE_NUM, messageLimit, sort));
         int numResults = results.getNumberOfElements();
@@ -92,8 +92,9 @@ public class MessageService {
         return messages;
     }
 
-    public List<PupperMessage> getRecentMessageHistory(Long matchProfileId1, Long matchProfileId2, int limit) {
-        return null;
+    public List<PupperMessage> getRecentMessageHistoryBetweenMatchProfiles(Long matchProfileId1, Long matchProfileId2) {
+        return messageRepo.findTop10ByMatchProfileSender_IdAndMatchProfileReceiver_IdOrMatchProfileReceiver_IdAndMatchProfileSender_IdOrderByTimestampDesc(
+                matchProfileId1, matchProfileId2, matchProfileId1, matchProfileId2);
     }
 
     public List<List<PupperMessage>> getMessageHistoriesForAllMatches (Long matchProfileId) {
@@ -183,6 +184,11 @@ public class MessageService {
                 createMessageResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION):
                 createMessageResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
     }
+
+    private boolean isWithinAcceptableMessageLimit(int limit) {
+        return limit > 0 && limit <= MAX_MESSAGES;
+    }
+
 
 
 //    /**

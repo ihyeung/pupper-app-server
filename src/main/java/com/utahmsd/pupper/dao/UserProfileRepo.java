@@ -35,9 +35,4 @@ public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile,
     @Query("UPDATE UserProfile u SET u.profileImage = :url WHERE u.id = :id")
     void updateProfileImage(@Param("id") Long userId, @Param("url") String imageUrl);
 
-//    Optional<List<UserProfile>> findAllByPupperScore (float score);
-//    Optional<List<UserProfile>> findAllByLastLoginBetween (Date start, Date end);
-//    Optional<List<UserProfile>> findAllByImage (String imageLocation);
-//    Optional<List<UserProfile>> findAllByFirstNameContainingAndLastNameContaining(String firstName, String lastName);
-
 }

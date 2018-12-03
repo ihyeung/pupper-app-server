@@ -70,7 +70,6 @@ public class MessageController {
         return messageService.getMessageHistoriesForAllMatches(matchProfileId1);
     }
 
-
     /*
     Helper method to test that isValidMatchResult method is working.
      */
@@ -86,16 +85,15 @@ public class MessageController {
 //    }
 
     /**
-     * Retrieves the most recent messages exchanged between two matchProfileIds with limit.
+     * Retrieves recent message history (i.e., the 10 most recent messages exchanged) between two matchProfileIds.
      * @param matchProfileId1
      * @param matchProfileId2
      * @return
      */
-    @GetMapping(params = {"matchProfileId1", "matchProfileId2", "limit"})
+    @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
     public List<PupperMessage> getRecentMessageHistory(@RequestParam("matchProfileId1") Long matchProfileId1,
-                                                       @RequestParam("matchProfileId2") Long matchProfileId2,
-                                                       @RequestParam("limit") int limit) {
-        return messageService.getRecentMessageHistory(matchProfileId1, matchProfileId2, limit);
+                                                       @RequestParam("matchProfileId2") Long matchProfileId2) {
+        return messageService.getRecentMessageHistoryBetweenMatchProfiles(matchProfileId1, matchProfileId2);
     }
 
     /**
