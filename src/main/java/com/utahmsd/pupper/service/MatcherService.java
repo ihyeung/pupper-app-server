@@ -94,7 +94,7 @@ public class MatcherService {
         int zipRadius = radius > 0 && radius < MAX_RADIUS ? radius : DEFAULT_ZIP_RADIUS;
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
         if (m.isPresent()) {
-            List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), zipRadius);
+            List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), String.valueOf(zipRadius));
 
             List<Long> idList = getViewedMatchProfileIds(matchProfileId);
 
@@ -111,7 +111,7 @@ public class MatcherService {
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
         int zipRadius = radius > 0 && radius < MAX_RADIUS ? radius : DEFAULT_ZIP_RADIUS;
         if (m.isPresent()) {
-            List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), zipRadius);
+            List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), String.valueOf(zipRadius));
             LOGGER.info("Number of zipcodes in range of {}: {}", m.get().getUserProfile().getZip(), zipcodesInRange.size());
 
             List<Long> idList = getViewedMatchProfileIds(matchProfileId);
