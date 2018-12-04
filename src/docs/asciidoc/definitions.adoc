@@ -133,6 +133,8 @@ __optional__|enum (100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 2
 [options="header", cols=".^3a,.^4a"]
 |===
 |Name|Schema
+|**batchSent** +
+__optional__|string (date-time)
 |**id** +
 __optional__|integer (int64)
 |**matchForProfileOne** +
@@ -143,6 +145,10 @@ __optional__|boolean
 __optional__|<<_matchprofile,MatchProfile>>
 |**matchProfileTwo** +
 __optional__|<<_matchprofile,MatchProfile>>
+|**recordExpires** +
+__optional__|string (date-time)
+|**resultCompleted** +
+__optional__|string (date-time)
 |===
 
 
@@ -152,10 +158,10 @@ __optional__|<<_matchprofile,MatchProfile>>
 [options="header", cols=".^3a,.^11a,.^4a"]
 |===
 |Name|Description|Schema
+|**matchProfileId** +
+__optional__||integer (int64)
 |**matcherResults** +
 __optional__||< string, boolean > map
-|**playerId** +
-__optional__||integer (int64)
 |**timestamp** +
 __optional__|**Example** : `"yyyy-MM-dd HH:mm a"`|string
 |===

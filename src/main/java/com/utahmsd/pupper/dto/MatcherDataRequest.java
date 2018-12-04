@@ -16,8 +16,8 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class MatcherDataRequest {
 
-    @JsonProperty("playerId")
-    private Long profileIdForPlayer;
+    @JsonProperty("matchProfileId")
+    private Long matchProfileId;
 
     @JsonProperty("matcherResults")
     private Map<Long, Boolean> map;
@@ -26,13 +26,9 @@ public class MatcherDataRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a")
     private Date date;
 
-    public Long getProfileIdForPlayer() {
-        return profileIdForPlayer;
-    }
+    public Long getMatchProfileId() { return matchProfileId; }
 
-    public void setProfileIdForPlayer(Long profileIdForPlayer) {
-        this.profileIdForPlayer = profileIdForPlayer;
-    }
+    public void setMatchProfileId(Long matchProfileId) {this.matchProfileId = matchProfileId;}
 
     public Map<Long, Boolean> getMap() {
         return map;

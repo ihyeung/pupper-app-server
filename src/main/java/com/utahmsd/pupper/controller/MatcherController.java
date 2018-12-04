@@ -57,10 +57,10 @@ public class MatcherController {
      * @param matcherRequest
      * @return
      */
-    @PutMapping(params = {"matchProfileId"})
+    @PostMapping(params = {"matchProfileId"})
     public MatcherDataResponse submitMatcherResults(@RequestParam("matchProfileId") Long matchProfileId,
                                                     @RequestBody MatcherDataRequest matcherRequest) {
-        return null;
+        return matcherService.updateMatcherResults(matchProfileId, matcherRequest);
     }
 
     /**
@@ -71,20 +71,20 @@ public class MatcherController {
      */
     @GetMapping(params = {"matchProfileId", "isSuccess"})
     public MatcherResponse getMatchResultDataForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId,
-                                                @RequestParam("isSuccess") boolean getSuccessResultData) {
+                                                            @RequestParam("isSuccess") boolean getSuccessResultData) {
 
         return null;
     }
 
     /**
-     * Explicit crud endpoint to retrieve a matcher result record between a pair of match profiles.
+     * Explicit crud endpoint to retrieve a match result record between a pair of match profiles.
      * @param matchProfileId1
      * @param matchProfileId2
      * @return
      */
     @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
-    public MatchResult findMatcherResultById(@RequestParam("matchProfileId1") Long matchProfileId1,
-                                             @RequestParam("matchProfileId2") Long matchProfileId2) {
+    public MatchResult getMatchResultForMatchProfiles(@RequestParam("matchProfileId1") Long matchProfileId1,
+                                                        @RequestParam("matchProfileId2") Long matchProfileId2) {
         return matcherService.checkForMatch(matchProfileId1, matchProfileId2);
     }
 
@@ -97,14 +97,13 @@ public class MatcherController {
      * @param isMatchForMatchProfileId1
      * @return
      */
-    @PutMapping(params = {"matchProfileId", "resultFor", "isMatch"})
+    @PostMapping(params = {"matchProfileId", "resultFor", "isMatch"})
     public MatcherResponse createOrUpdateMatcherResult(@RequestParam("matchProfileId") Long matchProfileId1,
                                                        @RequestParam("resultFor") Long matchProfileId2,
-                                                       @RequestParam("isMatch") boolean isMatchForMatchProfileId1) {
+                                                       @RequestParam("isMatch") Boolean isMatchForMatchProfileId1) {
+        matcherService.createOrInsertMatchResultRecord(matchProfileId1, matchProfileId2, isMatchForMatchProfileId1);
+
         return null;
-        //TODO: service method that queries for an existing match result record between two users.
-        //TODO: If a match result record does not exist, insert new record into match_result table
-        //TODO: If a record exists between the two match profiles, update existing record.
     }
 
     /**

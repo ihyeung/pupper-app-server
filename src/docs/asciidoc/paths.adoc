@@ -273,23 +273,11 @@ __required__|accountId|integer (int64)
 * auth-controller
 
 
-[[_getallmatchprofilesusingget]]
+[[_getallmatchprofilesusingget_1]]
 === getAllMatchProfiles
 ....
 GET /matchProfile
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
-|**Query**|**sortBy** +
-__required__|sortBy|string
-|===
 
 
 ==== Responses
@@ -297,7 +285,7 @@ __required__|sortBy|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|< <<_matchprofile,MatchProfile>> > array
+|**200**|OK|<<_matchprofileresponse,MatchProfileResponse>>
 |===
 
 
@@ -347,48 +335,10 @@ __required__|userId|string
 * match-profile-controller
 
 
-[[_findmatcherresultbyidusingget]]
-=== findMatcherResultById
-....
-GET /matcher
-....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**matchProfileId1** +
-__required__|matchProfileId1|string
-|**Query**|**matchProfileId2** +
-__required__|matchProfileId2|string
-|===
-
-
-==== Responses
-
-[options="header", cols=".^2a,.^14a,.^4a"]
-|===
-|HTTP Code|Description|Schema
-|**200**|OK|<<_matchresult,MatchResult>>
-|===
-
-
-==== Produces
-
-* `\*/*`
-
-
-==== Tags
-
-* matcher-controller
-
-
-[[_submitmatcherresultsusingput]]
+[[_submitmatcherresultsusingpost]]
 === submitMatcherResults
 ....
-PUT /matcher
+POST /matcher
 ....
 
 
@@ -416,6 +366,44 @@ __required__|matcherRequest|<<_matcherdatarequest,MatcherDataRequest>>
 ==== Consumes
 
 * `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* matcher-controller
+
+
+[[_fetchmatcherdatabatchusingget]]
+=== fetchMatcherDataBatch
+....
+GET /matcher
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
+|**Query**|**zipRadius** +
+__required__|zipRadius|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|< <<_profilecard,ProfileCard>> > array
+|===
 
 
 ==== Produces
@@ -464,6 +452,78 @@ __required__|matchProfileId|string
 * matcher-controller
 
 
+[[_getallunseenprofilesformatchprofileusingget]]
+=== getAllUnseenProfilesForMatchProfile
+....
+GET /matcher/all
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|< <<_matchprofile,MatchProfile>> > array
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* matcher-controller
+
+
+[[_retrievematchesformatchprofileusingget]]
+=== retrieveMatchesForMatchProfile
+....
+GET /matches
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|< <<_matchprofile,MatchProfile>> > array
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* match-profile-controller
+
+
 [[_sendmessagetomatchusingpost]]
 === sendMessageToMatch
 ....
@@ -509,8 +569,8 @@ __required__|pupperMessage|<<_puppermessage,PupperMessage>>
 * message-controller
 
 
-[[_getrecentmessagehistoryusingget]]
-=== getRecentMessageHistory
+[[_getmessagehistoriesforallmatchesusingget]]
+=== getMessageHistoriesForAllMatches
 ....
 GET /message
 ....
@@ -521,12 +581,8 @@ GET /message
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
 |**Query**|**matchProfileId1** +
 __required__|matchProfileId1|string
-|**Query**|**matchProfileId2** +
-__required__|matchProfileId2|string
 |===
 
 
@@ -535,7 +591,7 @@ __required__|matchProfileId2|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|< <<_puppermessage,PupperMessage>> > array
+|**200**|OK|< < <<_puppermessage,PupperMessage>> > array > array
 |===
 
 
@@ -623,8 +679,46 @@ __required__|matchProfileId|integer (int64)
 * message-controller
 
 
-[[_getallpupperprofilesusingget]]
-=== getAllPupperProfiles
+[[_getrecentmessagehistoryusingget]]
+=== getRecentMessageHistory
+....
+GET /message/recent
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**matchProfileId1** +
+__required__|matchProfileId1|string
+|**Query**|**matchProfileId2** +
+__required__|matchProfileId2|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|< <<_puppermessage,PupperMessage>> > array
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* message-controller
+
+
+[[_getpupperprofilesbyuseremailusingget]]
+=== getPupperProfilesByUserEmail
 ....
 GET /pupper
 ....
@@ -635,10 +729,8 @@ GET /pupper
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
-|**Query**|**sortBy** +
-__required__|sortBy|string
+|**Query**|**userEmail** +
+__required__|userEmail|string
 |===
 
 
@@ -661,11 +753,21 @@ __required__|sortBy|string
 * pupper-profile-controller
 
 
-[[_getallpupperbreedsusingget]]
-=== getAllPupperBreeds
+[[_findpupperbreedbynameusingget]]
+=== findPupperBreedByName
 ....
 GET /pupper/breed
 ....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**name** +
+__required__|name|string
+|===
 
 
 ==== Responses
@@ -673,7 +775,7 @@ GET /pupper/breed
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|<<_breedresponse,BreedResponse>>
+|**200**|OK|<<_breed,Breed>>
 |===
 
 
@@ -899,8 +1001,8 @@ __required__|userProfile|<<_userprofile,UserProfile>>
 * user-profile-controller
 
 
-[[_finduserprofilebyuseraccountemailusingget]]
-=== findUserProfileByUserAccountEmail
+[[_getuserprofileswithzipusingget]]
+=== getUserProfilesWithZip
 ....
 GET /user
 ....
@@ -911,8 +1013,8 @@ GET /user
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**email** +
-__required__|email|string
+|**Query**|**zip** +
+__required__|zip|string
 |===
 
 
@@ -1057,8 +1159,8 @@ __required__|userId|integer (int64)
 * user-profile-controller
 
 
-[[_updatelastloginusingput]]
-=== updateLastLogin
+[[_updateuserprofilebyidusingput]]
+=== updateUserProfileById
 ....
 PUT /user/{userId}
 ....
@@ -1071,8 +1173,8 @@ PUT /user/{userId}
 |Type|Name|Description|Schema
 |**Path**|**userId** +
 __required__|userId|integer (int64)
-|**Query**|**lastLogin** +
-__required__|lastLogin|string
+|**Body**|**userProfile** +
+__required__|userProfile|<<_userprofile,UserProfile>>
 |===
 
 
