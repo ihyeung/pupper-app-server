@@ -19,13 +19,15 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.*;
 
+import static com.utahmsd.pupper.client.ZipCodeAPIClient.MAX_RADIUS;
+
 @Named
 @Singleton
 public class MatcherService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
-    private static final int DEFAULT_BATCH_SIZE = 10; //Number of match profiles to retrieve for a user per batch
-    private static final int DEFAULT_ZIP_RADIUS = 20;
+    private static final int DEFAULT_BATCH_SIZE = 3; //Number of match profiles to retrieve for a user per batch
+    private static final int DEFAULT_ZIP_RADIUS = 3;
 
 
     private final MatchProfileRepo matchProfileRepo;
@@ -41,11 +43,8 @@ public class MatcherService {
         this.zipCodeAPIClient = zipCodeAPIClient;
     }
 
-    public List<ProfileCard> retrieveMatcherDataProfileCards(Long matchProfileId) {
-//        List<MatchProfile> matchProfileBatch = getNextMatchProfileBatch(matchProfileId);
-        List<MatchProfile> matchProfiles = getNextMatchProfileBatchWithZipFilter(matchProfileId);
-        LOGGER.info("Match profiles in upcoming batch: {}", matchProfiles.size());
-
+    public List<ProfileCard> retrieveMatcherDataProfileCards(Long matchProfileId, int radius) {
+        List<MatchProfile> matchProfiles = getNextMatchProfileBatchWithZipFilter(matchProfileId, radius);
         return ProfileCard.matchProfileToProfileCardMapper(matchProfiles);
     }
 
@@ -67,36 +66,66 @@ public class MatcherService {
     }
 
     /**
-     * Retrieves a list of matchProfiles of batch size 10 corresponding to profileCards that the user has not yet
+     * Retrieves a list of matchProfiles corresponding to profileCards that the user has not yet
      * been shown and/or rated.
      *
      * The matchProfiles returned in the batch are those with the highest scores that the user has not viewed/rated.
      * @param matchProfileId
      * @return
      */
-    public List<MatchProfile> getNextMatchProfileBatch(Long matchProfileId) {
+    public List<MatchProfile> getAllUnseenMatchProfilesForMatchProfile(Long matchProfileId) {
         List<Long> idList = new ArrayList<>();
         getPastMatcherResultsForMatchProfile(matchProfileId)
                 .forEach(matchProfile -> idList.add(matchProfile.getId()));
 
-        List<MatchProfile> unseenProfiles = matchProfileRepo.findTop10ByIdIsNotInAndIdNotOrderByScoreDesc(idList, matchProfileId);
-        LOGGER.info("Number of unseen matchProfiles: {}", unseenProfiles.size());
+        List<MatchProfile> unseenProfiles = matchProfileRepo.findAllByIdIsNotInAndIdIsNotOrderByScoreDesc(idList, matchProfileId);
+        LOGGER.info("Total number of unseen matchProfiles: {}", unseenProfiles.size());
         return unseenProfiles;
     }
 
-    public List<MatchProfile> getNextMatchProfileBatchWithZipFilter(Long matchProfileId) {
+    public List<MatchProfile> getAllUnseenMatchProfilesForMatchProfileWithZipFilter(Long matchProfileId, int radius) {
+        int zipRadius = radius > 0 && radius < MAX_RADIUS ? radius : DEFAULT_ZIP_RADIUS;
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
         if (m.isPresent()) {
-            List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), DEFAULT_ZIP_RADIUS);
-            LOGGER.info("Number of zipcodes in range: {}", zipcodesInRange.size());
-            zipcodesInRange.forEach(LOGGER::info);
+            List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), zipRadius);
+            List<Long> idList = new ArrayList<>();
+            getPastMatcherResultsForMatchProfile(matchProfileId)
+                    .forEach(each -> idList.add(each.getId()));
+
+            List<MatchProfile> profiles =
+                    matchProfileRepo.findAllByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(matchProfileId, zipcodesInRange);
+            if (!idList.isEmpty()) {
+                profiles = matchProfileRepo.
+                        findAllByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(idList, matchProfileId, zipcodesInRange);
+            }
+            LOGGER.info("Number of unseen profiles within zip code radius: {}", profiles.size());
+
+            return profiles;
+        }
+        return null;
+    }
+
+    public List<MatchProfile> getNextMatchProfileBatchWithZipFilter(Long matchProfileId, int radius) {
+        Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
+        int zipRadius = radius > 0 && radius < MAX_RADIUS ? radius : DEFAULT_ZIP_RADIUS;
+        if (m.isPresent()) {
+            List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), zipRadius);
+            LOGGER.info("Number of zipcodes in range of {}: {}", m.get().getUserProfile().getZip(), zipcodesInRange.size());
 
             List<Long> idList = new ArrayList<>();
             getPastMatcherResultsForMatchProfile(matchProfileId)
                     .forEach(each -> idList.add(each.getId()));
             LOGGER.info("Number of ids to exclude: {}", idList.size());
 
-            return matchProfileRepo.findTop5ByIdIsNotInAndIdNotAndUserProfile_ZipIsInOrderByScoreDesc(idList, matchProfileId, zipcodesInRange);
+            List<MatchProfile> profiles =
+                    matchProfileRepo.findTop5ByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(matchProfileId, zipcodesInRange);
+            if (!idList.isEmpty()) {
+                profiles = matchProfileRepo.
+                        findTop5ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(idList, matchProfileId, zipcodesInRange);
+            }
+            LOGGER.info("Number of unseen profiles within zip code radius: {}", profiles.size());
+
+            return profiles;
         }
         return null;
     }
@@ -110,10 +139,6 @@ public class MatcherService {
 
     //Called when #2 swipes left/right on #1 (Someone swipes back on someone who has already swiped/rated them)
     public MatcherResponse updateMatchResult(MatcherRequest request) { return null;}
-
-    public MatcherResponse getPupperMatcherResults(Long matchProfileId, boolean getSuccessResults) { //get list of match profiles for a given match profile where both parties rated each other positively
-        return null;
-    }
 
     public MatcherResponse getPastPupperMatchResults(Long matchProfileId) { //All match profiles that a given match profile has been shown and rated (i.e., pastPupperMatches = success pupper matches + failure pupper matches)
         return null;

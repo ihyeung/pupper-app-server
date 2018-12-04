@@ -16,9 +16,9 @@ public interface MessageRepo extends PagingAndSortingRepository<PupperMessage, L
     Optional<List<PupperMessage>> findAllByMatchProfileSender_IdAndMatchProfileReceiver_Id(Long matchProfileId1, Long matchProfileId2);
 
 
-    @Query("FROM PupperMessage p WHERE (p.matchProfileSender.id = :id1 OR p.matchProfileReceiver.id = :id1) AND " +
-            "(p.matchProfileSender.id = :id2 OR p.matchProfileReceiver.id = :id2) ORDER BY p.timestamp DESC")
-    List<PupperMessage> retrieveMessageHistoryNewestToOldest(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
+    @Query("FROM PupperMessage p WHERE (p.matchProfileSender.id = :id1 AND p.matchProfileReceiver.id = :id2) OR " +
+            "(p.matchProfileSender.id = :id2 AND p.matchProfileReceiver.id = :id1) ORDER BY p.timestamp ASC")
+    List<PupperMessage> retrieveMessageHistoryOldestToNewest(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
 
     /**
      * Returns the 10 most recent messages sent from a given matchProfileId to a given matchProfileId.
@@ -62,11 +62,10 @@ public interface MessageRepo extends PagingAndSortingRepository<PupperMessage, L
                                                                                                                                                         Long id3,
                                                                                                                                                         Long id4);
 
-    void deleteAllByMatchProfileSender_IdOrMatchProfileReceiver_Id(Long matchProfileSenderId, Long matchProfileReceiverId);
-
     @Transactional
     @Modifying
-    @Query("DELETE FROM PupperMessage m WHERE (m.matchProfileSender = :mp1 AND m.matchProfileReceiver = :mp2) OR (m.matchProfileReceiver = :mp1 AND m.matchProfileSender = :mp2)")
+    @Query("DELETE FROM PupperMessage m WHERE (m.matchProfileSender = :mp1 AND m.matchProfileReceiver = :mp2) OR " +
+            "(m.matchProfileReceiver = :mp1 AND m.matchProfileSender = :mp2)")
     void deleteMessageHistoryBetweenMatchProfiles(@Param("mp1") MatchProfile matchProfile1, @Param("mp2") MatchProfile matchProfile2);
 
     @Transactional

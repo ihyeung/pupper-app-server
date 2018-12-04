@@ -3,6 +3,7 @@ package com.utahmsd.pupper.service;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
+import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,6 +146,7 @@ public class MatchProfileService {
 
         Set<MatchProfile> distinctMatchProfiles = new HashSet<>(activeMatches);
         distinctMatchProfiles.addAll(passiveMatches);
+        LOGGER.info("Matches for matchProfileId={}: {}", matchProfileId, distinctMatchProfiles.size());
 
         return new ArrayList<>(distinctMatchProfiles);
     }

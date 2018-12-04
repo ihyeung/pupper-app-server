@@ -50,6 +50,7 @@ public class MessageController {
 
     /**
      * Retrieves all messages exchanged between two matchProfileIds.
+     * Messages are returned in ascending order by timestamp (i.e., oldest to newest).
      * @param matchProfileId1
      * @param matchProfileId2
      * @return
@@ -57,7 +58,7 @@ public class MessageController {
     @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
     public List<PupperMessage> getMessageHistory(@RequestParam("matchProfileId1") Long matchProfileId1,
                                                  @RequestParam("matchProfileId2") Long matchProfileId2) {
-        return messageService.getMessageHistory(matchProfileId1, matchProfileId2);
+        return messageService.getCompleteMessageHistoryBetweenMatchProfiles(matchProfileId1, matchProfileId2);
     }
 
     /**
@@ -90,7 +91,7 @@ public class MessageController {
      * @param matchProfileId2
      * @return
      */
-    @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
+    @GetMapping(path="/recent", params = {"matchProfileId1", "matchProfileId2"})
     public List<PupperMessage> getRecentMessageHistory(@RequestParam("matchProfileId1") Long matchProfileId1,
                                                        @RequestParam("matchProfileId2") Long matchProfileId2) {
         return messageService.getRecentMessageHistoryBetweenMatchProfiles(matchProfileId1, matchProfileId2);

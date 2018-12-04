@@ -1,7 +1,6 @@
 package com.utahmsd.pupper.service;
 
 import com.utahmsd.pupper.dao.MatchProfileRepo;
-import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.MessageRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.PupperMessage;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.time.Instant;
@@ -34,20 +32,17 @@ public class MessageService {
     private final String DEFAULT_SORT_ORDER = "timestamp";
 
     private final MessageRepo messageRepo;
-    private final MatchResultRepo matchResultRepo;
     private final MatchProfileRepo matchProfileRepo;
     private final MatchProfileService matchProfileService;
-
-    @Inject
-    MatcherService matcherService;
+    private final MatcherService matcherService;
 
     @Autowired
-    MessageService(MessageRepo messageRepo, MatchResultRepo matchResultRepo, MatchProfileRepo matchProfileRepo,
-                   MatchProfileService matchProfileService) {
+    MessageService(final MessageRepo messageRepo, final MatchProfileRepo matchProfileRepo,
+                   final MatchProfileService matchProfileService, final MatcherService matcherService) {
         this.messageRepo = messageRepo;
-        this.matchResultRepo = matchResultRepo;
         this.matchProfileRepo = matchProfileRepo;
         this.matchProfileService = matchProfileService;
+        this.matcherService = matcherService;
     }
 
     public List<PupperMessage> getAllMessages() {
@@ -72,27 +67,24 @@ public class MessageService {
                 messageRepo.findAllByMatchProfileSender_IdOrMatchProfileReceiver_Id(matchProfileId, matchProfileId);
         if (!messageList.isPresent()) {
             LOGGER.error("No messages were found for matchProfileId={}", matchProfileId);
-
-            return emptyList();
+            return null;
         }
-
-        LOGGER.info("{} messages were found that were sent/received by matchProfileId={}", messageList.get().size(), matchProfileId);
-
+        LOGGER.info("{} messages found that were sent/received by matchProfileId={}", messageList.get().size(), matchProfileId);
         return messageList.get();
     }
 
-    public List<PupperMessage> getMessageHistory(Long matchProfileId1, Long matchProfileId2) {
-        LOGGER.info("Retrieving messages between matchProfileId={} and matchProfileId={}, sorted from most recent " +
-                "to oldest.", matchProfileId1, matchProfileId2);
+    public List<PupperMessage> getCompleteMessageHistoryBetweenMatchProfiles(Long matchProfileId1, Long matchProfileId2) {
+        List<PupperMessage> messages = messageRepo.retrieveMessageHistoryOldestToNewest(matchProfileId1, matchProfileId2);
 
-        List<PupperMessage> messages = messageRepo.retrieveMessageHistoryNewestToOldest(matchProfileId1, matchProfileId2);
-
-        LOGGER.info("{} messages were exchanged between matchProfileId={} and matchProfileId={}", messages.size(),
+        LOGGER.info("{} total messages were exchanged between matchProfileId={} and matchProfileId={}", messages.size(),
                 matchProfileId1, matchProfileId2);
         return messages;
     }
 
     public List<PupperMessage> getRecentMessageHistoryBetweenMatchProfiles(Long matchProfileId1, Long matchProfileId2) {
+        LOGGER.info("Retrieving (up to) 10 most recent messages exchanged between matchProfileId={} and " +
+                "matchProfileId={}", matchProfileId1, matchProfileId2);
+
         return messageRepo.findTop10ByMatchProfileSender_IdAndMatchProfileReceiver_IdOrMatchProfileReceiver_IdAndMatchProfileSender_IdOrderByTimestampDesc(
                 matchProfileId1, matchProfileId2, matchProfileId1, matchProfileId2);
     }
@@ -100,9 +92,8 @@ public class MessageService {
     public List<List<PupperMessage>> getMessageHistoriesForAllMatches (Long matchProfileId) {
         List<MatchProfile> matchProfiles = matchProfileService.retrieveMatchesForMatchProfile(matchProfileId);
         List<List<PupperMessage>> allMessageHistories = new ArrayList<>(new ArrayList<>());
-        matchProfiles.forEach(each -> {
-            allMessageHistories.add(messageRepo.retrieveMessageHistoryNewestToOldest(matchProfileId, each.getId()));
-        });
+        matchProfiles.forEach(each -> allMessageHistories
+                .add(messageRepo.retrieveMessageHistoryOldestToNewest(matchProfileId, each.getId())));
 
         return allMessageHistories;
     }
@@ -172,7 +163,7 @@ public class MessageService {
     /**
      * Method that queries pupper_message for all records where either from_match_profile_id_fk or to_match_profile_id_fk
      * matches the matchProfileId supplied.
-     * @param matchProfileId
+     * @param matchProfileId id of matchProfile to delete messages for
      * @return
      */
     public MessageResponse deleteAllMessagesByMatchProfileId(Long matchProfileId) {

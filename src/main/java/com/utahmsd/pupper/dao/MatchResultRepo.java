@@ -43,7 +43,7 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
      * @param matchProfileId
      * @return
      */
-    @Query(value = "select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id")
+    @Query("select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id")
     List<MatchProfile> findPassiveMatcherResults(@Param("id") Long matchProfileId);
 
     /**
@@ -51,8 +51,8 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
      * @param matchProfileId
      * @return
      */
-    @Query(value = "select r.matchProfileTwo from MatchResult r where r.matchProfileOne.id = :id " +
-            "AND (r.matchForProfileOne = true AND r.matchForProfileTwo = true)")
+    @Query("select r.matchProfileTwo from MatchResult r where r.matchProfileOne.id = :id " +
+            "AND r.matchForProfileOne = TRUE AND r.matchForProfileTwo = TRUE")
     List<MatchProfile> findActiveMatches(@Param("id") Long matchProfileId);
 
     /**
@@ -60,7 +60,8 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
      * @param matchProfileId
      * @return
      */
-    @Query(value = "select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id " +
+    @Query("select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id " +
             "AND (r.matchForProfileOne = true AND r.matchForProfileTwo = true)")
     List<MatchProfile> findPassiveMatches(@Param("id") Long matchProfileId);
+
 }

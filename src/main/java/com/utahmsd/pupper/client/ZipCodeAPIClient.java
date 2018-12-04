@@ -37,7 +37,7 @@ public class ZipCodeAPIClient {
     private static final String BASE_URL = "https://www.zipcodeapi.com/rest/%s/%s.json/%s/%s/miles";
     private static final String DIST_BETWEEN_ZIPCODES = String.format(BASE_URL, apiKey, "distance", "%s", "%s");
     private static final String ZIP_CODES_RADIUS = String.format(BASE_URL, apiKey, "radius", "%s", "%d");
-    private static final int MAX_RADIUS = 500;
+    public static final int MAX_RADIUS = 500;
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;

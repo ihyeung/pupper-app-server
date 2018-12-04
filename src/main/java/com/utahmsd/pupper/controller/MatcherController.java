@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.controller;
 
+import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatcherDataRequest;
 import com.utahmsd.pupper.dto.MatcherDataResponse;
@@ -30,13 +31,23 @@ public class MatcherController {
     }
 
     /**
+     * Retrieves ALL unseen match profiles for a given matchProfileId.
+     * @param matchProfileId
+     * @return
+     */
+    @GetMapping(path="/all", params = {"matchProfileId"})
+    public List<MatchProfile> getAllUnseenProfilesForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
+        return matcherService.getAllUnseenMatchProfilesForMatchProfile(matchProfileId);
+    }
+    /**
      * Retrieves next batch of profile cards to display to the user.
      * @param matchProfileId
      * @return
      */
-    @GetMapping(params = {"matchProfileId"})
-    public List<ProfileCard> fetchMatcherData(@RequestParam("matchProfileId") Long matchProfileId) {
-        return matcherService.retrieveMatcherDataProfileCards(matchProfileId);
+    @GetMapping(params = {"matchProfileId", "zipRadius"})
+    public List<ProfileCard> fetchMatcherDataBatch(@RequestParam("matchProfileId") Long matchProfileId,
+                                                   @RequestParam("zipRadius") int zipRadius) {
+        return matcherService.retrieveMatcherDataProfileCards(matchProfileId, zipRadius);
     }
 
     /**
@@ -59,10 +70,10 @@ public class MatcherController {
      * @return
      */
     @GetMapping(params = {"matchProfileId", "isSuccess"})
-    public MatcherResponse getMatcherResultData(@RequestParam("matchProfileId") Long matchProfileId,
+    public MatcherResponse getMatchResultDataForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId,
                                                 @RequestParam("isSuccess") boolean getSuccessResultData) {
 
-        return matcherService.getPupperMatcherResults(matchProfileId, getSuccessResultData);
+        return null;
     }
 
     /**

@@ -104,8 +104,8 @@ public class PupperProfileController {
         return pupperProfileService.getPupperProfilesByBreedId(breedId);
     }
 
-    @GetMapping(path ="/pupper", params = {"breed"})
-    public Breed findPupperBreedByName(@RequestParam("breed") String breedName) {
+    @GetMapping(path ="/pupper/breed", params = {"name"})
+    public Breed findPupperBreedByName(@RequestParam("name") String breedName) {
         return pupperProfileFilterService.getPupperBreedByName(breedName);
     }
 

@@ -1,6 +1,7 @@
 package com.utahmsd.pupper.controller;
 
 import com.utahmsd.pupper.dao.entity.MatchProfile;
+import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import com.utahmsd.pupper.service.MatchProfileService;
 import com.utahmsd.pupper.service.filter.MatchProfileFilterService;

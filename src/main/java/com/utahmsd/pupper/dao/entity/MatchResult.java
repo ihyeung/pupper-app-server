@@ -1,6 +1,5 @@
 package com.utahmsd.pupper.dao.entity;
 
-import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.Valid;
 import java.io.Serializable;
@@ -25,7 +24,7 @@ public class MatchResult implements Serializable {
     private MatchProfile matchProfileOne;
 
     @Column(name = "match_profile_1_result")
-    private boolean isMatchForProfileOne; //Match profile 1's decision on match profile 2
+    private boolean matchForProfileOne; //Match profile 1's decision on match profile 2
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_profile_id_fk_2", referencedColumnName = "id")
@@ -33,7 +32,7 @@ public class MatchResult implements Serializable {
     private MatchProfile matchProfileTwo;
 
     @Column(name = "match_profile_2_result")
-    private boolean isMatchForProfileTwo; //Match profile 2's decision on match profile 1
+    private boolean matchForProfileTwo; //Match profile 2's decision on match profile 1
 
     public Long getId() { return id; }
 
@@ -43,16 +42,16 @@ public class MatchResult implements Serializable {
 
     public void setMatchProfileOne(MatchProfile matchProfileOne) { this.matchProfileOne = matchProfileOne; }
 
-    public boolean isMatchForProfileOne() { return isMatchForProfileOne; }
+    public boolean isMatchForProfileOne() { return matchForProfileOne; }
 
-    public void setMatchForProfileOne(boolean matchForProfileOne) { isMatchForProfileOne = matchForProfileOne; }
+    public void setMatchForProfileOne(boolean matchForProfileOne) { this.matchForProfileOne = matchForProfileOne; }
 
     public MatchProfile getMatchProfileTwo() { return matchProfileTwo; }
 
     public void setMatchProfileTwo(MatchProfile matchProfileTwo) { this.matchProfileTwo = matchProfileTwo; }
 
-    public boolean isMatchForProfileTwo() { return isMatchForProfileTwo; }
+    public boolean isMatchForProfileTwo() { return matchForProfileTwo; }
 
-    public void setMatchForProfileTwo(boolean matchForProfileTwo) { isMatchForProfileTwo = matchForProfileTwo; }
+    public void setMatchForProfileTwo(boolean matchForProfileTwo) { this.matchForProfileTwo = matchForProfileTwo; }
 
 }
