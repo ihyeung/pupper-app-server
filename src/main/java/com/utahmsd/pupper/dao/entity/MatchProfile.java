@@ -3,6 +3,7 @@ package com.utahmsd.pupper.dao.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.utahmsd.pupper.dto.pupper.Energy;
+import com.utahmsd.pupper.dto.pupper.Gender;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
 import com.utahmsd.pupper.dto.pupper.Size;
 
@@ -57,8 +58,8 @@ public class MatchProfile implements Serializable {
     private int numDogs;
 
     @Column(name = "sex")
-    @javax.validation.constraints.Size(min = 1, max = 1)
-    private String sex; //M or F
+    @Enumerated(EnumType.STRING)
+    private Gender sex;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "birthdate")
@@ -113,7 +114,7 @@ public class MatchProfile implements Serializable {
             matchProfile.setUserProfile(UserProfile.createFromObject(entityObject.get("userProfile")));
             matchProfile.setNames((String) entityObject.get("names"));
             matchProfile.setBirthdate(DATE_FORMATTER.parse((String) entityObject.get("birthdate")));
-            matchProfile.setSex((String) entityObject.get("sex"));
+            matchProfile.setSex(Gender.valueOf((String) entityObject.get("sex")));
             matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
             matchProfile.setBreed(Breed.createFromObject(entityObject.get("breed")));
             matchProfile.setSize(Size.valueOf((String) entityObject.get("size")));
@@ -144,9 +145,9 @@ public class MatchProfile implements Serializable {
 
     public void setNumDogs(int numDogs) { this.numDogs = numDogs; }
 
-    public String getSex() { return sex; }
+    public Gender getSex() { return sex; }
 
-    public void setSex(String sex) { this.sex = sex; }
+    public void setSex(Gender sex) { this.sex = sex; }
 
     public Date getBirthdate() { return birthdate; }
 

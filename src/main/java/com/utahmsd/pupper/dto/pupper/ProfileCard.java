@@ -39,7 +39,7 @@ public class ProfileCard {
         ProfileCard card = new ProfileCard();
         card.setProfileId(matchProfile.getId());
         card.setName(matchProfile.getNames());
-        card.setSex(matchProfile.getSex());
+        card.setSex(matchProfile.getSex().value());
         card.setAgeWithUnits(createAgeStringFromDate(matchProfile.getBirthdate()));
         card.setBreedName(matchProfile.getBreed().getName());
 //        card.setLocation("SOUTH JORDAN, UTAH");
@@ -56,7 +56,7 @@ public class ProfileCard {
         ProfileCard card = new ProfileCard();
         card.setProfileId(pupperProfile.getId());
         card.setName(pupperProfile.getName());
-        card.setSex(pupperProfile.getSex());
+        card.setSex(pupperProfile.getSex().value());
         card.setAgeWithUnits(createAgeStringFromDate(pupperProfile.getBirthdate()));
         card.setBreedName(pupperProfile.getBreed().getName());
         card.setAboutMe(DEFAULT_ABOUT_ME);

@@ -2,6 +2,7 @@ package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.utahmsd.pupper.dto.pupper.Energy;
+import com.utahmsd.pupper.dto.pupper.Gender;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
 
 import javax.persistence.*;
@@ -41,9 +42,9 @@ public class PupperProfile implements Serializable {
     @NotBlank
     private String name;
 
-    @Size(min = 1, max = 1)
     @Column(name = "sex")
-    private String sex; //M or F
+    @Enumerated(EnumType.STRING)
+    private Gender sex; //M or F
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "birthdate")
@@ -87,11 +88,11 @@ public class PupperProfile implements Serializable {
         this.name = name;
     }
 
-    public String getSex() {
+    public Gender getSex() {
         return sex;
     }
 
-    public void setSex(String sex) {
+    public void setSex(Gender sex) {
         this.sex = sex;
     }
 

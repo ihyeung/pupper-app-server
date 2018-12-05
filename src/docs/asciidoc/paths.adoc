@@ -2,8 +2,8 @@
 [[_paths]]
 == Paths
 
-[[_getaccountbyuserprofileidusingget]]
-=== getAccountByUserProfileId
+[[_getaccountbyemailusingget]]
+=== getAccountByEmail
 ....
 GET /account
 ....
@@ -14,8 +14,8 @@ GET /account
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**userId** +
-__required__|userId|string
+|**Query**|**email** +
+__required__|email|string
 |===
 
 
@@ -428,8 +428,8 @@ __required__|zipRadius|string
 * matcher-controller
 
 
-[[_deleteallmatchresultsformatchprofileusingdelete]]
-=== deleteAllMatchResultsForMatchProfile
+[[_deletematchresultformatchprofileoneandmatchprofiletwousingdelete]]
+=== deleteMatchResultForMatchProfileOneAndMatchProfileTwo
 ....
 DELETE /matcher
 ....
@@ -440,8 +440,10 @@ DELETE /matcher
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**matchProfileId** +
-__required__|matchProfileId|string
+|**Query**|**matchProfileId1** +
+__required__|matchProfileId1|string
+|**Query**|**matchProfileId2** +
+__required__|matchProfileId2|string
 |===
 
 
@@ -617,21 +619,11 @@ __required__|pupperMessage|<<_puppermessage,PupperMessage>>
 * message-controller
 
 
-[[_getmessagehistoriesforallmatchesusingget]]
-=== getMessageHistoriesForAllMatches
+[[_getallmessagesusingget]]
+=== getAllMessages
 ....
 GET /message
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**matchProfileId1** +
-__required__|matchProfileId1|string
-|===
 
 
 ==== Responses
@@ -639,7 +631,7 @@ __required__|matchProfileId1|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|< < <<_puppermessage,PupperMessage>> > array > array
+|**200**|OK|< <<_puppermessage,PupperMessage>> > array
 |===
 
 
@@ -765,11 +757,21 @@ __required__|matchProfileId2|string
 * message-controller
 
 
-[[_getallpupperprofilesusingget]]
-=== getAllPupperProfiles
+[[_getpupperprofilesbyuseremailusingget]]
+=== getPupperProfilesByUserEmail
 ....
 GET /pupper
 ....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**userEmail** +
+__required__|userEmail|string
+|===
 
 
 ==== Responses
@@ -791,21 +793,11 @@ GET /pupper
 * pupper-profile-controller
 
 
-[[_findpupperbreedsbysizeusingget]]
-=== findPupperBreedsBySize
+[[_getallpupperbreedsusingget]]
+=== getAllPupperBreeds
 ....
 GET /pupper/breed
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**size** +
-__required__|size|string
-|===
 
 
 ==== Responses
@@ -813,7 +805,7 @@ __required__|size|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|< <<_breed,Breed>> > array
+|**200**|OK|<<_breedresponse,BreedResponse>>
 |===
 
 
@@ -1039,8 +1031,8 @@ __required__|userProfile|<<_userprofile,UserProfile>>
 * user-profile-controller
 
 
-[[_getalluserprofilesusingget]]
-=== getAllUserProfiles
+[[_finduserprofilebyuseraccountemailusingget]]
+=== findUserProfileByUserAccountEmail
 ....
 GET /user
 ....
@@ -1051,10 +1043,8 @@ GET /user
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
-|**Query**|**sortBy** +
-__required__|sortBy|string
+|**Query**|**email** +
+__required__|email|string
 |===
 
 

@@ -100,7 +100,7 @@ __optional__||string
 |**score** +
 __optional__||number (float)
 |**sex** +
-__optional__||string
+__optional__||enum (FEMALE, MALE, UNKNOWN)
 |**size** +
 __optional__||enum (TOY, SMALL, MID, LARGE, XLARGE)
 |**userProfile** +
@@ -276,7 +276,7 @@ __optional__||<<_matchprofile,MatchProfile>>
 |**name** +
 __optional__||string
 |**sex** +
-__optional__||string
+__optional__||enum (FEMALE, MALE, UNKNOWN)
 |===
 
 
@@ -352,11 +352,11 @@ __optional__|**Example** : `"yyyy-MM-dd"`|string
 |**lastName** +
 __optional__||string
 |**maritalStatus** +
-__optional__||string
+__optional__||enum (SINGLE, RELATIONSHIP, MARRIED, DIVORCED, UNKNOWN)
 |**profileImage** +
 __optional__||string
 |**sex** +
-__optional__||string
+__optional__||enum (FEMALE, MALE, UNKNOWN)
 |**userAccount** +
 __optional__||<<_useraccount,UserAccount>>
 |**zip** +

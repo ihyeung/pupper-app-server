@@ -2,6 +2,8 @@ package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.utahmsd.pupper.dto.pupper.Gender;
+import com.utahmsd.pupper.dto.pupper.MaritalStatus;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -42,20 +44,19 @@ public class UserProfile implements Serializable {
     @Column(name = "name_last")
     private String lastName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "sex")
-    @Size(min = 1, max = 1)
     @NotBlank
-    private String sex; //M or F
+    private Gender sex;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "birthdate")
     @Past
     private Date birthdate;
 
-    @DefaultValue("single")
+    @Enumerated(EnumType.STRING)
     @Column(name = "marital_status")
-    @Size(min = 3, max = 20)
-    private String maritalStatus;
+    private MaritalStatus maritalStatus;
 
     @Column(name = "zip")
     @Size(max = 5)
@@ -86,9 +87,9 @@ public class UserProfile implements Serializable {
             userProfile.setUserAccount(UserAccount.createFromObject(entityObject.get("userAccount")));
             userProfile.setFirstName((String) entityObject.get("firstName"));
             userProfile.setLastName((String) entityObject.get("lastName"));
-            userProfile.setSex((String) entityObject.get("sex"));
+            userProfile.setSex(Gender.valueOf((String) entityObject.get("sex")));
             userProfile.setBirthdate(DATE_FORMATTER.parse((String) entityObject.get("birthdate")));
-            userProfile.setMaritalStatus((String) entityObject.get("maritalStatus"));
+            userProfile.setMaritalStatus(MaritalStatus.valueOf((String) entityObject.get("maritalStatus")));
             userProfile.setZip((String) entityObject.get("zip"));
             userProfile.setDateJoin(DATE_FORMATTER.parse((String) entityObject.get("dateJoin")));
             userProfile.setLastLogin(DATE_FORMATTER.parse((String) entityObject.get("lastLogin")));
@@ -131,11 +132,11 @@ public class UserProfile implements Serializable {
         this.lastName = lastName;
     }
 
-    public String getSex() {
+    public Gender getSex() {
         return sex;
     }
 
-    public void setSex(String sex) {
+    public void setSex(Gender sex) {
         this.sex = sex;
     }
 
@@ -147,11 +148,11 @@ public class UserProfile implements Serializable {
         this.birthdate = birthdate;
     }
 
-    public String getMaritalStatus() {
+    public MaritalStatus getMaritalStatus() {
         return maritalStatus;
     }
 
-    public void setMaritalStatus(String maritalStatus) {
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
         this.maritalStatus = maritalStatus;
     }
 

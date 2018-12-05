@@ -2,6 +2,8 @@ package com.utahmsd.pupper.acceptance;
 
 import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
+import com.utahmsd.pupper.dto.pupper.Gender;
+import com.utahmsd.pupper.dto.pupper.MaritalStatus;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
@@ -158,8 +160,8 @@ public class UserProfileControllerAT extends BaseAcceptanceTest {
         user.setLastName("San Diego");
         user.setBirthdate(Date.from(Instant.parse("2004-12-03T10:15:30.00Z")));
         user.setZip("84095");
-        user.setSex("F");
-        user.setMaritalStatus("Single");
+        user.setSex(Gender.FEMALE);
+        user.setMaritalStatus(MaritalStatus.SINGLE);
         user.setLastLogin(Date.from(Instant.now()));
         user.setDateJoin(Date.from(Instant.now()));
 
