@@ -27,7 +27,7 @@ public class MatchResult implements Serializable {
 
     @Column(name = "match_profile_1_result")
     @DefaultValue("null")
-    private Boolean matchForProfileOne; //Match profile 1's decision on match profile 2
+    private Boolean matchForProfileOne;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_profile_id_fk_2", referencedColumnName = "id")
@@ -36,7 +36,7 @@ public class MatchResult implements Serializable {
 
     @Column(name = "match_profile_2_result")
     @DefaultValue("null")
-    private Boolean matchForProfileTwo; //Match profile 2's decision on match profile 1
+    private Boolean matchForProfileTwo;
 
     @Column(name = "batch_sent")
     private Instant batchSent;

@@ -136,7 +136,7 @@ public class MessageService {
                 !pupperMessage.getMatchProfileReceiver().getId().equals(receiverId)) {
             return createMessageResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
-        else if (matcherService.checkForMatch(senderId, receiverId) == null) {
+        else if (matcherService.checkForTwoWayMatch(senderId, receiverId) == null) {
             return createMessageResponse(false, null, HttpStatus.BAD_REQUEST,
                     "Error: not a valid match result.");
         }

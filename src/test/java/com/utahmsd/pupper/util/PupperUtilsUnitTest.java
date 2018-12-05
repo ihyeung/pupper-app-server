@@ -3,15 +3,10 @@ package com.utahmsd.pupper.util;
 import org.junit.Test;
 
 import java.time.Instant;
-import java.time.Period;
-import java.time.chrono.ChronoPeriod;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
 import java.util.Date;
 
-import static com.utahmsd.pupper.util.PupperUtils.DEFAULT_AGE;
-import static com.utahmsd.pupper.util.PupperUtils.createAgeStringFromDate;
+import static com.utahmsd.pupper.util.PupperUtils.*;
 import static org.junit.Assert.assertEquals;
 
 public class PupperUtilsUnitTest {
@@ -42,5 +37,17 @@ public class PupperUtilsUnitTest {
         assertEquals("4 months old", createAgeStringFromDate(fourMonths));
         assertEquals("6 months old", createAgeStringFromDate(sixMonthsOld));
         assertEquals("2 years old", createAgeStringFromDate(twoYears));
+    }
+
+    @Test
+    public void testLastActivityFromLastLogin() {
+        Date zeroDaysAgo = new Date();
+        Date threeDaysAgo = Date.from(Instant.now().minus(3, ChronoUnit.DAYS));
+        Date oneMonthAgo = Date.from(Instant.now().minus(31, ChronoUnit.DAYS));
+
+        assertEquals("Last active 0 days ago", lastActivityFromLastLogin(zeroDaysAgo));
+        assertEquals("Last active 3 days ago", lastActivityFromLastLogin(threeDaysAgo));
+        assertEquals("Last active 1 months ago", lastActivityFromLastLogin(oneMonthAgo));
+
     }
 }

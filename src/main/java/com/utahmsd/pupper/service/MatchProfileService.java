@@ -147,7 +147,7 @@ public class MatchProfileService {
         Set<MatchProfile> distinctMatchProfiles = new HashSet<>(activeMatches);
         distinctMatchProfiles.addAll(passiveMatches);
 
-//        List<Long> allMatchProfiles = matchResultRepo.findAllMatches(matchProfileId, matchProfileId);
+//        List<Long> allMatchProfiles = matchResultRepo.retrieveMatchProfileIdsOfAllMatches(matchProfileId, matchProfileId);
 
         return new ArrayList<>(distinctMatchProfiles);
     }
