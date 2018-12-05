@@ -93,7 +93,7 @@ public class ZipCodeAPIClient {
 
     private String executeHttpGet(String url, String zipcode, String apiParam) {
         HttpGet httpGet = new HttpGet(String.format(url, zipcode, apiParam));
-        LOGGER.info("Sending HTTP GET to '{}'", httpGet.getURI());
+//        LOGGER.info("Sending HTTP GET to '{}'", httpGet.getURI());
         httpGet.setHeaders(HEADERS);
 
         HttpResponse response;

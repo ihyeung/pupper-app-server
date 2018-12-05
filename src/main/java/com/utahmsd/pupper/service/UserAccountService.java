@@ -86,13 +86,11 @@ public class UserAccountService implements UserDetailsService {
                 HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserAuthenticationResponse createOrUpdateUserAccount(UserAccount userAccount) {
+    public UserAuthenticationResponse registerNewUserAccount(UserAccount userAccount) {
         UserAccount result = userAccountRepo.findByUsername(userAccount.getUsername());
         if (result != null) {
-            LOGGER.info("Account exists: performing update");
-            userAccount.setId(result.getId());
-            UserAccount account = userAccountRepo.save(userAccount);
-            return createUserAuthResponse(true, Arrays.asList(account), HttpStatus.OK, DEFAULT_DESCRIPTION);
+            return createUserAuthResponse(false, null, HttpStatus.CONFLICT,
+                    "User account already exists.");
         }
         userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
         UserAccount savedUser = userAccountRepo.save(userAccount);
