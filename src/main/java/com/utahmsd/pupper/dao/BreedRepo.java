@@ -2,17 +2,17 @@ package com.utahmsd.pupper.dao;
 
 import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dto.pupper.Size;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BreedRepo extends PagingAndSortingRepository<Breed, Long> {
 
     Breed findByNameOrAltName(String name, String altName);
     List<Breed> findAllBySize(Size size);
+
+    @Query("SELECT b.size FROM Breed b WHERE b.name = :breed OR b.altName = :breed")
+    Size getBreedSizeByName(@Param("breed") String breed);
 }

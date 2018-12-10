@@ -36,6 +36,7 @@ public class MatcherService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
     private static final int DEFAULT_ZIP_RADIUS = 3;
     private static final long DEFAULT_EXPIRES = 12L; //Mark matchResults to expire 12 hours from when a batch of profiles is sent
+    private final String DIST_AWAY = "%d miles away";
 
 
     private final MatchProfileRepo matchProfileRepo;
@@ -60,14 +61,20 @@ public class MatcherService {
             }
             createBlankMatchResultRecordsForBatch(matchProfileId, matchProfilesBatchWithRadiusFilter);
             List<ProfileCard> profileCards = matchProfileToProfileCardMapper(matchProfilesBatchWithRadiusFilter);
-            profileCards.forEach(profileCard -> {
-                Integer distanceInMiles = zipCodeAPIClient.getDistanceBetweenZipcodes(m.get().getUserProfile().getZip(),
-                        profileCard.getDistance());
-                profileCard.setDistance(String.format("%d miles away", distanceInMiles));
-            });
+            updateProfileCardDistancesFromZipcode(m.get(), profileCards);
             return profileCards;
         }
         return new ArrayList<>();
+    }
+
+    private void updateProfileCardDistancesFromZipcode(MatchProfile m, List<ProfileCard> profileCards) {
+        List<String> zipcodeList = new ArrayList<>();
+        profileCards.forEach(each -> zipcodeList.add(each.getDistance()));
+        Map<String, Integer> zipcodeDistances =
+                zipCodeAPIClient.getDistanceBetweenMultipleZipcodes(m.getUserProfile().getZip(), zipcodeList);
+
+        profileCards.forEach(profileCard ->
+                profileCard.setDistance(String.format(DIST_AWAY, zipcodeDistances.get(profileCard.getDistance()))));
     }
 
     /**

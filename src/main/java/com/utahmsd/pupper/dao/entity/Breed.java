@@ -35,14 +35,12 @@ public class Breed implements Serializable {
             breed.setName((String) entityObject.get("name"));
             breed.setAltName((String) entityObject.get("altName"));
             breed.setSize(Size.fromValue((String) entityObject.get("size")));
-
             return breed;
         }
         return null;
     }
 
-
-        public Long getId() {
+    public Long getId() {
         return id;
     }
 

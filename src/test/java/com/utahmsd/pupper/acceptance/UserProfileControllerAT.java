@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.acceptance;
 
+import com.utahmsd.pupper.TestUtils;
 import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.pupper.Gender;
@@ -39,7 +40,7 @@ public class UserProfileControllerAT extends BaseAcceptanceTest {
         RestAssured.registerParser("text/plain", Parser.JSON);
         RestAssured.defaultParser = Parser.JSON;
 
-        userAccount = createUserAccountForTests();
+        userAccount = TestUtils.createUserAccount();
         accessToken = authenticateAndRetrieveAuthToken();
     }
 
@@ -97,7 +98,7 @@ public class UserProfileControllerAT extends BaseAcceptanceTest {
     @Test
     public void testUpdateUserProfileByAccountEmail() {
 
-        UserProfile profileToUpdate = createUserProfile();
+        UserProfile profileToUpdate = TestUtils.createUserProfile(userAccount);
         profileToUpdate.setId(3L);
         profileToUpdate.getUserAccount(). //When doing updateUserProfile, don't want to modify hash of userAccount password in the process
                 setPassword("$2a$04$vb9A83WYIyo1Ny7qFI8V3.AbKWZ2bz1G14kzJNj5d6bI1wbp47siu");
@@ -141,7 +142,7 @@ public class UserProfileControllerAT extends BaseAcceptanceTest {
                 relaxedHTTPSValidation().
                 log().all().
                 contentType(ContentType.JSON).
-                body(createUserProfile()).
+                body(TestUtils.createUserProfile(userAccount)).
                 header(new Header("Authorization", accessToken)).
         when().
                 post("/user").
@@ -152,20 +153,20 @@ public class UserProfileControllerAT extends BaseAcceptanceTest {
                 body("userProfiles", notNullValue());
     }
 
-    private UserProfile createUserProfile() {
-        UserProfile user = new UserProfile();
-        user.setUserAccount(userAccount);
-
-        user.setFirstName("Carmen");
-        user.setLastName("San Diego");
-        user.setBirthdate(Date.from(Instant.parse("2004-12-03T10:15:30.00Z")));
-        user.setZip("84095");
-        user.setSex(Gender.FEMALE);
-        user.setMaritalStatus(MaritalStatus.SINGLE);
-        user.setLastLogin(Date.from(Instant.now()));
-        user.setDateJoin(Date.from(Instant.now()));
-
-        return user;
-    }
+//    private UserProfile createUserProfile() {
+//        UserProfile user = new UserProfile();
+//        user.setUserAccount(userAccount);
+//
+//        user.setFirstName("Carmen");
+//        user.setLastName("San Diego");
+//        user.setBirthdate(Date.from(Instant.parse("2004-12-03T10:15:30.00Z")));
+//        user.setZip("84095");
+//        user.setSex(Gender.FEMALE);
+//        user.setMaritalStatus(MaritalStatus.SINGLE);
+//        user.setLastLogin(Date.from(Instant.now()));
+//        user.setDateJoin(Date.from(Instant.now()));
+//
+//        return user;
+//    }
 
 }

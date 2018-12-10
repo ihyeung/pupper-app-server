@@ -17,6 +17,7 @@ public class PupperUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(PupperUtils.class);
     static final String DEFAULT_AGE = "0 years old";
     private static final String PUPPER_AGE = "%d %s old";
+    public static final String NOT_ACTIVE = "No recent activity";
 
     public static String lastActivityFromLastLogin(Date lastLogin) {
         LocalDate now = Instant.now().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -24,7 +25,7 @@ public class PupperUtils {
 
         Period lastActivity = Period.between(lastActive, now);
         if (lastActivity.getYears() > 0 || lastActivity.getMonths() > 3) {
-            return "No recent activity";
+            return NOT_ACTIVE;
         }
         if (lastActivity.getMonths() > 0) {
             return String.format("Last active %d months ago", lastActivity.getMonths());
@@ -98,9 +99,6 @@ public class PupperUtils {
 
             return weeks > 0 ? String.format(PUPPER_AGE, weeks, "weeks") : days > 0 ?
                     String.format(PUPPER_AGE, period.getDays(), "days") : DEFAULT_AGE;
-
         }
     }
-
-
 }

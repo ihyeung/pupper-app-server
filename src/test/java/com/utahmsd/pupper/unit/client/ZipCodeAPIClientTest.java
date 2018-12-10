@@ -58,13 +58,11 @@ public class ZipCodeAPIClientTest {
         assertThat(zipCodeAPIClient.getZipCodesInRadius(DEFAULT_ZIP, "0").size()).isEqualTo(0);
         assertThat(zipCodeAPIClient.getZipCodesInRadius(DEFAULT_ZIP, "-10").size()).isEqualTo(0);
         assertThat(zipCodeAPIClient.getZipCodesInRadius("123456789", "5").size()).isEqualTo(0);
-
     }
 
     @Test
     public void testGetDistanceBetweenZipcodes() {
         assertThat(zipCodeAPIClient.getDistanceBetweenZipcodes(DEFAULT_ZIP, "84601")).isNotZero();
-
     }
 
     @Test
@@ -77,15 +75,11 @@ public class ZipCodeAPIClientTest {
     public void testGetDistanceBetweenMultipleZipcodes() {
         List<String> zipcodeList = Arrays.asList("84601", "84088");
         assertThat(zipCodeAPIClient.getDistanceBetweenMultipleZipcodes(DEFAULT_ZIP, zipcodeList)).containsKeys("84601", "84088");
-
     }
 
     @Test
     public void testGetDistanceBetweenMultipleZipcodes_listContainsInvalidZipcode() {
         List<String> zipcodeList = Arrays.asList("84601", "84088", "hello");
         assertThat(zipCodeAPIClient.getDistanceBetweenMultipleZipcodes(DEFAULT_ZIP, zipcodeList)).isEmpty();
-
     }
-
-
 }

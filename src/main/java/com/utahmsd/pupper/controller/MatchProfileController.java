@@ -1,9 +1,9 @@
 package com.utahmsd.pupper.controller;
 
 import com.utahmsd.pupper.dao.entity.MatchProfile;
-import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import com.utahmsd.pupper.service.MatchProfileService;
+import com.utahmsd.pupper.service.ProfileScoreService;
 import com.utahmsd.pupper.service.filter.MatchProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,14 @@ public class MatchProfileController {
 
     private final MatchProfileService matchProfileService;
     private final MatchProfileFilterService matchProfileFilterService;
+    private final ProfileScoreService profileScoreService;
 
     @Autowired
-    MatchProfileController(MatchProfileService matchProfileService, MatchProfileFilterService matchProfileFilterService) {
+    MatchProfileController(MatchProfileService matchProfileService, MatchProfileFilterService matchProfileFilterService,
+                           ProfileScoreService profileScoreService) {
         this.matchProfileService = matchProfileService;
         this.matchProfileFilterService = matchProfileFilterService;
+        this.profileScoreService = profileScoreService;
     }
 
     @GetMapping(path="/matchProfile")
@@ -98,5 +101,10 @@ public class MatchProfileController {
     @DeleteMapping(path="/matchProfile", params = {"userId"})
     public MatchProfileResponse deleteMatchProfilesByUserProfileId(@RequestParam("userId") Long userId) {
         return matchProfileService.deleteMatchProfilesByUserProfileId(userId);
+    }
+
+    @GetMapping(path="/matchProfile/score", params = {"matchProfileId"})
+    public void getMatchProfileScoreUpdate(@RequestParam("matchProfileId") Long matchProfileId) {
+        profileScoreService.getMatchProfileScoreById(matchProfileId);
     }
 }

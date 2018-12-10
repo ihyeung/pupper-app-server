@@ -70,6 +70,11 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "AND (m.matchProfileOne.id = :id OR m.matchProfileTwo.id = :id)")
     List<MatchResult> findCompletedMatchResultsForMatchProfile(@Param("id") Long matchProfileId);
 
+    @Query("SELECT COUNT(m) FROM MatchResult m WHERE (m.resultCompleted IS NOT NULL OR " +
+            "(m.matchForProfileOne IS NOT NULL AND m.matchForProfileTwo IS NOT NULL)) " +
+            "AND (m.matchProfileOne.id = :id OR m.matchProfileTwo.id = :id)")
+    Integer getCompletedMatchResultCount(@Param("id") Long matchProfileId);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM MatchResult m WHERE (m.matchProfileOne.id= :id1 AND m.matchProfileTwo.id = :id2)" +
