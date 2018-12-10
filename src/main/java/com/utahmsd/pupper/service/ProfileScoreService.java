@@ -7,19 +7,24 @@ import com.utahmsd.pupper.util.PupperUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.utahmsd.pupper.util.Constants.DEFAULT_SCORE;
+import static com.utahmsd.pupper.util.Constants.DEFAULT_MAX_SCORE;
 import static com.utahmsd.pupper.util.PupperUtils.NOT_ACTIVE;
 
 @Service
 public class ProfileScoreService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileScoreService.class);
+
     private static final float ACTIVITY_WEIGHT = 1;
+    private static final int DAYS_ACTIVE_MIN = 7;
+
     private static final float MATCH_PERCENT_WEIGHT = 3;
+    private static final int MATCH_PERCENT_MIN = 80;
 
     private final MatchResultRepo matchResultRepo;
     private final MatchProfileRepo matchProfileRepo;
@@ -46,13 +51,15 @@ public class ProfileScoreService {
 
     private void updateProfileScoreForMatchProfile(MatchProfile matchProfile){
         float newScore = matchProfile.getScore() + calculateScoreAdjustment(matchProfile);
-        matchProfile.setScore(newScore < DEFAULT_SCORE ? newScore : DEFAULT_SCORE);
+        matchProfile.setScore(newScore < DEFAULT_MAX_SCORE ? newScore : DEFAULT_MAX_SCORE);
     }
 
     private float calculateScoreAdjustment(MatchProfile matchProfile) {
         float scoreAdjustment = 0;
         if (!wasRecentlyActive(matchProfile.getUserProfile().getLastLogin())) {
             scoreAdjustment -= ACTIVITY_WEIGHT;
+        } else {
+            scoreAdjustment += ACTIVITY_WEIGHT;
         }
         Integer completedMatchResultCount = matchResultRepo.getCompletedMatchResultCount(matchProfile.getId());
         if (completedMatchResultCount == 0) {
@@ -65,9 +72,20 @@ public class ProfileScoreService {
         distinctMatches.addAll(matches1);
         distinctMatches.addAll(matches2);
 
-        float matchPercentage = distinctMatches.size()/(completedMatchResultCount.floatValue());
+        Integer mutualMatches = matchResultRepo.getMutualMatchesCount(matchProfile.getId());
 
-        scoreAdjustment -= (matchPercentage * MATCH_PERCENT_WEIGHT);
+        assert(mutualMatches == distinctMatches.size());
+
+        float matchPercentage = distinctMatches.size()/(completedMatchResultCount.floatValue());
+        LOGGER.info("Match percent: {}", matchPercentage);
+
+        if (matchPercentage >= MATCH_PERCENT_MIN) {
+            scoreAdjustment += (1/matchPercentage * MATCH_PERCENT_WEIGHT);
+        } else {
+            scoreAdjustment -= (1/matchPercentage * MATCH_PERCENT_WEIGHT);
+
+        }
+        LOGGER.info("Score adjustment: {}", scoreAdjustment);
         return scoreAdjustment;
     }
 
@@ -77,7 +95,7 @@ public class ProfileScoreService {
             return false;
         }
         String[] stringSplit = lastActive.split(" ");
-        return Integer.valueOf(stringSplit[2]) < 7 ; //Consider recent activity if lastLogin within one week ago
+        return Integer.valueOf(stringSplit[2]) <= DAYS_ACTIVE_MIN ; //Consider recent activity if lastLogin within one week ago
     }
 
 }

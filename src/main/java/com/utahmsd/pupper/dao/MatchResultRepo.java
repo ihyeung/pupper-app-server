@@ -43,7 +43,7 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "(m.matchProfileOne.id = :id2 AND m.matchProfileTwo.id = :id1) ")
     MatchResult findMatcherRecord(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
 
-//    //TODO: FIX THIS QUERY SO IT STOPS THROWING AN EXCEPTION
+////    //TODO: FIX THIS QUERY SO IT STOPS THROWING AN EXCEPTION
 //    @Query(value = "(select distinct match_profile_id_fk_2 from match_result " +
 //            "where (match_profile_id_fk_1 = ?1 " +
 //            "and match_profile_1_result is not null) " +
@@ -52,7 +52,7 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
 //            "where (match_profile_id_fk_2 = ?3 " +
 //            "and match_profile_2_result is not null) " +
 //            "AND ((match_result_completed is not null) " +
-//            "OR (batch_sent is not null and record_expires > ?)))", nativeQuery = true)
+//            "OR (batch_sent is not null and record_expires > ?4)))", nativeQuery = true)
 //    List<Long> retrieveAllIdsforMatchProfilesSentInPreviousBatchesAndNotExpired(Long matchProfileId, Instant now,
 //                                                                                Long matchProfileId1, Instant now1);
 //
@@ -74,6 +74,11 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "(m.matchForProfileOne IS NOT NULL AND m.matchForProfileTwo IS NOT NULL)) " +
             "AND (m.matchProfileOne.id = :id OR m.matchProfileTwo.id = :id)")
     Integer getCompletedMatchResultCount(@Param("id") Long matchProfileId);
+
+    @Query("SELECT COUNT(m) FROM MatchResult m WHERE " +
+            "(m.matchForProfileOne = true AND m.matchForProfileTwo = true) " +
+            "AND (m.matchProfileOne.id = :id OR m.matchProfileTwo.id = :id)")
+    Integer getMutualMatchesCount(@Param("id") Long matchProfileId);
 
     @Transactional
     @Modifying
@@ -99,11 +104,26 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "AND (r.matchForProfileOne = true AND r.matchForProfileTwo = true)")
     List<MatchProfile> findPassiveMatches(@Param("id") Long matchProfileId);
 
+    /**
+     * Alternative method for retrieving matchProfiles previously rated for a given matchProfileId, in a single
+     * native query (as opposed to combining the results of findActivePreviouslyRatedMatchProfiles and
+     * findPassivePreviouslyRatedMatchProfiles into a hashset, WITH THE EXCEPTION that it retrieves a list of IDs
+     * as opposed to a list of MatchProfiles.
+     * @param matchProfileId
+     * @param matchProfileId1
+     * @return
+     */
+
     @Query(value = "(select match_profile_id_fk_2 from match_result where match_profile_id_fk_1 = ? " +
             "and match_profile_1_result is not null) " +
             "union (select match_profile_id_fk_1 from match_result where (match_profile_id_fk_2 = ? " +
             "and match_profile_2_result is not null))", nativeQuery = true)
     List<Long> retrieveAllIdsforMatchProfilesPreviouslyRated(Long matchProfileId, Long matchProfileId1);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE match_result set record_expires = ? WHERE record_expires is not null", nativeQuery = true)
+    void updateRecordExpiresTimeTest(Instant newExpiresTime);
 
     /**
      * Finds all match results (both incomplete/complete) where the matchProfileId was the initiating user who generated
@@ -112,7 +132,7 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
      */
     @Query("select r.matchProfileTwo from MatchResult r where r.matchProfileOne.id = :id " +
             "and r.matchForProfileOne IS NOT NULL")
-    List<MatchProfile> findActiveMatcherResults(@Param("id") Long matchProfileId);
+    List<MatchProfile> findActivePreviouslyRatedMatchProfiles(@Param("id") Long matchProfileId);
 
     /**
      * Finds all PASSIVE match result records for profiles for which a given matchProfile has rated.
@@ -121,11 +141,12 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
      */
     @Query("select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id " +
             "and r.matchForProfileTwo is not null")
-    List<MatchProfile> findPassiveMatcherResults(@Param("id") Long matchProfileId);
+    List<MatchProfile> findPassivePreviouslyRatedMatchProfiles(@Param("id") Long matchProfileId);
 
-    @Transactional
-    @Modifying
-    @Query(value = "UPDATE match_result set record_expires = ? WHERE record_expires is not null", nativeQuery = true)
-    void updateRecordExpiresTimeTest(Instant newExpiresTime);
 
+
+    @Query("select r.matchProfileTwo from MatchResult r where r.matchProfileOne.id = :id " +
+            "and (r.matchForProfileOne is null and r.batchSent is not null and r.recordExpires > :now )")
+    List<MatchProfile> findMatchProfilesInPreviouslySentBatchesNotExpiredAndIncomplete(@Param("id") Long matchProfileId,
+                                                                                       @Param("now") Instant now);
 }

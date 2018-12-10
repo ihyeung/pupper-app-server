@@ -8,12 +8,10 @@ import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatcherDataRequest;
 import com.utahmsd.pupper.dto.MatcherDataResponse;
 import com.utahmsd.pupper.dto.pupper.ProfileCard;
-import com.utahmsd.pupper.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -26,7 +24,6 @@ import static com.utahmsd.pupper.client.ZipCodeAPIClient.MAX_RADIUS;
 import static com.utahmsd.pupper.dto.MatcherDataResponse.createMatcherDataResponse;
 import static com.utahmsd.pupper.dto.pupper.ProfileCard.matchProfileToProfileCardMapper;
 import static com.utahmsd.pupper.util.Constants.*;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 @Named
@@ -96,13 +93,15 @@ public class MatcherService {
 //
 //        return matchProfileRepo.findAllByIdIn(previousMatchProfileIdsAndNotExpired);
 
-        List<MatchProfile> activeProfiles = matchResultRepo.findActiveMatcherResults(matchProfileId);
-        List<MatchProfile> passiveProfiles = matchResultRepo.findPassiveMatcherResults(matchProfileId);
+        List<MatchProfile> activeProfiles = matchResultRepo.findActivePreviouslyRatedMatchProfiles(matchProfileId);
+        List<MatchProfile> passiveProfiles = matchResultRepo.findPassivePreviouslyRatedMatchProfiles(matchProfileId);
+
         Set<MatchProfile> distinctProfiles = new HashSet<>();
         distinctProfiles.addAll(activeProfiles);
         distinctProfiles.addAll(passiveProfiles);
 
-        LOGGER.info("Number of previously shown match profiles that are not expired: {}", distinctProfiles.size());
+        List<Long> previouslyRatedProfilesUsingNativeQuery = matchResultRepo.retrieveAllIdsforMatchProfilesPreviouslyRated(matchProfileId, matchProfileId);
+        assert(previouslyRatedProfilesUsingNativeQuery.size() == distinctProfiles.size());
 
         return new ArrayList<>(distinctProfiles);
     }
@@ -182,7 +181,9 @@ public class MatcherService {
             matchResultRepo.insertMatchResult(matchProfileOneId, matchProfileTwoId, isMatch, batchSent, recordExpires);
             return;
         }
-        updateMatchResultRecord(matchProfileOneId, matchProfileTwoId, isMatch, result);
+        if (isMatch != null) {
+            updateMatchResultRecord(matchProfileOneId, matchProfileTwoId, isMatch, result);
+        }
     }
 
     private void updateMatchResultRecord(Long matchProfileId, Long resultForMatchProfileId, Boolean isMatch, MatchResult matchResult) {
@@ -201,8 +202,7 @@ public class MatcherService {
 
     private List<Long> getViewedMatchProfileIds(Long matchProfileId) {
         List<Long> idList = new ArrayList<>();
-        getPastMatcherResultsForMatchProfile(matchProfileId)
-                .forEach(each -> idList.add(each.getId()));
+        getPastMatcherResultsForMatchProfile(matchProfileId).forEach(each -> idList.add(each.getId()));
 //        LOGGER.info("Number of ids corresponding to matchProfiles to exclude from future matcher batches: {}", idList.size());
         return idList;
     }
@@ -233,22 +233,20 @@ public class MatcherService {
         return completedMatchResults;
     }
 
-    public MatcherDataResponse unmatchWithMatchProfile(Long matchProfileId, Long matchProfileToUnmatchWith) {
+    public void unmatchWithMatchProfile(Long matchProfileId, Long matchProfileToUnmatchWith) {
         MatchResult result = checkForTwoWayMatch(matchProfileId, matchProfileToUnmatchWith);
-        if (result == null) {
-            return createMatcherDataResponse(false, null, BAD_REQUEST, "Invalid match result.");
+        if (result != null) {
+
+            Instant unmatchTimestamp = Instant.now();
+            if (result.getMatchProfileOne().getId().equals(matchProfileId)) {
+                matchResultRepo.updateMatchResultByMatchProfileOne(false,
+                        matchProfileId, matchProfileToUnmatchWith);
+            } else if (result.getMatchProfileTwo().getId().equals(matchProfileId)) {
+                matchResultRepo.updateMatchResultByMatchProfileTwo(false,
+                        matchProfileToUnmatchWith, matchProfileId);
+            }
+            matchResultRepo.markMatchResultAsCompleted(result.getId(), unmatchTimestamp);
         }
-        Instant unmatchTimestamp = Instant.now();
-        if (result.getMatchProfileOne().getId().equals(matchProfileId)) {
-            matchResultRepo.updateMatchResultByMatchProfileOne(false,
-                    matchProfileId, matchProfileToUnmatchWith);
-        }
-        else if (result.getMatchProfileTwo().getId().equals(matchProfileId)) {
-            matchResultRepo.updateMatchResultByMatchProfileTwo(false,
-                    matchProfileToUnmatchWith, matchProfileId);
-        }
-        matchResultRepo.markMatchResultAsCompleted(result.getId(), unmatchTimestamp);
-        return createMatcherDataResponse(true, null, OK, DEFAULT_DESCRIPTION);
     }
 
     public void deleteMatchResultRecordForMatchProfiles(Long matchProfileId1, Long matchProfileId2) {

@@ -3,19 +3,15 @@ package com.utahmsd.pupper.service;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
-import com.utahmsd.pupper.dao.entity.MatchResult;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
-import com.utahmsd.pupper.dto.pupper.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.time.Instant;
 import java.util.*;
 
 import static com.utahmsd.pupper.dto.MatchProfileResponse.createMatchProfileResponse;
@@ -87,7 +83,7 @@ public class MatchProfileService {
             MatchProfile savedResult = matchProfileRepo.save(matchProfile);
             return createMatchProfileResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-        matchProfile.setScore(DEFAULT_SCORE);
+        matchProfile.setScore(DEFAULT_MAX_SCORE);
 
         if (matchProfile.getSize() == null) {
             matchProfile.setSize(matchProfile.getBreed().getSize());
