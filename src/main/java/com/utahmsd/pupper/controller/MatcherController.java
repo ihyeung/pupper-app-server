@@ -136,4 +136,9 @@ public class MatcherController {
                                                                       @RequestParam("matchProfileId2") Long matchProfileId2) {
         matcherService.deleteMatchResultRecordForMatchProfiles(matchProfileId, matchProfileId2);
     }
+
+    @PostMapping(path = "/expiresAt")
+    public void updateExpiresAt() {
+        matcherService.updateRecordExpiresForAllFields();
+    }
 }

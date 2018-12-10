@@ -1,6 +1,6 @@
 package com.utahmsd.pupper.security;
 
-public class SecurityConstants {
+class SecurityConstants {
     static final String SECRET = "SecretKeyJWTs";
     static final long AUTH_TOKEN_EXPIRATION = 86_400_000L; // Access token is valid for 24 hours
 //    static final long AUTH_TOKEN_EXPIRATION = 30_000L; //Make token expire after 30 seconds for testing

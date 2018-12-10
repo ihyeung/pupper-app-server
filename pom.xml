@@ -141,16 +141,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>junit</groupId>-->
-                    <!--<artifactId>junit</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.mockito</groupId>-->
-                    <!--<artifactId>mockito-core</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -163,21 +153,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <scope>test</scope>
+            <version>2.23.4</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -212,16 +188,6 @@
             <groupId>io.github.swagger2markup</groupId>
             <artifactId>swagger2markup-spring-restdocs-ext</artifactId>
             <version>${swagger2markup.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <scope>test</scope>
-    </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -260,98 +226,98 @@
             <!--START of comment out when not running tests for generating documentation-->
 
             <!--<plugin>-->
-                <!--<groupId>io.github.swagger2markup</groupId>-->
-                <!--<artifactId>swagger2markup-maven-plugin</artifactId>-->
-                <!--<version>1.3.3</version>-->
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>io.github.swagger2markup</groupId>-->
-                        <!--<artifactId>swagger2markup-import-files-ext</artifactId>-->
-                        <!--<version>1.3.1</version>-->
-                    <!--</dependency>-->
-                    <!--<dependency>-->
-                        <!--<groupId>io.github.swagger2markup</groupId>-->
-                        <!--<artifactId>swagger2markup</artifactId>-->
-                        <!--<version>1.3.1</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-                <!--<configuration>-->
-                    <!--<swaggerInput>${swagger.input}</swaggerInput>-->
-                    <!--<outputDir>${generated.asciidoc.directory}</outputDir>-->
-                    <!--<config>-->
-                        <!--<swagger2markup.markupLanguage>ASCIIDOC</swagger2markup.markupLanguage>-->
-                        <!--<swagger2markup.pathsGroupedBy>TAGS</swagger2markup.pathsGroupedBy>-->
-                        <!--<swagger2markup.extensions.dynamicOverview.contentPath>${project.basedir}/src/docs/asciidoc/extensions/overview</swagger2markup.extensions.dynamicOverview.contentPath>-->
-                        <!--<swagger2markup.extensions.dynamicDefinitions.contentPath>${project.basedir}/src/docs/asciidoc/extensions/definitions</swagger2markup.extensions.dynamicDefinitions.contentPath>-->
-                        <!--<swagger2markup.extensions.dynamicPaths.contentPath>${project.basedir}/src/docs/asciidoc/extensions/paths</swagger2markup.extensions.dynamicPaths.contentPath>-->
-                        <!--<swagger2markup.extensions.dynamicSecurity.contentPath>${project.basedir}src/docs/asciidoc/extensions/security</swagger2markup.extensions.dynamicSecurity.contentPath>-->
-                    <!--</config>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>generate-sources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>convertSwagger2markup</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+            <!--<groupId>io.github.swagger2markup</groupId>-->
+            <!--<artifactId>swagger2markup-maven-plugin</artifactId>-->
+            <!--<version>1.3.3</version>-->
+            <!--<dependencies>-->
+            <!--<dependency>-->
+            <!--<groupId>io.github.swagger2markup</groupId>-->
+            <!--<artifactId>swagger2markup-import-files-ext</artifactId>-->
+            <!--<version>1.3.1</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+            <!--<groupId>io.github.swagger2markup</groupId>-->
+            <!--<artifactId>swagger2markup</artifactId>-->
+            <!--<version>1.3.1</version>-->
+            <!--</dependency>-->
+            <!--</dependencies>-->
+            <!--<configuration>-->
+            <!--<swaggerInput>${swagger.input}</swaggerInput>-->
+            <!--<outputDir>${generated.asciidoc.directory}</outputDir>-->
+            <!--<config>-->
+            <!--<swagger2markup.markupLanguage>ASCIIDOC</swagger2markup.markupLanguage>-->
+            <!--<swagger2markup.pathsGroupedBy>TAGS</swagger2markup.pathsGroupedBy>-->
+            <!--<swagger2markup.extensions.dynamicOverview.contentPath>${project.basedir}/src/docs/asciidoc/extensions/overview</swagger2markup.extensions.dynamicOverview.contentPath>-->
+            <!--<swagger2markup.extensions.dynamicDefinitions.contentPath>${project.basedir}/src/docs/asciidoc/extensions/definitions</swagger2markup.extensions.dynamicDefinitions.contentPath>-->
+            <!--<swagger2markup.extensions.dynamicPaths.contentPath>${project.basedir}/src/docs/asciidoc/extensions/paths</swagger2markup.extensions.dynamicPaths.contentPath>-->
+            <!--<swagger2markup.extensions.dynamicSecurity.contentPath>${project.basedir}src/docs/asciidoc/extensions/security</swagger2markup.extensions.dynamicSecurity.contentPath>-->
+            <!--</config>-->
+            <!--</configuration>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<phase>generate-sources</phase>-->
+            <!--<goals>-->
+            <!--<goal>convertSwagger2markup</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
 
             <!--<plugin>-->
-                <!--<groupId>org.asciidoctor</groupId>-->
-                <!--<artifactId>asciidoctor-maven-plugin</artifactId>-->
-                <!--<version>1.5.7.1</version>-->
+            <!--<groupId>org.asciidoctor</groupId>-->
+            <!--<artifactId>asciidoctor-maven-plugin</artifactId>-->
+            <!--<version>1.5.7.1</version>-->
 
-                <!--&lt;!&ndash; Include Asciidoctor PDF for pdf generation &ndash;&gt;-->
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.asciidoctor</groupId>-->
-                        <!--<artifactId>asciidoctorj-pdf</artifactId>-->
-                        <!--<version>1.5.0-alpha.16</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-                <!--&lt;!&ndash; Configure generic document generation settings &ndash;&gt;-->
-                <!--<configuration>-->
-                    <!--<sourceDirectory>${asciidoctor.input.directory}</sourceDirectory>-->
-                    <!--<sourceDocumentName>index.adoc</sourceDocumentName>-->
-                    <!--<attributes>-->
-                        <!--<doctype>book</doctype>-->
-                        <!--<toc>left</toc>-->
-                        <!--<toclevels>3</toclevels>-->
-                        <!--<numbered/>-->
-                        <!--<hardbreaks/>-->
-                        <!--<sectlinks/>-->
-                        <!--<sectanchors/>-->
-                        <!--<generated>${generated.asciidoc.directory}</generated>-->
-                    <!--</attributes>-->
-                <!--</configuration>-->
-                <!--&lt;!&ndash; Since each execution can only handle one backend, run-->
-                     <!--separate executions for each desired output type &ndash;&gt;-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>output-html</id>-->
-                        <!--<phase>test</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>process-asciidoc</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<backend>html5</backend>-->
-                            <!--<outputDirectory>${asciidoctor.html.output.directory}</outputDirectory>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
+            <!--&lt;!&ndash; Include Asciidoctor PDF for pdf generation &ndash;&gt;-->
+            <!--<dependencies>-->
+            <!--<dependency>-->
+            <!--<groupId>org.asciidoctor</groupId>-->
+            <!--<artifactId>asciidoctorj-pdf</artifactId>-->
+            <!--<version>1.5.0-alpha.16</version>-->
+            <!--</dependency>-->
+            <!--</dependencies>-->
+            <!--&lt;!&ndash; Configure generic document generation settings &ndash;&gt;-->
+            <!--<configuration>-->
+            <!--<sourceDirectory>${asciidoctor.input.directory}</sourceDirectory>-->
+            <!--<sourceDocumentName>index.adoc</sourceDocumentName>-->
+            <!--<attributes>-->
+            <!--<doctype>book</doctype>-->
+            <!--<toc>left</toc>-->
+            <!--<toclevels>3</toclevels>-->
+            <!--<numbered/>-->
+            <!--<hardbreaks/>-->
+            <!--<sectlinks/>-->
+            <!--<sectanchors/>-->
+            <!--<generated>${generated.asciidoc.directory}</generated>-->
+            <!--</attributes>-->
+            <!--</configuration>-->
+            <!--&lt;!&ndash; Since each execution can only handle one backend, run-->
+            <!--separate executions for each desired output type &ndash;&gt;-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>output-html</id>-->
+            <!--<phase>test</phase>-->
+            <!--<goals>-->
+            <!--<goal>process-asciidoc</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<backend>html5</backend>-->
+            <!--<outputDirectory>${asciidoctor.html.output.directory}</outputDirectory>-->
+            <!--</configuration>-->
+            <!--</execution>-->
 
-                    <!--<execution>-->
-                        <!--<id>output-pdf</id>-->
-                        <!--<phase>test</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>process-asciidoc</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<backend>pdf</backend>-->
-                            <!--<outputDirectory>${asciidoctor.pdf.output.directory}</outputDirectory>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+            <!--<execution>-->
+            <!--<id>output-pdf</id>-->
+            <!--<phase>test</phase>-->
+            <!--<goals>-->
+            <!--<goal>process-asciidoc</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<backend>pdf</backend>-->
+            <!--<outputDirectory>${asciidoctor.pdf.output.directory}</outputDirectory>-->
+            <!--</configuration>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
 
             <!--&lt;!&ndash;END of comment out when not running tests for generating documentation&ndash;&gt;-->
@@ -359,34 +325,34 @@
 
             <!--&lt;!&ndash; specify the main class for the manifest &ndash;&gt;-->
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>3.1.0</version>-->
-                <!--<configuration>-->
-                    <!--<archive>-->
-                        <!--<manifest>-->
-                            <!--<addClasspath>true</addClasspath>-->
-                            <!--<classpathPrefix>lib/</classpathPrefix>-->
-                            <!--<mainClass>com.utahmsd.pupper.PupperApplication</mainClass>-->
-                        <!--</manifest>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-jar-plugin</artifactId>-->
+            <!--<version>3.1.0</version>-->
+            <!--<configuration>-->
+            <!--<archive>-->
+            <!--<manifest>-->
+            <!--<addClasspath>true</addClasspath>-->
+            <!--<classpathPrefix>lib/</classpathPrefix>-->
+            <!--<mainClass>com.utahmsd.pupper.PupperApplication</mainClass>-->
+            <!--</manifest>-->
+            <!--</archive>-->
+            <!--</configuration>-->
             <!--</plugin>-->
 
             <!--&lt;!&ndash; copy dependencies to the lib directory &ndash;&gt;-->
             <!--<plugin>-->
-                <!--<artifactId>maven-dependency-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-dependencies</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<outputDirectory>${project.build.directory}/lib</outputDirectory>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
+            <!--<artifactId>maven-dependency-plugin</artifactId>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<phase>package</phase>-->
+            <!--<goals>-->
+            <!--<goal>copy-dependencies</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+            <!--<outputDirectory>${project.build.directory}/lib</outputDirectory>-->
+            <!--</configuration>-->
+            <!--</execution>-->
+            <!--</executions>-->
             <!--</plugin>-->
         </plugins>
     </build>

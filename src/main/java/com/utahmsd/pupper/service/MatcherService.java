@@ -276,4 +276,10 @@ public class MatcherService {
         return result;
     }
 
+    public void updateRecordExpiresForAllFields() {
+        Instant batchSent = Instant.now();
+        Instant recordExpires = batchSent.plus(DEFAULT_EXPIRES, ChronoUnit.HOURS);
+        matchResultRepo.updateRecordExpiresTimeTest(recordExpires);
+    }
+
 }
