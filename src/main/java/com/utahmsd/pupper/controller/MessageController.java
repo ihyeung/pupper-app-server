@@ -43,7 +43,7 @@ public class MessageController {
      * @param matchProfileId
      * @return
      */
-    @GetMapping(params = {"matchProfileId"})
+    @GetMapping(params = {"matchProfileId1"})
     public List<PupperMessage> getMessagesByMatchProfileId(@RequestParam("matchProfileId") Long matchProfileId) {
         return messageService.getAllMessagesByMatchProfileId(matchProfileId);
     }
@@ -63,27 +63,17 @@ public class MessageController {
 
     /**
      * Retrieves all conversations between a given matchProfileId and its matches.
+     *
+     * NOTE: For performance reasons, this method has been modified to only retrieve the 5 most recent messages in each message
+     * history between a given match profile and its matches.
+     *
      * @param matchProfileId1
      * @return
      */
-    @GetMapping(params = {"matchProfileId1"})
-    public List<List<PupperMessage>> getMessageHistoriesForAllMatches(@RequestParam("matchProfileId1") Long matchProfileId1) {
-        return messageService.getMessageHistoriesForAllMatches(matchProfileId1);
+    @GetMapping(params = {"matchProfileId"})
+    public List<List<PupperMessage>> getRecentMessagesForAllMatches(@RequestParam("matchProfileId") Long matchProfileId1) {
+        return messageService.getRecentMessageHistoriesForAllMatches(matchProfileId1);
     }
-
-    /*
-    Helper method to test that isValidMatchResult method is working.
-     */
-//    @GetMapping(path="/matchProfile/{matchProfileId1}/matchProfile/{matchProfileId2}/match")
-//    public void checkForMatchResult(@PathVariable("matchProfileId1") Long matchProfileId1,
-//                                                 @PathVariable("matchProfileId2") Long matchProfileId2) {
-//        if (!pupperMessageService.isValidMatchResult(matchProfileId1, matchProfileId2)) {
-//            System.out.println("not a valid match result");
-//        } else {
-//            System.out.println("This is a valid match result");
-//
-//        }
-//    }
 
     /**
      * Retrieves recent message history (i.e., the 10 most recent messages exchanged) between two matchProfileIds.

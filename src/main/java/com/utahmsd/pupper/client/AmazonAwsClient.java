@@ -15,7 +15,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.util.EntityUtils;
-import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +23,8 @@ import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,9 +35,7 @@ import static com.amazonaws.regions.Regions.US_EAST_1;
 import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static com.utahmsd.pupper.util.Constants.INVALID_PATH_VARIABLE;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.*;
 
 @Named
 @Singleton
@@ -53,8 +48,7 @@ public class AmazonAwsClient {
     private final String MATCH_PROFILE_GET_ENDPOINT = "/user/%d/matchProfile/%d";
     private final String USER_PROFILE_GET_ENDPOINT = "/user/%d";
 
-
-    private final long MAX_IMAGE_BYTES = 1_048_576L;
+    public static final long MAX_IMAGE_BYTES = 1_048_576L;
 
     @Value("${spring.jersey.application-path:}")
     private String baseUrl;
@@ -101,7 +95,6 @@ public class AmazonAwsClient {
         if (invalidSizeResponse != null) {
             return invalidSizeResponse;
         }
-
         //Use http client to hit GET endpoint in matchProfileController to verify matchProfile exists
         Object getResponseObject= doGetRequest(userId, matchProfileId, authToken, "matchProfiles");
         MatchProfile matchProfile = null;
@@ -135,7 +128,7 @@ public class AmazonAwsClient {
                         response.getResponseCode(), response.getDescription()));
     }
 
-    public ImageUploadResponse uploadFileByUser(MultipartFile multipartFile, Long userId, String authToken) {
+    public ImageUploadResponse uploadFileByUserProfile(MultipartFile multipartFile, Long userId, String authToken) {
         ImageUploadResponse invalidSizeResponse = processFileUploadsExceedingLimit(multipartFile);
         if (invalidSizeResponse != null) {
             return invalidSizeResponse;
@@ -153,7 +146,7 @@ public class AmazonAwsClient {
             return createImageUploadResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
-        String fileName = generateFileNameByUser(userId, userProfile.getFirstName());
+        String fileName = generateFileNameByUserProfile(userId, userProfile.getFirstName());
         ImageUploadResponse response = uploadFileToS3(multipartFile, fileName);
         if (response.getResponseCode() == 200) {
             HttpStatus postResponseStatus = doPostRequest(userId, null, authToken, response.getImageUrl());
@@ -176,7 +169,7 @@ public class AmazonAwsClient {
         return uploadFileToS3(multipartFile, fileName);
     }
 
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
+    private static File convertMultiPartToFile(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() != null) {
             File convFile = new File(file.getOriginalFilename());
             FileOutputStream fos = new FileOutputStream(convFile);
@@ -185,50 +178,41 @@ public class AmazonAwsClient {
             if (convFile.length() <= MAX_IMAGE_BYTES) {
                 return convFile;
             }
-            return getScaledFile(convFile);
+            return Utils.getScaledFile(convFile);
         }
         return null;
-    }
-
-    private File getScaledFile(File file) throws IOException {
-        LOGGER.error("Error: file being uploaded exceeds maximum allowable bytes size: {}", file.length());
-        long scaleFactor = file.length()/MAX_IMAGE_BYTES;
-        BufferedImage image = ImageIO.read(file);
-        File outputfile = new File(file.getName() + "-scaled.jpg");
-        int height = image.getHeight();
-        int width = image.getWidth();
-        if (scaleFactor > 2) {
-            BufferedImage scaledImage =
-                    Scalr.resize(image, Scalr.Method.BALANCED, width/2, height/2);
-            LOGGER.info(String.format("Scaled dimensions: %d w x %d h", width/2, height/2));
-
-            try {
-                ImageIO.write(scaledImage, "jpg", outputfile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return outputfile;
-        }
-        ImageIO.write(image, "jpg", outputfile);
-
-        return outputfile;
     }
 
     private String generateFileNameByUserAndMatchProfileId(Long userId, Long matchProfileId) {
         return "user_" + userId + "_match_" + matchProfileId + "_" + Utils.getIsoFormatTimestampFromDate(new Date(), null);
     }
 
-    private String generateFileNameByUser(Long userId, String name) {
+    private String generateFileNameByUserProfile(Long userId, String name) {
         return "user_" + userId + "_" + name.toLowerCase() + "_" + Utils.getIsoFormatTimestampFromDate(new Date(), null);
     }
 
-//    private String generateFileName(ImageUploadRequest request) {
-//        UserProfile userProfile = request.getMatchProfile().findUserProfileById();
-//        return userProfile.getId() + "_" + userProfile.getFirstName() + "-" + userProfile.getLastName().substring(0,1) + "_"
-//                + request.getMatchProfile().getId() + "_" + new Date().getTime();
-//    }
+    public ImageUploadResponse deleteUserProfileImage(Long userId, String authToken) {
+        //Use http client to hit GET endpoint in userProfileController to verify userProfile exists
+        Object getResponseObj = doGetRequest(userId, null, authToken, "userProfiles");
+        UserProfile userProfile = null;
+        try {
+            userProfile = UserProfile.createFromObject(getResponseObj);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (userProfile == null) {
+            return createImageUploadResponse(false, null, NOT_FOUND, INVALID_PATH_VARIABLE);
+        }
+        else if (StringUtils.isNullOrEmpty(userProfile.getProfileImage())) {
+            return createImageUploadResponse(true, null, OK, DEFAULT_DESCRIPTION);
+        }
 
-    public ImageUploadResponse deleteFileFromS3Bucket(Long userId, Long matchProfileId, String authToken) {
+        deleteProfileImageFromS3Bucket(userProfile.getProfileImage());
+
+        return deleteProfileImageUrlFromDatabaseTable(userId, null, authToken);
+    }
+
+    public ImageUploadResponse deleteMatchProfileImage(Long userId, Long matchProfileId, String authToken) {
         //Use http client to hit GET endpoint in matchProfileController to verify matchProfile exists
         Object getResponseObject= doGetRequest(userId, matchProfileId, authToken, "matchProfiles");
         MatchProfile matchProfile = null;
@@ -246,19 +230,33 @@ public class AmazonAwsClient {
                     String.format("Error deleting profile image: either matchProfile with id=%d is not a valid matchProfile" +
                             " or endpoint URL is malformed.", matchProfileId));
         }
+        else if (StringUtils.isNullOrEmpty(matchProfile.getProfileImage())) {
+            return createImageUploadResponse(true, null, OK, DEFAULT_DESCRIPTION);
+        }
+        deleteProfileImageFromS3Bucket(matchProfile.getProfileImage());
 
-        String imageUrl = matchProfile.getProfileImage();
-        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-        s3client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName)); //Delete from S3 bucket
+        return deleteProfileImageUrlFromDatabaseTable(userId, matchProfileId, authToken);
+    }
 
-        //Use http client to hit updateProfileImageForMatchProfile endpoint in matchProfileController to update image_url to empty string
+    /**
+     * Makes update to corresponding profile controller endpoint to reset the profile image url to an empty string.
+     * @param userId
+     * @param matchProfileId
+     * @param authToken
+     * @return
+     */
+    private ImageUploadResponse deleteProfileImageUrlFromDatabaseTable(Long userId, Long matchProfileId, String authToken) {
         HttpStatus responseStatus = doPostRequest(userId, matchProfileId, authToken, "");
         if (responseStatus.isError()) {
-            return createImageUploadResponse(false, imageUrl, HttpStatus.BAD_REQUEST,
+            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST,
                     String.format("Error deleting profile image for matchProfile=%d", matchProfileId));
         }
-        return createImageUploadResponse(true, imageUrl, OK, "Profile image was successfully deleted from S3 bucket " +
-                "and deleted from profile.");
+        return createImageUploadResponse(true, null, OK, "Profile image successfully deleted.");
+    }
+
+    private void deleteProfileImageFromS3Bucket(String profileImage) {
+        String fileName = profileImage.substring(profileImage.lastIndexOf("/") + 1);
+        s3client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName)); //Delete from S3 bucket
     }
 
     private HttpStatus doPostRequest(Long userId, Long matchProfileId, String authToken, String imageUrl) {
@@ -307,7 +305,6 @@ public class AmazonAwsClient {
         String responseBody = null;
         try {
             responseBody = EntityUtils.toString(response.getEntity());
-            LOGGER.info(responseBody);
         } catch (IOException e) {
             e.printStackTrace();
         }

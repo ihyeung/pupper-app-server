@@ -22,6 +22,8 @@ public interface MatchProfileRepo extends JpaRepository<MatchProfile, Long> {
     @Query("SELECT m FROM MatchProfile m WHERE m.userProfile.zip = :zip ORDER BY m.userProfile.lastLogin")
     List<MatchProfile> findAllByZip(@Param("zip") String zip);
 
+    List<MatchProfile> findAllByIdIn(List<Long> ids);
+
     @Query("SELECT m FROM MatchProfile m WHERE m.userProfile.lastLogin BETWEEN :lastLoginStart AND :lastLoginEnd")
     List<MatchProfile> findAllByUserProfileLastLogin(@Param("lastLoginStart") Date dateStart, @Param("lastLoginEnd") Date dateEnd);
 

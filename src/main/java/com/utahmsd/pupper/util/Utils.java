@@ -1,6 +1,9 @@
 package com.utahmsd.pupper.util;
 
 import com.amazonaws.util.StringUtils;
+import org.imgscalr.Scalr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,21 +15,36 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 
+import static com.utahmsd.pupper.client.AmazonAwsClient.MAX_IMAGE_BYTES;
 import static com.utahmsd.pupper.util.Constants.ISO_DATE_FORMAT;
+import static com.utahmsd.pupper.util.Constants.MATCH_RESULT_TIMESTAMP_FORMAT;
 
 public class Utils {
 
-    /**
-     * Generates a location string from a user zipcode for displaying on the profile card.
-     * @param zipcode
-     * @return
-     */
-    public static String getProfileLocationByZipcode(String zipcode) {
-        if (StringUtils.isNullOrEmpty(zipcode)) {
-            return null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+
+    public static File getScaledFile(File file) throws IOException {
+        LOGGER.error("Error: file being uploaded exceeds maximum allowable bytes size: {}", file.length());
+        long scaleFactor = file.length()/MAX_IMAGE_BYTES;
+        BufferedImage image = ImageIO.read(file);
+        File outputfile = new File(file.getName() + "-scaled.jpg");
+        int height = image.getHeight();
+        int width = image.getWidth();
+        if (scaleFactor > 2) {
+            BufferedImage scaledImage =
+                    Scalr.resize(image, Scalr.Method.BALANCED, width/2, height/2);
+            LOGGER.info(String.format("Scaled dimensions: %d w x %d h", width/2, height/2));
+
+            try {
+                ImageIO.write(scaledImage, "jpg", outputfile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return outputfile;
         }
-        //TODO: Implement this
-        return null;
+        ImageIO.write(image, "jpg", outputfile);
+
+        return outputfile;
     }
 
     public static String getIsoFormatTimestampFromDate(final Date date, String timezone) {
@@ -73,14 +91,12 @@ public class Utils {
                     w = targetWidth;
                 }
             }
-
             if (higherQuality && h > targetHeight) {
                 h /= 2;
                 if (h < targetHeight) {
                     h = targetHeight;
                 }
             }
-
             BufferedImage tmp = new BufferedImage(w, h, type);
             Graphics2D g2 = tmp.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);

@@ -19,7 +19,7 @@ import static com.utahmsd.pupper.util.Constants.NULL_FIELD;
  * profile image files to an S3 bucket in AWS.
  *
  * Currently a maximum of one photo can be uploaded per matchProfile.
- * TODO: Extend this to allow multiple profile pictures for a matchProfile, allow a profile picture for a userProfile.
+ * TODO: Extend this to allow multiple profile pictures for a matchProfile.
  */
 
 @RestController
@@ -39,13 +39,13 @@ public class ImageController {
      */
     @PostMapping(path = "/upload", consumes = {"multipart/form-data"}, produces = "application/json")
     public ImageUploadResponse uploadFile(@RequestPart(value = "profilePic") MultipartFile file,
-                                          @RequestPart(value = "requestBody") @RequestBody ImageUploadRequest imageUploadRequest) {
-        if (imageUploadRequest.getMatchProfile() == null || imageUploadRequest.getMatchProfile().getUserProfile() == null) {
+                              @RequestPart(value = "requestBody") @RequestBody ImageUploadRequest request) {
+        if (request.getMatchProfile() == null || request.getMatchProfile().getUserProfile() == null) {
             return createImageUploadResponse(false, null, HttpStatus.UNPROCESSABLE_ENTITY,
                     String.format(NULL_FIELD, "matchProfile and/or userProfile"));
         }
 
-        return this.amazonClient.uploadFileByRequest(file, imageUploadRequest);
+        return this.amazonClient.uploadFileByRequest(file, request);
     }
 
     /**
@@ -63,28 +63,43 @@ public class ImageController {
      */
     @PutMapping(path = "/upload/user/{userId}/matchProfile/{matchProfileId}", consumes = {"multipart/form-data"}, headers = {"Authorization"})
     public ImageUploadResponse uploadProfileImageForMatchProfile(@RequestPart(value = "profilePic") @NotNull MultipartFile file,
-                                                         @PathVariable("userId") Long userId,
-                                                         @PathVariable("matchProfileId") Long matchProfileId,
-                                                         @RequestHeader("Authorization") String authToken) {
+                                                                @PathVariable("userId") Long userId,
+                                                                @PathVariable("matchProfileId") Long matchProfileId,
+                                                                @RequestHeader("Authorization") String authToken) {
 
         return amazonClient.uploadFileByUserAndMatchProfile(file, userId, matchProfileId, authToken);
     }
 
-    @PutMapping(path = "/upload/user/{userId}", consumes = {"multipart/form-data"}, headers = {"Authorization"})
+    @PutMapping(path = "/user/{userId}/upload", consumes = {"multipart/form-data"}, headers = {"Authorization"})
     public ImageUploadResponse uploadProfileImageForUserProfile(@RequestPart(value = "profilePic") @NotNull MultipartFile file,
-                                                         @PathVariable("userId") Long userId,
-                                                         @RequestHeader("Authorization") String authToken) {
-        return amazonClient.uploadFileByUser(file, userId, authToken);
+                                                                @PathVariable("userId") Long userId,
+                                                                @RequestHeader("Authorization") String authToken) {
+        return amazonClient.uploadFileByUserProfile(file, userId, authToken);
     }
 
-    /*
-    Delete endpoint for deleting a profile picture for a given userId/matchProfileId.
+    /**
+     *  Delete endpoint for deleting a profile image for a given match profile.
+     * @param userId
+     * @param matchProfileId
+     * @param authToken
+     * @return
      */
     @DeleteMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload", headers = {"Authorization"})
-    public ImageUploadResponse deleteFile(@PathVariable("userId") Long userId,
-                                          @PathVariable("matchProfileId") Long matchProfileId,
-                                          @RequestHeader("Authorization") String authToken) {
-        return this.amazonClient.deleteFileFromS3Bucket(userId, matchProfileId, authToken);
+    public ImageUploadResponse deleteProfileImageForMatchProfile(@PathVariable("userId") Long userId,
+                                                                @PathVariable("matchProfileId") Long matchProfileId,
+                                                                @RequestHeader("Authorization") String authToken) {
+        return this.amazonClient.deleteMatchProfileImage(userId, matchProfileId, authToken);
+    }
+    /**
+     *  Delete endpoint for deleting a profile image for a given user profile.
+     * @param userId
+     * @param authToken
+     * @return
+     */
+    @DeleteMapping(path = "/user/{userId}/upload", headers = {"Authorization"})
+    public ImageUploadResponse deleteProfileImageForUserProfile(@PathVariable("userId") Long userId,
+                                                                @RequestHeader("Authorization") String authToken) {
+        return this.amazonClient.deleteUserProfileImage(userId, authToken);
     }
 }
 

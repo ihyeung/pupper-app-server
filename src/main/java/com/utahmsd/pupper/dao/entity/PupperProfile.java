@@ -9,7 +9,6 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -44,7 +43,7 @@ public class PupperProfile implements Serializable {
 
     @Column(name = "sex")
     @Enumerated(EnumType.STRING)
-    private Gender sex; //M or F
+    private Gender sex;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     @Column(name = "birthdate")
@@ -57,8 +56,8 @@ public class PupperProfile implements Serializable {
     private LifeStage lifeStage;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "energy")
-    private Energy energy;
+    @Column(name = "energyLevel")
+    private Energy energyLevel;
 
     @ManyToOne
     @JoinColumn(name = "breed_id_fk")
@@ -112,12 +111,12 @@ public class PupperProfile implements Serializable {
         this.lifeStage = lifeStage;
     }
 
-    public Energy getEnergy() {
-        return energy;
+    public Energy getEnergyLevel() {
+        return energyLevel;
     }
 
-    public void setEnergy(Energy energy) {
-        this.energy = energy;
+    public void setEnergyLevel(Energy energyLevel) {
+        this.energyLevel = energyLevel;
     }
 
     public Breed getBreed() {

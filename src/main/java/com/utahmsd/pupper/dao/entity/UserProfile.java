@@ -46,7 +46,6 @@ public class UserProfile implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sex")
-    @NotBlank
     private Gender sex;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)

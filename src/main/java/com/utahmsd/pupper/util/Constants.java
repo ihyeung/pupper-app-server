@@ -9,6 +9,8 @@ public class Constants {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    public static final String MATCH_RESULT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
 

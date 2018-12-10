@@ -89,12 +89,14 @@ public class MessageService {
                 matchProfileId1, matchProfileId2, matchProfileId1, matchProfileId2);
     }
 
-    public List<List<PupperMessage>> getMessageHistoriesForAllMatches (Long matchProfileId) {
+    public List<List<PupperMessage>> getRecentMessageHistoriesForAllMatches(Long matchProfileId) {
         List<MatchProfile> matchProfiles = matchProfileService.retrieveMatchesForMatchProfile(matchProfileId);
         List<List<PupperMessage>> allMessageHistories = new ArrayList<>(new ArrayList<>());
+//        matchProfiles.forEach(each -> allMessageHistories
+//                .add(messageRepo.retrieveMessageHistoryOldestToNewest(matchProfileId, each.getId())));
         matchProfiles.forEach(each -> allMessageHistories
-                .add(messageRepo.retrieveMessageHistoryOldestToNewest(matchProfileId, each.getId())));
-
+                .add(messageRepo.retrieve5MostRecentMessagesBetweenMatchProfiles(matchProfileId, each.getId(),
+                                                                                each.getId(), matchProfileId)));
         return allMessageHistories;
     }
 

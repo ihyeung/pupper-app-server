@@ -263,7 +263,7 @@ __optional__|**Example** : `"yyyy-MM-dd'T'HH:mm:ss'Z'"`|string
 __optional__|**Example** : `"yyyy-MM-dd"`|string
 |**breed** +
 __optional__||<<_breed,Breed>>
-|**energy** +
+|**energyLevel** +
 __optional__||enum (MIN, LOW, MED, HIGH, EXTREME)
 |**fixed** +
 __optional__||boolean

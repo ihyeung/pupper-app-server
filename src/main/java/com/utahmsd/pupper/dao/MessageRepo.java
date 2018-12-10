@@ -20,6 +20,11 @@ public interface MessageRepo extends PagingAndSortingRepository<PupperMessage, L
             "(p.matchProfileSender.id = :id2 AND p.matchProfileReceiver.id = :id1) ORDER BY p.timestamp ASC")
     List<PupperMessage> retrieveMessageHistoryOldestToNewest(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
 
+    @Query(value = "SELECT * FROM pupper_message WHERE (from_match_profile_id_fk = ? AND to_match_profile_id_fk = ?) OR " +
+            "(from_match_profile_id_fk = ? AND to_match_profile_id_fk = ?) ORDER BY timestamp ASC LIMIT 5", nativeQuery = true)
+    List<PupperMessage> retrieve5MostRecentMessagesBetweenMatchProfiles(Long matchProfileId1, Long matchProfileId2,
+                                                                         Long matchProfileId3, Long matchProfileId4);
+
     /**
      * Returns the 10 most recent messages sent from a given matchProfileId to a given matchProfileId.
      * @param matchIdSender

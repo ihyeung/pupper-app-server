@@ -56,7 +56,7 @@ public class MatcherController {
      * @param matcherRequest
      * @return
      */
-    @PostMapping(params = {"matchProfileId"})
+    @PostMapping(path = "/result", params = {"matchProfileId"})
     public MatcherDataResponse submitCompletedMatcherResults(@RequestParam("matchProfileId") Long matchProfileId,
                                                              @RequestBody MatcherDataRequest matcherRequest) {
         return matcherService.updateMatcherResults(matchProfileId, matcherRequest);
@@ -68,7 +68,7 @@ public class MatcherController {
      * @param matchProfileId2
      * @return
      */
-    @GetMapping(params = {"matchProfileId1", "matchProfileId2"})
+    @GetMapping(path = "/result", params = {"matchProfileId1", "matchProfileId2"})
     public MatchResult getMatchResultForMatchProfiles(@RequestParam("matchProfileId1") Long matchProfileId1,
                                                       @RequestParam("matchProfileId2") Long matchProfileId2) {
         return matcherService.checkForTwoWayMatch(matchProfileId1, matchProfileId2);
@@ -83,11 +83,10 @@ public class MatcherController {
      * @param isMatchForMatchProfileId1
      * @return
      */
-    @PostMapping(params = {"matchProfileId", "resultFor", "isMatch"})
+    @PostMapping(path = "/result", params = {"matchProfileId", "resultFor", "isMatch"})
     public void createOrUpdateMatcherResult(@RequestParam("matchProfileId") Long matchProfileId1,
                                             @RequestParam("resultFor") Long matchProfileId2,
                                             @RequestParam("isMatch") Boolean isMatchForMatchProfileId1) {
-
         matcherService.insertOrUpdateMatchResult(matchProfileId1, matchProfileId2, isMatchForMatchProfileId1);
     }
 
@@ -99,10 +98,10 @@ public class MatcherController {
      * @param matchProfileId
      * @return
      */
-    @DeleteMapping(params = {"matchProfileId"})
+    @DeleteMapping(path = "/result", params = {"matchProfileId"})
     public void deleteAllMatchResultsForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
+        matcherService.deleteAllMatchResultDataByMatchProfileId(matchProfileId);
     }
-
 
     /**
      * Retrieves all matchResult completed records relating to a given matchProfileId.
@@ -114,9 +113,27 @@ public class MatcherController {
         return matcherService.retrieveMatchResultDataForMatchProfile(matchProfileId);
     }
 
-    @DeleteMapping(params = {"matchProfileId1", "matchProfileId2"})
+    /**
+     * Resets a specific match result record between two match profiles.
+     *
+     * This endpoint should be used when a given match profile wants to un-match with a previously matched match profile.
+     * @param matchProfileId match profile one
+     * @param matchProfileToUnmatchWith match profile two
+     */
+    @PostMapping(path = "/result", params = {"matchProfileId", "unmatchWith"})
+    public void unmatchWithMatchProfileByMatchProfileIds(@RequestParam("matchProfileId") Long matchProfileId,
+                                                          @RequestParam("unmatchWith") Long matchProfileToUnmatchWith) {
+        matcherService.unmatchWithMatchProfile(matchProfileId, matchProfileToUnmatchWith);
+    }
+
+    /**
+     * Deletes a specific match result record between two match profiles.
+     * @param matchProfileId match profile one
+     * @param matchProfileId2 match profile two
+     */
+    @DeleteMapping(path = "/result", params = {"matchProfileId1", "matchProfileId2"})
     public void deleteMatchResultForMatchProfileOneAndMatchProfileTwo(@RequestParam("matchProfileId1") Long matchProfileId,
                                                                       @RequestParam("matchProfileId2") Long matchProfileId2) {
-        matcherService.deleteMatchResultForMatchProfiles(matchProfileId, matchProfileId2);
+        matcherService.deleteMatchResultRecordForMatchProfiles(matchProfileId, matchProfileId2);
     }
 }
