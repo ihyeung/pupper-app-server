@@ -6,10 +6,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import static com.utahmsd.pupper.util.PupperUtils.*;
+import static com.utahmsd.pupper.util.ProfileUtils.*;
 import static org.junit.Assert.assertEquals;
 
-public class PupperUtilsUnitTest {
+public class ProfileUtilsUnitTest {
 
     private static final long SECONDS_DAY = 86_400L;
     private static final long SECONDS_WEEK = SECONDS_DAY * 7;

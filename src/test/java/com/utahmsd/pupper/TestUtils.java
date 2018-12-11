@@ -5,7 +5,7 @@ import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.Gender;
 import com.utahmsd.pupper.dto.pupper.MaritalStatus;
 import com.utahmsd.pupper.dto.pupper.Size;
-import com.utahmsd.pupper.util.PupperUtils;
+import com.utahmsd.pupper.util.ProfileUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -48,7 +48,7 @@ public class TestUtils {
         matchProfile.setSize(Size.TOY);
         matchProfile.setEnergyLevel(Energy.LOW);
         matchProfile.setBirthdate(Date.from(Instant.now().minus(600L, ChronoUnit.DAYS)));
-        matchProfile.setLifeStage(PupperUtils.dobToLifeStage(matchProfile.getBirthdate()));
+        matchProfile.setLifeStage(ProfileUtils.dobToLifeStage(matchProfile.getBirthdate()));
         matchProfile.setNumDogs(2);
         matchProfile.setSex(Gender.FEMALE);
 
@@ -65,7 +65,7 @@ public class TestUtils {
         pupperProfile.setSex(Gender.MALE);
         pupperProfile.setEnergyLevel(Energy.LOW);
         pupperProfile.setBirthdate(Date.from(Instant.now().minus(600L, ChronoUnit.DAYS)));
-        pupperProfile.setLifeStage(PupperUtils.dobToLifeStage(pupperProfile.getBirthdate()));
+        pupperProfile.setLifeStage(ProfileUtils.dobToLifeStage(pupperProfile.getBirthdate()));
         pupperProfile.setFixed(true);
 
         return pupperProfile;

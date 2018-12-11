@@ -56,7 +56,7 @@ public class MatcherController {
      * @param matcherRequest
      * @return
      */
-    @PostMapping(path = "/submit", params = {"matchProfileId"})
+    @PostMapping(path = "/result/submit", params = {"matchProfileId"})
     public MatcherDataResponse submitCompletedMatcherResults(@RequestParam("matchProfileId") Long matchProfileId,
                                                              @RequestBody MatcherDataRequest matcherRequest) {
         return matcherService.updateMatcherResults(matchProfileId, matcherRequest);

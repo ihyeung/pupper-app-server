@@ -3,18 +3,17 @@ package com.utahmsd.pupper.service;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
-import com.utahmsd.pupper.util.PupperUtils;
+import com.utahmsd.pupper.util.ProfileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 import static com.utahmsd.pupper.util.Constants.DEFAULT_MAX_SCORE;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_MIN_SCORE;
-import static com.utahmsd.pupper.util.PupperUtils.NOT_ACTIVE;
+import static com.utahmsd.pupper.util.ProfileUtils.NOT_ACTIVE;
 
 @Service
 public class ProfileScoreService {
@@ -91,7 +90,7 @@ public class ProfileScoreService {
     }
 
     private boolean wasRecentlyActive(Date date) {
-        String lastActive = PupperUtils.lastActivityFromLastLogin(date);
+        String lastActive = ProfileUtils.lastActivityFromLastLogin(date);
         if (lastActive.equals(NOT_ACTIVE) || lastActive.contains("months")) {
             return false;
         }

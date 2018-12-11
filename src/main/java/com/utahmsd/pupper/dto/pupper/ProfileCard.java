@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.utahmsd.pupper.util.Constants.DEFAULT_ABOUT_ME;
-import static com.utahmsd.pupper.util.PupperUtils.createAgeStringFromDate;
-import static com.utahmsd.pupper.util.PupperUtils.lastActivityFromLastLogin;
+import static com.utahmsd.pupper.util.ProfileUtils.createAgeStringFromDate;
+import static com.utahmsd.pupper.util.ProfileUtils.lastActivityFromLastLogin;
 
 /**
  * POJO class representing all of the data that will be contained/displayed on a individual profile card.

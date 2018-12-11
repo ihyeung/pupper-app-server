@@ -25,7 +25,7 @@ import java.util.Optional;
 import static com.utahmsd.pupper.dto.BreedResponse.createBreedResponse;
 import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
-import static com.utahmsd.pupper.util.PupperUtils.dobToLifeStage;
+import static com.utahmsd.pupper.util.ProfileUtils.dobToLifeStage;
 
 @Named
 @Singleton

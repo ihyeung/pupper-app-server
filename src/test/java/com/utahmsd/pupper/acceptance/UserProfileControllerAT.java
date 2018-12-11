@@ -152,21 +152,4 @@ public class UserProfileControllerAT extends BaseAcceptanceTest {
                 body("isSuccess", equalTo(true)).
                 body("userProfiles", notNullValue());
     }
-
-//    private UserProfile createUserProfile() {
-//        UserProfile user = new UserProfile();
-//        user.setUserAccount(userAccount);
-//
-//        user.setFirstName("Carmen");
-//        user.setLastName("San Diego");
-//        user.setBirthdate(Date.from(Instant.parse("2004-12-03T10:15:30.00Z")));
-//        user.setZip("84095");
-//        user.setSex(Gender.FEMALE);
-//        user.setMaritalStatus(MaritalStatus.SINGLE);
-//        user.setLastLogin(Date.from(Instant.now()));
-//        user.setDateJoin(Date.from(Instant.now()));
-//
-//        return user;
-//    }
-
 }

@@ -12,9 +12,9 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 
-public class PupperUtils {
+public class ProfileUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PupperUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileUtils.class);
     static final String DEFAULT_AGE = "0 years old";
     private static final String PUPPER_AGE = "%d %s old";
     public static final String NOT_ACTIVE = "No recent activity";

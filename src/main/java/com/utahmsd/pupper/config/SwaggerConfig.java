@@ -16,7 +16,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
 @ComponentScan(lazyInit = true)
-//@EnableSwagger2
+@EnableSwagger2
 public class SwaggerConfig {
 
     @Bean

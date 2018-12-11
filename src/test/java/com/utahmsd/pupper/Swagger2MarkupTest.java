@@ -69,11 +69,11 @@ public class Swagger2MarkupTest {
         Swagger2MarkupConverter.from(new URL(TEST_URL + "v2/api-docs")).build()
                 .toFolder(Paths.get("src/docs/asciidoc"));
     }
-
-    private String createUser() throws JsonProcessingException {
-        UserAccount account = new UserAccount();
-        account.setUsername("thisisatest@test.com");
-        account.setPassword("password");
-        return new ObjectMapper().writeValueAsString(account);
-    }
+//
+//    private String createUser() throws JsonProcessingException {
+//        UserAccount account = new UserAccount();
+//        account.setUsername("thisisatest@test.com");
+//        account.setPassword("password");
+//        return new ObjectMapper().writeValueAsString(account);
+//    }
 }
