@@ -53,7 +53,7 @@ public class MatcherService {
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
         if (m.isPresent()) {
             List<MatchProfile> matchProfilesBatchWithRadiusFilter = getNextMatchProfileBatchWithZipFilter(m.get(), radius);
-            if (matchProfilesBatchWithRadiusFilter == null || matchProfilesBatchWithRadiusFilter.isEmpty()) {
+            if (matchProfilesBatchWithRadiusFilter.isEmpty()) {
                 return new ArrayList<>();
             }
             createBlankMatchResultRecordsForBatch(matchProfileId, matchProfilesBatchWithRadiusFilter);
@@ -75,7 +75,12 @@ public class MatcherService {
     }
 
     /**
-     * Retrieves a list of all matchProfiles that a given matchProfile has already been shown and has rated.
+     * Retrieves a list of all matchProfiles that either:
+     * 1. A given matchProfile has already been previously shown and has rated (and the result was saved to the db).
+     * 2. A previously sent batch of matcher data (profile cards) was sent to a given matchProfile. In this situation
+     * we want to exclude these profiles IF the record is not expired yet. (if it is expired and not marked complete,
+     * we want the record to be requeued and resent to the user -- i.e., if the batch was never received by the client)
+     *
      * We want to filter these when retrieving the next batch of profile cards to display to the user, to prevent
      * profiles being displayed to the user multiple times.
      *
@@ -83,27 +88,24 @@ public class MatcherService {
      * @param matchProfileId
      * @return
      */
-    private List<MatchProfile> getPastMatcherResultsForMatchProfile(Long matchProfileId) {
-//        Instant now = Instant.now();
-//        List<Long> previousMatchProfileIdsAndNotExpired =
-//                matchResultRepo.retrieveAllIdsforMatchProfilesSentInPreviousBatchesAndNotExpired(matchProfileId,
-//                        now, matchProfileId, now);
-//        LOGGER.info("Number of match profiles that have been previously shown that are not expired: {}",
-//                previousMatchProfileIdsAndNotExpired.size());
-//
-//        return matchProfileRepo.findAllByIdIn(previousMatchProfileIdsAndNotExpired);
+    private List<Long> getPastMatcherResultsForMatchProfile(Long matchProfileId) {
 
-        List<MatchProfile> activeProfiles = matchResultRepo.findActivePreviouslyRatedMatchProfiles(matchProfileId);
-        List<MatchProfile> passiveProfiles = matchResultRepo.findPassivePreviouslyRatedMatchProfiles(matchProfileId);
+        //Native query referencing matchProfileIds returns a list of Integers **
+        List<Integer> previouslyRatedProfileIdsUsingNativeQuery =
+                matchResultRepo.retrieveAllIdsforMatchProfilesPreviouslyRated(matchProfileId, matchProfileId);
 
-        Set<MatchProfile> distinctProfiles = new HashSet<>();
-        distinctProfiles.addAll(activeProfiles);
-        distinctProfiles.addAll(passiveProfiles);
+        Set<Long> distinctMatchProfileIds = new HashSet<>();
+        //Cast each Integer to a Long to prevent hashset from including duplicate values
+        previouslyRatedProfileIdsUsingNativeQuery.forEach(each -> distinctMatchProfileIds.add(each.longValue()));
 
-        List<Long> previouslyRatedProfilesUsingNativeQuery = matchResultRepo.retrieveAllIdsforMatchProfilesPreviouslyRated(matchProfileId, matchProfileId);
-        assert(previouslyRatedProfilesUsingNativeQuery.size() == distinctProfiles.size());
+        //JPQL query referencing matchProfileIds returns a list of Longs **
+        List<Long> previouslySentRecords =
+                matchResultRepo.findMatchProfilesInPreviouslySentBatchesNotExpired(matchProfileId, Instant.now());
 
-        return new ArrayList<>(distinctProfiles);
+        distinctMatchProfileIds.addAll(previouslySentRecords);
+
+        LOGGER.info("Number of distinct ids in combined two queries: {}", distinctMatchProfileIds.size());
+        return new ArrayList<>(distinctMatchProfileIds);
     }
 
     /**
@@ -115,14 +117,11 @@ public class MatcherService {
      * @return
      */
     public List<MatchProfile> getAllUnseenMatchProfilesForMatchProfile(Long matchProfileId) {
-        List<Long> matchProfileIdsToExclude = new ArrayList<>();
-        getPastMatcherResultsForMatchProfile(matchProfileId)
-                .forEach(matchProfile -> matchProfileIdsToExclude.add(matchProfile.getId()));
+        List<Long> matchProfileIdsToExclude = getPastMatcherResultsForMatchProfile(matchProfileId);
 
         if (matchProfileIdsToExclude.isEmpty()) {
             List<MatchProfile> allRemainingProfiles = matchProfileRepo.findAll();
             allRemainingProfiles.removeIf(matchProfile -> matchProfile.getId().equals(matchProfileId));
-            LOGGER.info("Total number of unseen matchProfiles: {}", allRemainingProfiles.size());
 
             return allRemainingProfiles;
         }
@@ -138,7 +137,7 @@ public class MatcherService {
         if (m.isPresent()) {
             List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), String.valueOf(zipRadius));
 
-            List<Long> idList = getViewedMatchProfileIds(matchProfileId);
+            List<Long> idList = getPastMatcherResultsForMatchProfile(matchProfileId);
 
             if (idList.isEmpty()) {
                 return matchProfileRepo.findAllByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(matchProfileId, zipcodesInRange);
@@ -155,7 +154,7 @@ public class MatcherService {
         List<String> zipcodesInRange =
                 zipCodeAPIClient.getZipCodesInRadius(matchProfile.getUserProfile().getZip(), String.valueOf(zipRadius));
 
-        List<Long> viewedMatchProfileIds = getViewedMatchProfileIds(matchProfile.getId());
+        List<Long> viewedMatchProfileIds = getPastMatcherResultsForMatchProfile(matchProfile.getId());
 
         if (viewedMatchProfileIds.isEmpty()) {
             return matchProfileRepo.findTop5ByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(matchProfile.getId(),
@@ -200,13 +199,6 @@ public class MatcherService {
         }
     }
 
-    private List<Long> getViewedMatchProfileIds(Long matchProfileId) {
-        List<Long> idList = new ArrayList<>();
-        getPastMatcherResultsForMatchProfile(matchProfileId).forEach(each -> idList.add(each.getId()));
-//        LOGGER.info("Number of ids corresponding to matchProfiles to exclude from future matcher batches: {}", idList.size());
-        return idList;
-    }
-
     public MatcherDataResponse updateMatcherResults (Long matchProfileId, MatcherDataRequest request) {
         LOGGER.info("{} match_result records to update data for", request.getMap().size());
         AtomicInteger updateCount = new AtomicInteger();
@@ -227,8 +219,10 @@ public class MatcherService {
     }
 
     public List<MatchResult> retrieveMatchResultDataForMatchProfile(Long matchProfileId) {
-        List<MatchResult> completedMatchResults = matchResultRepo.findCompletedMatchResultsForMatchProfile(matchProfileId);
-        LOGGER.info("Found {} completed matchResults corresponding to matchProfileId={}", completedMatchResults.size(), matchProfileId);
+        List<MatchResult> completedMatchResults =
+                                        matchResultRepo.findCompletedMatchResultsForMatchProfile(matchProfileId);
+        LOGGER.info("Found {} completed matchResults corresponding to matchProfileId={}",
+                completedMatchResults.size(), matchProfileId);
 
         return completedMatchResults;
     }

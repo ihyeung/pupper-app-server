@@ -19,6 +19,8 @@ public class Constants {
     public static final int MAX_RESULTS = 20;
     public static final int MAX_MESSAGES = 10;
     public static final float DEFAULT_MAX_SCORE = 100.0F;
+    public static final float DEFAULT_MIN_SCORE = 0.0F;
+
     public static final Date RECENT_ACTIVITY_CUTOFF = DateTime.now().minusDays(30).toDate();//Considered recent activity if within the last 30 days
 
     public static final String DEFAULT_DESCRIPTION = "success";

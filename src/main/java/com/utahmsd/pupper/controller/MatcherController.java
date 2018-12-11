@@ -56,7 +56,7 @@ public class MatcherController {
      * @param matcherRequest
      * @return
      */
-    @PostMapping(path = "/result", params = {"matchProfileId"})
+    @PostMapping(path = "/submit", params = {"matchProfileId"})
     public MatcherDataResponse submitCompletedMatcherResults(@RequestParam("matchProfileId") Long matchProfileId,
                                                              @RequestBody MatcherDataRequest matcherRequest) {
         return matcherService.updateMatcherResults(matchProfileId, matcherRequest);
@@ -137,6 +137,9 @@ public class MatcherController {
         matcherService.deleteMatchResultRecordForMatchProfiles(matchProfileId, matchProfileId2);
     }
 
+    /**
+     * IGNORE ME, this is a testing method in an attempt to resolve a bug!
+     */
     @PostMapping(path = "/expiresAt")
     public void updateExpiresAt() {
         matcherService.updateRecordExpiresForAllFields();

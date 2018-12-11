@@ -105,6 +105,6 @@ public class MatchProfileController {
 
     @GetMapping(path="/matchProfile/score", params = {"matchProfileId"})
     public void getMatchProfileScoreUpdate(@RequestParam("matchProfileId") Long matchProfileId) {
-        profileScoreService.getMatchProfileScoreById(matchProfileId);
+        profileScoreService.calculateMatchProfileScoreAdjustmentForMatchProfile(matchProfileId);
     }
 }
