@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MatchProfileRepo extends JpaRepository<MatchProfile, Long> {
-    List<MatchProfile> findAllByIdIsNot(Long matchProfileId);
 
     Optional<MatchProfile> findByUserProfileIdAndId(Long userProfileId, Long matchProfileId);
+
     Optional<List<MatchProfile>> findAllByUserProfile_Id (Long userProfileId);
 
     @Query("FROM MatchProfile m WHERE m.userProfile.lastLogin >= :date ORDER BY m.score DESC")

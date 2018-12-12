@@ -26,22 +26,6 @@ public interface MessageRepo extends PagingAndSortingRepository<PupperMessage, L
                                                                          Long matchProfileId3, Long matchProfileId4);
 
     /**
-     * Returns the 10 most recent messages sent from a given matchProfileId to a given matchProfileId.
-     * @param matchIdSender
-     * @param matchIdReceiver
-     * @return
-     */
-    List<PupperMessage> findTop10ByMatchProfileSender_IdAndMatchProfileReceiver_IdOrderByTimestampDesc(Long matchIdSender, Long matchIdReceiver);
-
-    /**
-     * Returns the 10 most recent messages exchanged to or from a given matchProfileId.
-     * @param matchIdSender
-     * @param matchIdReceiver
-     * @return
-     */
-    List<PupperMessage> findTop10ByMatchProfileSender_IdOrMatchProfileReceiver_IdOrderByTimestampDesc(Long matchIdSender, Long matchIdReceiver);
-
-    /**
      * Retrieves recent (10 messages) message history between two matchProfiles.
      * @param id1 matchProfile #1
      * @param id2 matchProfile #2
@@ -53,7 +37,6 @@ public interface MessageRepo extends PagingAndSortingRepository<PupperMessage, L
                                                                                                                                                         Long id2,
                                                                                                                                                         Long id3,
                                                                                                                                                         Long id4);
-
     /**
      * Retrieves entire message history between two  matchProfiles.
      * @param id1 matchProfile #1

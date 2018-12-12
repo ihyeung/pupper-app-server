@@ -15,8 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile, Long> {
+
     Optional<UserProfile> findByUserAccount(UserAccount userAccount);
+
     Page<UserProfile> findByZip (String zipCode, Pageable pageable);
+
     UserProfile findByUserAccount_Username(String username);
 
     @Transactional
