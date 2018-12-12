@@ -16,7 +16,7 @@ import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
 @ComponentScan(lazyInit = true)
-@EnableSwagger2
+//@EnableSwagger2
 public class SwaggerConfig {
 
     @Bean
@@ -37,15 +37,15 @@ public class SwaggerConfig {
                 .build();
     }
 
-    @Bean
-    public Docket pupperDocket() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("pupper-api")
-                .apiInfo(apiInfo())
-                .select()
-                .paths(regex("/pupper.*"))
-                .build();
-    }
+//    @Bean
+//    public Docket pupperDocket() {
+//        return new Docket(DocumentationType.SWAGGER_2)
+//                .groupName("pupper-api")
+//                .apiInfo(apiInfo())
+//                .select()
+//                .paths(regex("/pupper.*"))
+//                .build();
+//    }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()

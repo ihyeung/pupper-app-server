@@ -14,9 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -24,8 +23,7 @@ import java.util.Optional;
 import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
 
-@Named
-@Singleton
+@Service
 public class UserProfileFilterService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);

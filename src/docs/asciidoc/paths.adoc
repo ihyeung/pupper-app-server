@@ -2,21 +2,11 @@
 [[_paths]]
 == Paths
 
-[[_getaccountbyuserprofileidusingget]]
-=== getAccountByUserProfileId
+[[_getallaccountsusingget]]
+=== getAllAccounts
 ....
 GET /account
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**userId** +
-__required__|userId|string
-|===
 
 
 ==== Responses
@@ -273,8 +263,8 @@ __required__|accountId|integer (int64)
 * auth-controller
 
 
-[[_getmatchprofilesbybreedusingget]]
-=== getMatchProfilesByBreed
+[[_getallmatchprofileswithfiltersusingget]]
+=== getAllMatchProfilesWithFilters
 ....
 GET /matchProfile
 ....
@@ -285,8 +275,10 @@ GET /matchProfile
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**breed** +
-__required__|breed|string
+|**Query**|**limit** +
+__required__|limit|string
+|**Query**|**sortBy** +
+__required__|sortBy|string
 |===
 
 
@@ -529,8 +521,8 @@ __required__|unmatchWith|string
 * matcher-controller
 
 
-[[_getmatchresultformatchprofilesusingget]]
-=== getMatchResultForMatchProfiles
+[[_getmatchresultdataformatchprofileusingget]]
+=== getMatchResultDataForMatchProfile
 ....
 GET /matcher/result
 ....
@@ -541,10 +533,8 @@ GET /matcher/result
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**matchProfileId1** +
-__required__|matchProfileId1|string
-|**Query**|**matchProfileId2** +
-__required__|matchProfileId2|string
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
 |===
 
 
@@ -553,7 +543,7 @@ __required__|matchProfileId2|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|<<_matchresult,MatchResult>>
+|**200**|OK|< <<_matchresult,MatchResult>> > array
 |===
 
 
@@ -567,8 +557,8 @@ __required__|matchProfileId2|string
 * matcher-controller
 
 
-[[_deletematchresultformatchprofileoneandmatchprofiletwousingdelete]]
-=== deleteMatchResultForMatchProfileOneAndMatchProfileTwo
+[[_deleteallmatchresultsformatchprofileusingdelete]]
+=== deleteAllMatchResultsForMatchProfile
 ....
 DELETE /matcher/result
 ....
@@ -579,10 +569,8 @@ DELETE /matcher/result
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**matchProfileId1** +
-__required__|matchProfileId1|string
-|**Query**|**matchProfileId2** +
-__required__|matchProfileId2|string
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
 |===
 
 
@@ -729,11 +717,23 @@ __required__|pupperMessage|<<_puppermessage,PupperMessage>>
 * message-controller
 
 
-[[_getallmessagesusingget]]
-=== getAllMessages
+[[_getmessagehistoryusingget]]
+=== getMessageHistory
 ....
 GET /message
 ....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**matchProfileId1** +
+__required__|matchProfileId1|string
+|**Query**|**matchProfileId2** +
+__required__|matchProfileId2|string
+|===
 
 
 ==== Responses

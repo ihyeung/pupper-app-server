@@ -12,9 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -23,11 +22,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.utahmsd.pupper.client.ZipCodeAPIClient.MAX_RADIUS;
 import static com.utahmsd.pupper.dto.MatcherDataResponse.createMatcherDataResponse;
 import static com.utahmsd.pupper.dto.pupper.ProfileCard.matchProfileToProfileCardMapper;
-import static com.utahmsd.pupper.util.Constants.*;
+import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
+import static com.utahmsd.pupper.util.Constants.IDS_MISMATCH;
 import static org.springframework.http.HttpStatus.OK;
 
-@Named
-@Singleton
+@Service
 public class MatcherService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);

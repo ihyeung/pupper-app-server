@@ -1,29 +1,23 @@
 package com.utahmsd.pupper.service.filter;
 
 import com.utahmsd.pupper.dao.BreedRepo;
-import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
 import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import com.utahmsd.pupper.dto.pupper.Size;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.utahmsd.pupper.dto.BreedResponse.createBreedResponse;
 import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
 
-@Named
-@Singleton
+@Service
 public class PupperProfileFilterService {
 
     private final PupperProfileRepo pupperProfileRepo;

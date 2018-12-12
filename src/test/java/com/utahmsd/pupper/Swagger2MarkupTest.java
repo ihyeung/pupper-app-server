@@ -1,9 +1,6 @@
 package com.utahmsd.pupper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utahmsd.pupper.config.SwaggerConfig;
-import com.utahmsd.pupper.dao.entity.UserAccount;
 import io.github.swagger2markup.Swagger2MarkupConverter;
 import org.junit.Ignore;
 import org.junit.Test;

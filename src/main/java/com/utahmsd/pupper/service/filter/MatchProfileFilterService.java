@@ -6,18 +6,14 @@ import com.utahmsd.pupper.dao.entity.MatchProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.List;
 
 import static com.utahmsd.pupper.dao.entity.MatchProfile.matchProfileFieldList;
-import static com.utahmsd.pupper.util.Constants.RECENT_ACTIVITY_CUTOFF;
-import static com.utahmsd.pupper.util.Constants.PAGE_NUM;
-import static com.utahmsd.pupper.util.Constants.PAGE_SIZE;
+import static com.utahmsd.pupper.util.Constants.*;
 
-@Named
-@Singleton
+@Service
 public class MatchProfileFilterService {
 
     private static final String DEFAULT_SORT = "score";

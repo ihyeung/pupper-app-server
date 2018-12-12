@@ -35,7 +35,7 @@ public class MatchProfileController {
     }
 
     @GetMapping(path="/matchProfile", params = {"sortBy", "limit"})
-    public List<MatchProfile> getAllMatchProfiles(@RequestParam("sortBy") String sort, @RequestParam("limit") String limit) {
+    public List<MatchProfile> getAllMatchProfilesWithFilters(@RequestParam("sortBy") String sort, @RequestParam("limit") String limit) {
         return matchProfileFilterService.getMatchProfilesWithFilters(sort, limit);
     }
 
@@ -45,17 +45,17 @@ public class MatchProfileController {
     }
 
     @GetMapping(path="/matchProfile", params = {"userEmail"})
-    public List<MatchProfile> getMatchProfilesByUserEmail(@RequestParam("userEmail") @Email String email) {
+    public List<MatchProfile> getMatchProfilesFilterByUserEmail(@RequestParam("userEmail") @Email String email) {
         return matchProfileFilterService.getMatchProfilesFilterByUserEmail(email);
     }
 
     @GetMapping(path="/matchProfile", params = {"zip"})
-    public List<MatchProfile> getMatchProfilesByUserZip(@RequestParam("zip") String zipcode) {
+    public List<MatchProfile> getMatchProfilesFilterByUserZip(@RequestParam("zip") String zipcode) {
         return matchProfileFilterService.getMatchProfilesFilterByUserProfileZip(zipcode);
     }
 
     @GetMapping(path="/matchProfile", params = {"breed"})
-    public List<MatchProfile> getMatchProfilesByBreed(@RequestParam("breed") String breed) {
+    public List<MatchProfile> getMatchProfilesFilterByBreed(@RequestParam("breed") String breed) {
         return matchProfileFilterService.getMatchProfilesFilterByBreed(breed);
     }
 

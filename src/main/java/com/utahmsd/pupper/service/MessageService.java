@@ -13,9 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.time.Instant;
 import java.util.*;
 
@@ -23,8 +22,7 @@ import static com.utahmsd.pupper.dto.MessageResponse.createMessageResponse;
 import static com.utahmsd.pupper.util.Constants.*;
 import static java.util.Collections.emptyList;
 
-@Named
-@Singleton
+@Service
 public class MessageService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);

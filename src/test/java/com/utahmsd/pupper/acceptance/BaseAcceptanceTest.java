@@ -1,7 +1,6 @@
 package com.utahmsd.pupper.acceptance;
 
 import com.utahmsd.pupper.TestUtils;
-import com.utahmsd.pupper.dao.entity.UserAccount;
 import io.restassured.http.ContentType;
 
 import static io.restassured.RestAssured.given;

@@ -14,9 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,8 +26,7 @@ import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileRe
 import static com.utahmsd.pupper.util.Constants.*;
 import static com.utahmsd.pupper.util.ProfileUtils.dobToLifeStage;
 
-@Named
-@Singleton
+@Service
 public class PupperProfileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
@@ -60,29 +58,14 @@ public class PupperProfileService {
         return createPupperProfileResponse(true, pupperProfileList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    //TODO: TEST THIS METHOD POST REFACTORING
     public PupperProfileResponse findAllPupperProfilesByUserProfileId(Long userProfileId) {
         List<PupperProfile> pupperProfiles = pupperProfileRepo.findAllByMatchProfile_UserProfile_Id(userProfileId);
         if (pupperProfiles == null || pupperProfiles.isEmpty()) {
             return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, 
                     String.format(INVALID_OR_EMPTY_USER_PROFILE_ID, userProfileId));
         }
-//        Optional<List<MatchProfile>> matchProfileResults = matchProfileRepo.findAllByUserProfile_Id(userProfileId);
-//        if (!matchProfileResults.isPresent() || matchProfileResults.get().isEmpty()) {
-//            LOGGER.error(ID_NOT_FOUND.replace("id", "userProfile id"), PUPPER_PROFILE, userProfileId);
-//            return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND,
-//                    String.format(ID_NOT_FOUND.replace("id", "userProfile id"), PUPPER_PROFILE, userProfileId));
-//        }
-//
-//        Long matchProfileId = matchProfileResults.get().get(0).getId();
-//        Optional<List<PupperProfile>> results = pupperProfileRepo.findAllByMatchProfileId(matchProfileId);
-//        if (!results.isPresent() || results.get().isEmpty()) {
-//            return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND,
-//                    String.format(INVALID_OR_EMPTY_USER_PROFILE_ID, userProfileId));
-//        }
 
         return createPupperProfileResponse(true, pupperProfiles, HttpStatus.OK, DEFAULT_DESCRIPTION);
-
     }
 
     public PupperProfileResponse findPupperProfileById(Long userId, Long matchProfileId, Long pupperId) {
