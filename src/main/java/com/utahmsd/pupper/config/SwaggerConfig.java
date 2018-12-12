@@ -1,7 +1,6 @@
 package com.utahmsd.pupper.config;
 
 import io.swagger.annotations.Api;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +10,7 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
@@ -37,23 +36,13 @@ public class SwaggerConfig {
                 .build();
     }
 
-//    @Bean
-//    public Docket pupperDocket() {
-//        return new Docket(DocumentationType.SWAGGER_2)
-//                .groupName("pupper-api")
-//                .apiInfo(apiInfo())
-//                .select()
-//                .paths(regex("/pupper.*"))
-//                .build();
-//    }
-
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Pupper API")
                 .license("Copyright (C) 2018 Irene Yeung")
                 .termsOfServiceUrl("Pending Publication")
-                .description("RESTful Web Application For Pupper Mobile App")
-                .version("0.1.0")
+                .description("RESTful Server Application For Pupper Mobile App")
+                .version("0.1.3")
                 .build();
     }
 

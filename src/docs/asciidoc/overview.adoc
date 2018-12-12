@@ -3,12 +3,12 @@
 
 [[_overview]]
 == Overview
-RESTful Web Application For Pupper Mobile App
+RESTful Server Application For Pupper Mobile App
 
 
 === Version information
 [%hardbreaks]
-__Version__ : 0.1.0
+__Version__ : 0.1.2
 
 
 === License information
