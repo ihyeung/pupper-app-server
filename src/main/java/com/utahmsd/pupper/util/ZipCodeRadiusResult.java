@@ -8,7 +8,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class ZipcodeResult {
+public class ZipCodeRadiusResult {
 
     @JsonProperty("zip_code")
     private String zipcode;
@@ -22,9 +22,9 @@ public class ZipcodeResult {
     @JsonProperty("state")
     private String state;
 
-    public ZipcodeResult(){}
+    public ZipCodeRadiusResult(){}
 
-    public ZipcodeResult(String zip, double distance, String city, String state) {
+    public ZipCodeRadiusResult(String zip, double distance, String city, String state) {
         this.zipcode = zip;
         this.distance = distance;
         this.city = city;

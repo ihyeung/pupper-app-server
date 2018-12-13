@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class ZipCodeAPIClientTest {
 //    private ObjectMapper objectMapper;
 ////
 //    private static final String DEFAULT_ZIP = "84095";
-//    private List<ZipcodeResult> mockResults;
+//    private List<ZipCodeRadiusResult> mockResults;
 //    private HttpResponse response;
 //
 //    @Before
@@ -33,9 +32,9 @@ public class ZipCodeAPIClientTest {
 //        zipCodeAPIClient = new ZipCodeAPIClient(httpClient, objectMapper, apiKey);
 //
 //        mockResults = new ArrayList<>();
-//        mockResults.add(new ZipcodeResult("84009", 1.744, "South Jordan", "UT"));
-//        mockResults.add(new ZipcodeResult("84095", 0, "South Jordan", "UT"));
-//        mockResults.add(new ZipcodeResult("84088", 2.773, "West Jordan", "UT"));
+//        mockResults.add(new ZipCodeRadiusResult("84009", 1.744, "South Jordan", "UT"));
+//        mockResults.add(new ZipCodeRadiusResult("84095", 0, "South Jordan", "UT"));
+//        mockResults.add(new ZipCodeRadiusResult("84088", 2.773, "West Jordan", "UT"));
 //
 //    }
 
@@ -74,12 +73,12 @@ public class ZipCodeAPIClientTest {
     @Test
     public void testGetDistanceBetweenMultipleZipcodes() {
         List<String> zipcodeList = Arrays.asList("84601", "84088");
-        assertThat(zipCodeAPIClient.getDistanceBetweenMultipleZipcodes(DEFAULT_ZIP, zipcodeList)).containsKeys("84601", "84088");
+        assertThat(zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(DEFAULT_ZIP, zipcodeList)).containsKeys("84601", "84088");
     }
 
     @Test
     public void testGetDistanceBetweenMultipleZipcodes_listContainsInvalidZipcode() {
         List<String> zipcodeList = Arrays.asList("84601", "84088", "hello");
-        assertThat(zipCodeAPIClient.getDistanceBetweenMultipleZipcodes(DEFAULT_ZIP, zipcodeList)).isEmpty();
+        assertThat(zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(DEFAULT_ZIP, zipcodeList)).isEmpty();
     }
 }

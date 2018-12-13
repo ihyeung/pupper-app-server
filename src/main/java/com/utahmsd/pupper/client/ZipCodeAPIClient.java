@@ -3,7 +3,7 @@ package com.utahmsd.pupper.client;
 import com.amazonaws.util.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.utahmsd.pupper.util.ZipcodeResult;
+import com.utahmsd.pupper.util.ZipCodeRadiusResult;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -35,7 +35,7 @@ public class ZipCodeAPIClient {
             new BasicHeader("Content-Type", String.valueOf(APPLICATION_JSON)),
             new BasicHeader("Accept", String.valueOf(APPLICATION_JSON))};
 
-    private static final String BASE_URL = "https://www.zipcodeapi.com/rest/%s/%s.json/%s/%s/miles";
+    private static final String BASE_URL = "https://www.zipcodeapi.com/rest/%s/%s.json/%s/%s/mile";
     private static final String DIST_BETWEEN_ZIPCODES = String.format(BASE_URL, apiKey, "distance", "%s", "%s");
     private static final String DIST_BETWEEN_ZIPCODE_LIST = String.format(BASE_URL, apiKey, "multi-distance", "%s", "%s");
     private static final String ZIP_CODES_RADIUS = String.format(BASE_URL, apiKey, "radius", "%s", "%s");
@@ -50,7 +50,7 @@ public class ZipCodeAPIClient {
         this.objectMapper = objectMapper;
     }
 
-    public Map<String,Integer> getDistanceBetweenMultipleZipcodes(String zipcode, List<String> zipcodeList) {
+    public Map<String,Integer> getDistanceBetweenZipCodeAndMultipleZipCodes(String zipcode, List<String> zipcodeList) {
         Map<String,Integer> distanceMap = new HashMap<>();
         String zipString = createMultiZipcodeStringForUrl(zipcodeList);
         if (!isValidZipcode(zipcode) || zipString == null) {
@@ -58,12 +58,23 @@ public class ZipCodeAPIClient {
         }
         String responseBody = executeHttpGet(DIST_BETWEEN_ZIPCODE_LIST, zipcode, zipString);
         if (!StringUtils.isNullOrEmpty(responseBody)) {
-            Map<String, Double> distances =
-                    (Map<String, Double>) new JacksonJsonParser().parseMap(responseBody).get("distances");
-
-            distances.forEach((k, v) -> distanceMap.put(k, v.intValue()));
+            Map<String, Object> distances = new JacksonJsonParser().parseMap(responseBody);
+            String[] distanceList = manuallyParseZipcodeDIstanceResponseObj(distances);
+            for (String each: distanceList) {
+                String[] zipDistKeyValPair = each.split("=");
+                LOGGER.info("Adding the following zipcode and its calculated distance: <{},{}>",
+                        zipDistKeyValPair[0], zipDistKeyValPair[1]);
+                distanceMap.put(zipDistKeyValPair[0], Math.round(Float.parseFloat(zipDistKeyValPair[1])));
+            }
         }
         return distanceMap;
+    }
+
+    private String[] manuallyParseZipcodeDIstanceResponseObj(Map<String, Object> distances) {
+        Object zipCodeData = distances.getOrDefault("distances", null);
+        String zipcodeString =
+                zipCodeData.toString().replace("{", "").replace("}","");
+        return zipcodeString.split(", ");
     }
 
     public Integer getDistanceBetweenZipcodes(String zipcode, String zipcode1) {
@@ -85,7 +96,7 @@ public class ZipCodeAPIClient {
         }
         String responseBody = executeHttpGet(ZIP_CODES_RADIUS, zipcode, radius);
         if (!StringUtils.isNullOrEmpty(responseBody)) {
-            List<ZipcodeResult> zipcodeResults = parseZipcodeResultsFromApiResponse(responseBody);
+            List<ZipCodeRadiusResult> zipcodeResults = parseZipcodeResultsFromApiResponse(responseBody);
             zipcodeResults.forEach(each -> zipCodes.add(each.getZipcode()));
         }
         return zipCodes;
@@ -93,7 +104,7 @@ public class ZipCodeAPIClient {
 
     private String executeHttpGet(String url, String zipcode, String apiParam) {
         HttpGet httpGet = new HttpGet(String.format(url, zipcode, apiParam));
-//        LOGGER.info("Sending HTTP GET to '{}'", httpGet.getURI());
+        LOGGER.info("Sending HTTP GET to '{}'", httpGet.getURI());
         httpGet.setHeaders(HEADERS);
 
         HttpResponse response;
@@ -110,12 +121,12 @@ public class ZipCodeAPIClient {
         return null;
     }
 
-    private List<ZipcodeResult> parseZipcodeResultsFromApiResponse(String response) {
+    private List<ZipCodeRadiusResult> parseZipcodeResultsFromApiResponse(String response) {
         if (!StringUtils.isNullOrEmpty(response)) {
             Map<String, Object> responseMap = new BasicJsonParser().parseMap(response);
             Object zipCodeData = responseMap.getOrDefault("zip_codes", null);
 
-            return objectMapper.convertValue(zipCodeData, new TypeReference<List<ZipcodeResult>>() {});
+            return objectMapper.convertValue(zipCodeData, new TypeReference<List<ZipCodeRadiusResult>>() {});
         }
         return Collections.emptyList();
     }

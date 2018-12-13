@@ -64,10 +64,13 @@ public class MatcherService {
     }
 
     private void updateProfileCardDistancesFromZipcode(MatchProfile m, List<ProfileCard> profileCards) {
+        if (profileCards.isEmpty()) {
+            return;
+        }
         List<String> zipcodeList = new ArrayList<>();
         profileCards.forEach(each -> zipcodeList.add(each.getDistance()));
         Map<String, Integer> zipcodeDistances =
-                zipCodeAPIClient.getDistanceBetweenMultipleZipcodes(m.getUserProfile().getZip(), zipcodeList);
+                zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(m.getUserProfile().getZip(), zipcodeList);
 
         profileCards.forEach(profileCard ->
                 profileCard.setDistance(String.format(DIST_AWAY, zipcodeDistances.get(profileCard.getDistance()))));
@@ -152,7 +155,10 @@ public class MatcherService {
 
         List<String> zipcodesInRange =
                 zipCodeAPIClient.getZipCodesInRadius(matchProfile.getUserProfile().getZip(), String.valueOf(zipRadius));
-
+        if (zipcodesInRange.isEmpty()) {
+            LOGGER.info("No zipcodes were found within the specified radius of the profile's zipcode.");
+            return new ArrayList<>();
+        }
         List<Long> viewedMatchProfileIds = getPastMatcherResultsForMatchProfile(matchProfile.getId());
 
         if (viewedMatchProfileIds.isEmpty()) {
@@ -162,6 +168,7 @@ public class MatcherService {
         List<MatchProfile> nextBatch = matchProfileRepo.
                 findTop5ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(viewedMatchProfileIds,
                         matchProfile.getId(), zipcodesInRange);
+        LOGGER.info("Number of profiles in the next batch: {}", nextBatch.size());
         return nextBatch;
     }
 
