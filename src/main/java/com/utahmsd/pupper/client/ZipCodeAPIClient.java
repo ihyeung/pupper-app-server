@@ -16,17 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.*;
 
 import static com.utahmsd.pupper.util.ValidationUtils.isValidZipcode;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
-@Named
-@Singleton
+@Component
 public class ZipCodeAPIClient {
     private static final String apiKey = System.getProperty("zipCode.api.key", "");
     private static final Logger LOGGER = LoggerFactory.getLogger(ZipCodeAPIClient.class);

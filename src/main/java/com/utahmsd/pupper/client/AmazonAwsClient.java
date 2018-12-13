@@ -21,15 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 
 import static com.amazonaws.regions.Regions.US_EAST_1;
 import static com.utahmsd.pupper.dto.ImageUploadResponse.createImageUploadResponse;
@@ -37,8 +38,7 @@ import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static com.utahmsd.pupper.util.Constants.INVALID_PATH_VARIABLE;
 import static org.springframework.http.HttpStatus.*;
 
-@Named
-@Singleton
+@Component
 public class AmazonAwsClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AmazonAwsClient.class);
