@@ -68,7 +68,11 @@ public class MatcherService {
             return;
         }
         List<String> zipcodeList = new ArrayList<>();
-        profileCards.forEach(each -> zipcodeList.add(each.getDistance()));
+        profileCards.forEach(each -> {
+            if (!zipcodeList.contains(each.getDistance())) {
+                zipcodeList.add(each.getDistance());
+            }
+        });
         Map<String, Integer> zipcodeDistances =
                 zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(m.getUserProfile().getZip(), zipcodeList);
 
