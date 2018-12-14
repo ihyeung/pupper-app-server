@@ -139,7 +139,7 @@ public class ZipCodeAPIClient {
             if (!isValidZipcode(zip)) {
                 return null;
             }
-            zipString.append(", ").append(zip);
+            zipString.append(",").append(zip);
         }
         return zipString.substring(1);
     }

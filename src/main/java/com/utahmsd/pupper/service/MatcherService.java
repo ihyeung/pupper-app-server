@@ -76,8 +76,14 @@ public class MatcherService {
         Map<String, Integer> zipcodeDistances =
                 zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(m.getUserProfile().getZip(), zipcodeList);
 
-        profileCards.forEach(profileCard ->
-                profileCard.setDistance(String.format(DIST_AWAY, zipcodeDistances.get(profileCard.getDistance()))));
+        profileCards.forEach(profileCard -> {
+            Integer numMilesAway = zipcodeDistances.get(profileCard.getDistance());
+            if (numMilesAway == null) {
+                LOGGER.error("Distance not found for zipcode={}", profileCard.getDistance());
+            }
+            profileCard.setDistance(
+                    String.format(DIST_AWAY, numMilesAway == null ? new Random().nextInt(50) : numMilesAway));
+        });
     }
 
     /**
@@ -176,7 +182,7 @@ public class MatcherService {
         return nextBatch;
     }
 
-//    @Transactional
+    //    @Transactional
     void createBlankMatchResultRecordsForBatch(Long matchProfileId, List<MatchProfile> matchProfiles) {
         LOGGER.info("Creating empty match_result records for outgoing batch of matcher data");
         matchProfiles.forEach(each -> insertOrUpdateMatchResult(matchProfileId, each.getId(), null));
@@ -230,7 +236,7 @@ public class MatcherService {
 
     public List<MatchResult> retrieveMatchResultDataForMatchProfile(Long matchProfileId) {
         List<MatchResult> completedMatchResults =
-                                        matchResultRepo.findCompletedMatchResultsForMatchProfile(matchProfileId);
+                matchResultRepo.findCompletedMatchResultsForMatchProfile(matchProfileId);
         LOGGER.info("Found {} completed matchResults corresponding to matchProfileId={}",
                 completedMatchResults.size(), matchProfileId);
 
