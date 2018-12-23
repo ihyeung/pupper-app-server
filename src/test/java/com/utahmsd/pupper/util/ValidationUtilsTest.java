@@ -6,9 +6,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 
-import static com.utahmsd.pupper.util.ValidationUtils.isValidDate;
-import static com.utahmsd.pupper.util.ValidationUtils.isValidEmail;
-import static com.utahmsd.pupper.util.ValidationUtils.isValidZipcode;
+import static com.utahmsd.pupper.util.ValidationUtils.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -24,7 +22,16 @@ public class ValidationUtilsTest {
     }
 
     @Test
-    public void isValidEmail_validEmailInput() {
+    public void testIsValidZipCodeRadius() {
+        assertTrue(isValidZipCodeRadius("0"));
+        assertTrue(isValidZipCodeRadius("50"));
+        assertFalse(isValidZipCodeRadius("123456"));
+        assertFalse(isValidZipCodeRadius("-10"));
+        assertFalse(isValidZipCodeRadius("TEST"));
+    }
+
+    @Test
+    public void testIsValidEmail_validEmailInput() {
         assertTrue(isValidEmail("test123@test.com"));
         assertTrue(isValidEmail("test_123@test.com"));
         assertTrue(isValidEmail("test-123@test.com"));
@@ -35,7 +42,7 @@ public class ValidationUtilsTest {
     }
 
     @Test
-    public void isValidEmail_invalidEmailInput() {
+    public void testIsValidEmail_invalidEmailInput() {
         assertFalse(isValidEmail("email"));
         assertFalse(isValidEmail("1234"));
         assertFalse(isValidEmail("emailwith @ spaces.com"));
@@ -47,7 +54,7 @@ public class ValidationUtilsTest {
     }
 
     @Test
-    public void isValidDate_validDate() {
+    public void testIsValidDate_validDate() {
         assertTrue(isValidDate(new SimpleDateFormat("yyyy-MM-dd").format(Date.from(Instant.now()))));
         assertTrue(isValidDate("2018-11-29"));
         assertTrue(isValidDate("2018-01-31"));
@@ -55,7 +62,7 @@ public class ValidationUtilsTest {
     }
 
     @Test
-    public void isValidDate_invalidDateFormat() {
+    public void testIsValidDate_invalidDateFormat() {
         assertFalse(isValidDate("hello"));
         assertFalse(isValidDate("12-04-90"));
         assertFalse(isValidDate("12-04-1990"));
@@ -63,5 +70,15 @@ public class ValidationUtilsTest {
         assertFalse(isValidDate("2018-1-9"));
         assertFalse(isValidDate("1800-21-09"));
         assertFalse(isValidDate("2030-21-09"));
+    }
+
+    @Test
+    public void testIsValidNumericInput() {
+        assertTrue(isValidNumericInput("5"));
+        assertTrue(isValidNumericInput("123456789"));
+        assertFalse(isValidNumericInput(""));
+        assertFalse(isValidNumericInput("TEST"));
+        assertFalse(isValidNumericInput("123TEST123"));
+
     }
 }

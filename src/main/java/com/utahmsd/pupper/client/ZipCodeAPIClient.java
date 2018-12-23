@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.*;
 
+import static com.utahmsd.pupper.util.ValidationUtils.isValidZipCodeRadius;
 import static com.utahmsd.pupper.util.ValidationUtils.isValidZipcode;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
@@ -91,7 +92,7 @@ public class ZipCodeAPIClient {
 
     public List<String> getZipCodesInRadius(String zipcode, String radius) {
         List<String> zipCodes = new ArrayList<>();
-        if (!isValidRadius(radius) || !isValidZipcode(zipcode) || Integer.valueOf(radius) == 0) {
+        if (!isValidZipCodeRadius(radius) || !isValidZipcode(zipcode) || Integer.valueOf(radius) == 0) {
             return zipCodes;
         }
         String responseBody = executeHttpGet(ZIP_CODES_RADIUS, zipcode, radius);
@@ -102,7 +103,7 @@ public class ZipCodeAPIClient {
         return zipCodes;
     }
 
-    public String executeHttpGet(String url, String zipcode, String apiParam) {
+    private String executeHttpGet(String url, String zipcode, String apiParam) {
         HttpGet httpGet = new HttpGet(String.format(url, zipcode, apiParam));
         LOGGER.info("Sending HTTP GET to '{}'", httpGet.getURI());
         httpGet.setHeaders(HEADERS);
@@ -129,10 +130,6 @@ public class ZipCodeAPIClient {
             return objectMapper.convertValue(zipCodeData, new TypeReference<List<ZipCodeRadiusResult>>() {});
         }
         return Collections.emptyList();
-    }
-
-    private boolean isValidRadius(String input) {
-        return input.matches("^[0-9]+$") && Integer.valueOf(input) >= 0 && Integer.valueOf(input) <= MAX_RADIUS;
     }
 
     private String createMultiZipcodeStringForUrl(List<String> list) {

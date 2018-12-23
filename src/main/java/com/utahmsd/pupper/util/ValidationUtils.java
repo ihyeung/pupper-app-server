@@ -3,10 +3,20 @@ package com.utahmsd.pupper.util;
 import com.amazonaws.util.StringUtils;
 import org.joda.time.DateTime;
 
+import static com.utahmsd.pupper.client.ZipCodeAPIClient.MAX_RADIUS;
+
 public class ValidationUtils {
 
     public static boolean isValidZipcode(String input) {
         return !StringUtils.isNullOrEmpty(input) && input.matches("^[0-9]{5}$");
+    }
+
+    public static boolean isValidNumericInput(String input) {
+         return input.matches("^[0-9]+$");
+    }
+
+    public static boolean isValidZipCodeRadius(String input) {
+        return isValidNumericInput(input) && Integer.valueOf(input) >= 0 && Integer.valueOf(input) <= MAX_RADIUS;
     }
 
     public static boolean isValidEmail(String input) {
