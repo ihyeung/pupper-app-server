@@ -13,7 +13,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -41,11 +40,13 @@ public class ZipCodeAPIClient {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
+    private final JacksonJsonParser jacksonJsonParser;
 
     @Autowired
-    public ZipCodeAPIClient(HttpClient httpClient, ObjectMapper objectMapper) {
+    public ZipCodeAPIClient(HttpClient httpClient, ObjectMapper objectMapper, JacksonJsonParser jacksonJsonParser) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
+        this.jacksonJsonParser = jacksonJsonParser;
     }
 
     public Map<String,Integer> getDistanceBetweenZipCodeAndMultipleZipCodes(String zipcode, List<String> zipcodeList) {
@@ -56,13 +57,14 @@ public class ZipCodeAPIClient {
         }
         String responseBody = executeHttpGet(DIST_BETWEEN_ZIPCODE_LIST, zipcode, zipString);
         if (!StringUtils.isNullOrEmpty(responseBody)) {
-            Map<String, Object> distances = new JacksonJsonParser().parseMap(responseBody);
+            Map<String, Object> distances = jacksonJsonParser.parseMap(responseBody);
             String[] distanceList = manuallyParseZipcodeDIstanceResponseObj(distances);
             for (String each: distanceList) {
                 String[] zipDistKeyValPair = each.split("=");
+                Integer roundedDistance = Math.round(Float.parseFloat(zipDistKeyValPair[1]));
                 LOGGER.info("Adding the following zipcode and its calculated distance: <{},{}>",
-                        zipDistKeyValPair[0], zipDistKeyValPair[1]);
-                distanceMap.put(zipDistKeyValPair[0], Math.round(Float.parseFloat(zipDistKeyValPair[1])));
+                        zipDistKeyValPair[0], roundedDistance);
+                distanceMap.put(zipDistKeyValPair[0], roundedDistance);
             }
         }
         return distanceMap;
@@ -81,7 +83,7 @@ public class ZipCodeAPIClient {
         }
         String responseBody = executeHttpGet(DIST_BETWEEN_ZIPCODES, zipcode, zipcode1);
         if (!StringUtils.isNullOrEmpty(responseBody)) {
-            String distance = new JacksonJsonParser().parseMap(responseBody).get("distance").toString();
+            String distance = jacksonJsonParser.parseMap(responseBody).get("distance").toString();
             return Math.round(Float.valueOf(distance));
         }
         return 0;
@@ -100,7 +102,7 @@ public class ZipCodeAPIClient {
         return zipCodes;
     }
 
-    private String executeHttpGet(String url, String zipcode, String apiParam) {
+    public String executeHttpGet(String url, String zipcode, String apiParam) {
         HttpGet httpGet = new HttpGet(String.format(url, zipcode, apiParam));
         LOGGER.info("Sending HTTP GET to '{}'", httpGet.getURI());
         httpGet.setHeaders(HEADERS);
@@ -114,14 +116,14 @@ public class ZipCodeAPIClient {
             }
             return EntityUtils.toString(response.getEntity());
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
         return null;
     }
 
     private List<ZipCodeRadiusResult> parseZipcodeResultsFromApiResponse(String response) {
         if (!StringUtils.isNullOrEmpty(response)) {
-            Map<String, Object> responseMap = new BasicJsonParser().parseMap(response);
+            Map<String, Object> responseMap = jacksonJsonParser.parseMap(response);
             Object zipCodeData = responseMap.getOrDefault("zip_codes", null);
 
             return objectMapper.convertValue(zipCodeData, new TypeReference<List<ZipCodeRadiusResult>>() {});
@@ -130,7 +132,7 @@ public class ZipCodeAPIClient {
     }
 
     private boolean isValidRadius(String input) {
-        return Integer.valueOf(input) >= 0 && Integer.valueOf(input) <= MAX_RADIUS;
+        return input.matches("^[0-9]+$") && Integer.valueOf(input) >= 0 && Integer.valueOf(input) <= MAX_RADIUS;
     }
 
     private String createMultiZipcodeStringForUrl(List<String> list) {

@@ -1,56 +1,32 @@
-package com.utahmsd.pupper.unit.client;
+package com.utahmsd.pupper.acceptance.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utahmsd.pupper.client.ZipCodeAPIClient;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.json.JacksonJsonParser;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@RunWith(MockitoJUnitRunner.class)
-public class ZipCodeAPIClientTest {
+public class ZipCodeAPIClientAT {
 
-//    private ZipCodeAPIClient zipCodeAPIClient;
-//
-//    @Mock
-//    private HttpClient httpClient;
-//    @Mock
-//    private ObjectMapper objectMapper;
-////
-//    private static final String DEFAULT_ZIP = "84095";
-//    private List<ZipCodeRadiusResult> mockResults;
-//    private HttpResponse response;
-//
-//    @Before
-//    public void init() {
-//        zipCodeAPIClient = new ZipCodeAPIClient(httpClient, objectMapper, apiKey);
-//
-//        mockResults = new ArrayList<>();
-//        mockResults.add(new ZipCodeRadiusResult("84009", 1.744, "South Jordan", "UT"));
-//        mockResults.add(new ZipCodeRadiusResult("84095", 0, "South Jordan", "UT"));
-//        mockResults.add(new ZipCodeRadiusResult("84088", 2.773, "West Jordan", "UT"));
-//
-//    }
+    private ZipCodeAPIClient zipCodeAPIClient;
 
     private static final String DEFAULT_ZIP = "84095";
-    private HttpClient httpClient = HttpClients.createDefault();
-    private ObjectMapper objectMapper = new ObjectMapper();
-    private ZipCodeAPIClient zipCodeAPIClient;
 
     @Before
     public void init() {
-        zipCodeAPIClient = new ZipCodeAPIClient(httpClient, objectMapper);
+        zipCodeAPIClient =
+                new ZipCodeAPIClient(HttpClients.createDefault(), new ObjectMapper(), new JacksonJsonParser());
     }
 
     @Test
-    public void testGetZipCodesInRadius() throws IOException {
-//        when(httpClient.execute(any())).thenReturn(response);
+    public void testGetZipCodesInRadius() {
 
         assertThat(zipCodeAPIClient.getZipCodesInRadius(DEFAULT_ZIP, "3").size()).isEqualTo(3);
         assertThat(zipCodeAPIClient.getZipCodesInRadius(DEFAULT_ZIP, "1").size()).isEqualTo(1);
@@ -64,16 +40,25 @@ public class ZipCodeAPIClientTest {
         assertThat(zipCodeAPIClient.getDistanceBetweenZipcodes(DEFAULT_ZIP, "84601")).isNotZero();
     }
 
+
+    @Test
+    public void testGetDistanceBetweenZipcodes_distanceBetweenDuplicateZipCodes() {
+        assertThat(zipCodeAPIClient.getDistanceBetweenZipcodes(DEFAULT_ZIP, DEFAULT_ZIP)).isEqualTo(0);
+    }
+
     @Test
     public void testGetDistanceBetweenZipcodes_invalidZipcode() {
-        assertThat(zipCodeAPIClient.getDistanceBetweenZipcodes(DEFAULT_ZIP, DEFAULT_ZIP)).isEqualTo(0);
         assertThat(zipCodeAPIClient.getDistanceBetweenZipcodes(DEFAULT_ZIP, "ello")).isEqualTo(0);
     }
 
     @Test
     public void testGetDistanceBetweenMultipleZipcodes() {
-        List<String> zipcodeList = Arrays.asList("84601", "84088");
-        assertThat(zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(DEFAULT_ZIP, zipcodeList)).containsKeys("84601", "84088");
+        List<String> zipcodeList = Arrays.asList(DEFAULT_ZIP, "84088");
+        Map<String, Integer> distances =
+                zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(DEFAULT_ZIP, zipcodeList);
+        assertThat(distances).containsKey( "84088");
+        assertThat(distances.get("84088")).isNotZero();
+
     }
 
     @Test
