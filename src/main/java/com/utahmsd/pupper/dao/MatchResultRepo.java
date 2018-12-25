@@ -63,6 +63,11 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "AND (m.matchProfileOne.id = :id OR m.matchProfileTwo.id = :id)")
     Integer getMutualMatchesCount(@Param("id") Long matchProfileId);
 
+    @Query("SELECT COUNT(m) FROM MatchResult m WHERE " +
+            "(m.matchProfileOne.id = :id AND m.matchForProfileOne = true) " +
+            "OR (m.matchProfileTwo.id = :id AND m.matchForProfileTwo = true)")
+    Integer getLikesByMatchProfileId(@Param("id") Long matchProfileId);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM MatchResult m WHERE (m.matchProfileOne.id= :id1 AND m.matchProfileTwo.id = :id2)" +

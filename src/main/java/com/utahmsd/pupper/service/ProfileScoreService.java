@@ -76,7 +76,9 @@ public class ProfileScoreService {
 
         assert(mutualMatches == distinctMatches.size());
 
-        float matchPercentage = distinctMatches.size()/(completedMatchResultCount.floatValue());
+//        float matchPercentage = distinctMatches.size()/(completedMatchResultCount.floatValue());
+
+        float matchPercentage = calculateMutualMatchPercent(matchProfile);
         LOGGER.info("Match percent: {}", matchPercentage);
 
         if (matchPercentage >= MATCH_PERCENT_MIN) {
@@ -87,6 +89,19 @@ public class ProfileScoreService {
         }
         LOGGER.info("Score adjustment: {}", scoreAdjustment);
         return scoreAdjustment;
+    }
+
+    /**
+     * Helper method that calculates the percentage of profiles that a given match profile liked that were
+     * a mutual like.
+     * @param matchProfile
+     * @return
+     */
+    private float calculateMutualMatchPercent(MatchProfile matchProfile) {
+        Integer likesForMatchProfile = matchResultRepo.getLikesByMatchProfileId(matchProfile.getId());
+        Integer mutualMatches = matchResultRepo.getMutualMatchesCount(matchProfile.getId());
+
+        return mutualMatches/likesForMatchProfile.floatValue();
     }
 
     private boolean wasRecentlyActive(Date date) {
