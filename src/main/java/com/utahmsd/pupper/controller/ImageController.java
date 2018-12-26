@@ -61,7 +61,7 @@ public class ImageController {
      * @param authToken authorization token for accessing endpoint called in AmazonAwsClient class.
      * @return imageUploadResponse
      */
-    @PutMapping(path = "/upload/user/{userId}/matchProfile/{matchProfileId}", consumes = {"multipart/form-data"}, headers = {"Authorization"})
+    @PutMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload", consumes = {"multipart/form-data"}, headers = {"Authorization"})
     public ImageUploadResponse uploadProfileImageForMatchProfile(@RequestPart(value = "profilePic") @NotNull MultipartFile file,
                                                                 @PathVariable("userId") Long userId,
                                                                 @PathVariable("matchProfileId") Long matchProfileId,

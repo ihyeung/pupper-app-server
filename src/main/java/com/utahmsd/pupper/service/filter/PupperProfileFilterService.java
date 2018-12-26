@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
@@ -61,12 +62,34 @@ public class PupperProfileFilterService {
         return pupperProfileRepo.findAllByLifeStage(lifestage);
     }
 
-    public Breed getPupperBreedByName(String breed) {
+    public PupperProfileResponse getPupperProfilesFilterByBreedId(Long breedId) {
+        Optional<List<PupperProfile>> results = pupperProfileRepo.findAllByBreedId(breedId);
+        if (!results.isPresent()) {
+            return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        }
+
+        return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public List<Breed> getBreeds() {
+        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, "name"));
+        Iterable<Breed> breeds = breedRepo.findAll(sortCriteria);
+        List<Breed> breedList = new ArrayList<>();
+        if (breeds.iterator().hasNext()) {
+            breeds.forEach(breedList::add);
+        }
+        return breedList;
+    }
+
+    public Breed getBreedFilterByName(String breed) {
         return breedRepo.findByNameOrAltName(breed, breed);
     }
 
-    public List<Breed> getPupperBreedsBySize(String size) {
+    public List<Breed> getBreedsFilterBySize(String size) {
         return breedRepo.findAllBySize(Size.fromValue(size));
     }
+
+
+
 
 }

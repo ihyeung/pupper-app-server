@@ -1,8 +1,6 @@
 package com.utahmsd.pupper.controller;
 
-import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
-import com.utahmsd.pupper.dto.BreedResponse;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import com.utahmsd.pupper.service.PupperProfileService;
 import com.utahmsd.pupper.service.filter.PupperProfileFilterService;
@@ -90,28 +88,8 @@ public class PupperProfileController {
         return pupperProfileService.deletePupperProfileById(userProfileId, pupperId);
     }
 
-    /*
-     *  Breed endpoints
-     */
-
-    @GetMapping(path ="/pupper/breed")
-    public BreedResponse getAllPupperBreeds() {
-        return pupperProfileService.getBreeds();
-    }
-
     @GetMapping(path ="/pupper/breed/{breedId}")
     public PupperProfileResponse findPupperProfilesByBreedId(@PathVariable("breedId") Long breedId) {
-        return pupperProfileService.getPupperProfilesByBreedId(breedId);
+        return pupperProfileFilterService.getPupperProfilesFilterByBreedId(breedId);
     }
-
-    @GetMapping(path ="/pupper/breed", params = {"name"})
-    public Breed findPupperBreedByName(@RequestParam("name") String breedName) {
-        return pupperProfileFilterService.getPupperBreedByName(breedName);
-    }
-
-    @GetMapping(path ="/pupper/breed", params = {"size"})
-    public List<Breed> findPupperBreedsBySize(@RequestParam("size") String size) {
-        return pupperProfileFilterService.getPupperBreedsBySize(size);
-    }
-
 }

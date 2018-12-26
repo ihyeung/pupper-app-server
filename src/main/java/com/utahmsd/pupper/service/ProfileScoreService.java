@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static com.utahmsd.pupper.util.Constants.DEFAULT_MAX_SCORE;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_MIN_SCORE;
@@ -20,11 +22,13 @@ public class ProfileScoreService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileScoreService.class);
 
-    private static final float ACTIVITY_WEIGHT = 1;
+    private static final float ACTIVITY_WEIGHT = 5;
     private static final int DAYS_ACTIVE_MIN = 7;
 
-    private static final float MATCH_PERCENT_WEIGHT = 3;
-    private static final int MATCH_PERCENT_MIN = 80;
+    private static final float MATCH_PERCENT_WEIGHT = 1;
+    private static final int MATCH_PERCENT_MIN = 75; //Match percent threshold for which scores should be negatively impacted
+
+    private static final float IMAGE_WEIGHT = 1;
 
     private final MatchResultRepo matchResultRepo;
     private final MatchProfileRepo matchProfileRepo;
@@ -56,38 +60,15 @@ public class ProfileScoreService {
     }
 
     private float calculateScoreAdjustment(MatchProfile matchProfile) {
-        float scoreAdjustment = 0;
-        if (!wasRecentlyActive(matchProfile.getUserProfile().getLastLogin())) {
-            scoreAdjustment -= ACTIVITY_WEIGHT;
-        } else {
-            scoreAdjustment += ACTIVITY_WEIGHT;
-        }
-        Integer completedMatchResultCount = matchResultRepo.getCompletedMatchResultCount(matchProfile.getId());
-        if (completedMatchResultCount == 0) {
-            return scoreAdjustment;
-        }
-        List<MatchProfile> fkColumnOneMatches = matchResultRepo.findActiveMatches(matchProfile.getId());
-        List<MatchProfile> fkColumnTwoMatches = matchResultRepo.findPassiveMatches(matchProfile.getId());
-        Set<MatchProfile> distinctMatches = new HashSet<>();
-        distinctMatches.addAll(fkColumnOneMatches);
-        distinctMatches.addAll(fkColumnTwoMatches);
+        float scoreAdjustment = calculateRecentActivityScoreAdjustment(matchProfile);
+        LOGGER.info("User activity core adjustment: {}", scoreAdjustment);
 
-        Integer mutualMatches = matchResultRepo.getMutualMatchesCount(matchProfile.getId());
+        scoreAdjustment += calculateMatchPercentScoreAdjustment(calculateMutualMatchPercent(matchProfile));
+        LOGGER.info("Match score adjustment: {}", scoreAdjustment);
 
-        assert(mutualMatches == distinctMatches.size());
+        scoreAdjustment += calculateProfileImageScoreAdjustment(matchProfile);
+        LOGGER.info("Profile score adjustment: {}", scoreAdjustment);
 
-//        float matchPercentage = distinctMatches.size()/(completedMatchResultCount.floatValue());
-
-        float matchPercentage = calculateMutualMatchPercent(matchProfile);
-        LOGGER.info("Match percent: {}", matchPercentage);
-
-        if (matchPercentage >= MATCH_PERCENT_MIN) {
-            scoreAdjustment += (1/matchPercentage * MATCH_PERCENT_WEIGHT);
-        } else {
-            scoreAdjustment -= (1/matchPercentage * MATCH_PERCENT_WEIGHT);
-
-        }
-        LOGGER.info("Score adjustment: {}", scoreAdjustment);
         return scoreAdjustment;
     }
 
@@ -102,6 +83,23 @@ public class ProfileScoreService {
         Integer mutualMatches = matchResultRepo.getMutualMatchesCount(matchProfile.getId());
 
         return mutualMatches/likesForMatchProfile.floatValue();
+    }
+
+    private float calculateMatchPercentScoreAdjustment(float mutualMatchPercentage) {
+        float matchPercentAdjustment = 1/mutualMatchPercentage * MATCH_PERCENT_WEIGHT;
+        return mutualMatchPercentage >= MATCH_PERCENT_MIN ?
+                matchPercentAdjustment : -1 * matchPercentAdjustment;
+    }
+
+    private float calculateRecentActivityScoreAdjustment(MatchProfile matchProfile) {
+        if (!wasRecentlyActive(matchProfile.getUserProfile().getLastLogin())) {
+            return  -1 * ACTIVITY_WEIGHT/ACTIVITY_WEIGHT;  //Decrease magnitude of score decrease from inactivity
+        }
+            return ACTIVITY_WEIGHT; //Increase magnitude of score increase from recent activity
+    }
+
+    private float calculateProfileImageScoreAdjustment(MatchProfile matchProfile) {
+        return null == matchProfile.getProfileImage() ? -1 * IMAGE_WEIGHT : IMAGE_WEIGHT * 2;
     }
 
     private boolean wasRecentlyActive(Date date) {

@@ -110,7 +110,7 @@ public class MatcherController {
      */
     @GetMapping(path = "/result", params = {"matchProfileId"})
     public List<MatchResult> getMatchResultDataForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
-        return matcherService.retrieveMatchResultDataForMatchProfile(matchProfileId);
+        return matcherService.retrieveCompletedMatchResultsForMatchProfile(matchProfileId);
     }
 
     /**
@@ -138,10 +138,17 @@ public class MatcherController {
     }
 
     /**
-     * IGNORE ME, this is a testing method in an attempt to resolve a bug!
+     * Method that queries for the number of match result records that are expired and not completed yet.
+     * Used to verify that scheduled delete method for expired records is deleting the right number of records.
+     * @param expired
      */
-    @PostMapping(path = "/expiresAt")
-    public void updateExpiresAt() {
-        matcherService.updateRecordExpiresForAllFields();
+    @GetMapping(path = "/result", params = {"expired"})
+    public Integer getExpiredIncompleteRecords(@RequestParam("expired") boolean expired) {
+        return matcherService.retrieveNumberOfExpiredIncompleteRecords();
+    }
+
+    @PostMapping(path = "/result/expired")
+    public void extendExpirationOfExpiredIncompleteRecords() {
+        matcherService.extendResultExpirationPeriodForIncompleteRecords();
     }
 }

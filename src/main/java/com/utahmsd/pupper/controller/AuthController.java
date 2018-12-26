@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@Api(value = "UserAccount/Auth Controller For Testing UserAccount")
+@Api(value = "User Account/Auth Controller")
 @RequestMapping("/account")
 public class AuthController {
 

@@ -24,6 +24,7 @@ import static com.utahmsd.pupper.dto.MatcherDataResponse.createMatcherDataRespon
 import static com.utahmsd.pupper.dto.pupper.ProfileCard.matchProfileToProfileCardMapper;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static com.utahmsd.pupper.util.Constants.IDS_MISMATCH;
+import static com.utahmsd.pupper.util.Utils.getIsoFormatTimestamp;
 import static org.springframework.http.HttpStatus.OK;
 
 @Service
@@ -31,9 +32,8 @@ public class MatcherService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileService.class);
     private static final int DEFAULT_ZIP_RADIUS = 3;
-    private static final long DEFAULT_EXPIRES = 12L; //Mark matchResults to expire 12 hours from when a batch of profiles is sent
+    private static final long DEFAULT_EXPIRES = 24*7L; //Mark matchResult record expired 7 days from when the record is created
     private final String DIST_AWAY = "%d miles away";
-
 
     private final MatchProfileRepo matchProfileRepo;
     private final MatchResultRepo matchResultRepo;
@@ -67,6 +67,7 @@ public class MatcherService {
         if (profileCards.isEmpty()) {
             return;
         }
+        String zipCode = m.getUserProfile().getZip();
         List<String> zipcodeList = new ArrayList<>();
         profileCards.forEach(each -> {
             if (!zipcodeList.contains(each.getDistance())) {
@@ -74,15 +75,12 @@ public class MatcherService {
             }
         });
         Map<String, Integer> zipcodeDistances =
-                zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(m.getUserProfile().getZip(), zipcodeList);
+                zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(zipCode, zipcodeList);
 
         profileCards.forEach(profileCard -> {
             Integer numMilesAway = zipcodeDistances.get(profileCard.getDistance());
-            if (numMilesAway == null) {
-                LOGGER.error("Distance not found for zipcode={}", profileCard.getDistance());
-            }
-            profileCard.setDistance(
-                    String.format(DIST_AWAY, numMilesAway == null ? new Random().nextInt(50) : numMilesAway));
+
+            profileCard.setDistance(String.format(DIST_AWAY, numMilesAway));
         });
     }
 
@@ -100,23 +98,26 @@ public class MatcherService {
      * @param matchProfileId
      * @return
      */
-    private List<Long> getPastMatcherResultsForMatchProfile(Long matchProfileId) {
+    private List<Long> getIdsOfPreviouslyShownProfilesForMatchProfile(Long matchProfileId) {
 
         //Native query referencing matchProfileIds returns a list of Integers **
-        List<Integer> previouslyRatedProfileIdsUsingNativeQuery =
+        List<Integer> previouslyRatedProfileIds =
                 matchResultRepo.retrieveAllIdsforMatchProfilesPreviouslyRated(matchProfileId, matchProfileId);
+
+        LOGGER.info("Number of profiles that this matchprofile has rated: {}", previouslyRatedProfileIds.size());
 
         Set<Long> distinctMatchProfileIds = new HashSet<>();
         //Cast each Integer to a Long to prevent hashset from including duplicate values
-        previouslyRatedProfileIdsUsingNativeQuery.forEach(each -> distinctMatchProfileIds.add(each.longValue()));
+        previouslyRatedProfileIds.forEach(each -> distinctMatchProfileIds.add(each.longValue()));
 
         //JPQL query referencing matchProfileIds returns a list of Longs **
         List<Long> previouslySentRecords =
                 matchResultRepo.findMatchProfilesInPreviouslySentBatchesNotExpired(matchProfileId, Instant.now());
+        LOGGER.info("Number of records in batches that were previously sent to the user (that are not expired): {}", previouslySentRecords.size());
 
         distinctMatchProfileIds.addAll(previouslySentRecords);
 
-        LOGGER.info("Number of distinct ids in combined two queries: {}", distinctMatchProfileIds.size());
+        LOGGER.info("Number of distinct ids in the combined queries: {}", distinctMatchProfileIds.size());
         return new ArrayList<>(distinctMatchProfileIds);
     }
 
@@ -129,33 +130,28 @@ public class MatcherService {
      * @return
      */
     public List<MatchProfile> getAllUnseenMatchProfilesForMatchProfile(Long matchProfileId) {
-        List<Long> matchProfileIdsToExclude = getPastMatcherResultsForMatchProfile(matchProfileId);
+        List<Long> matchProfileIdsToExclude = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfileId);
 
-        if (matchProfileIdsToExclude.isEmpty()) {
-            List<MatchProfile> allRemainingProfiles = matchProfileRepo.findAll();
-            allRemainingProfiles.removeIf(matchProfile -> matchProfile.getId().equals(matchProfileId));
-
-            return allRemainingProfiles;
-        }
         List<MatchProfile> unseenProfiles =
                 matchProfileRepo.findAllByIdIsNotInAndIdIsNotOrderByScoreDesc(matchProfileIdsToExclude, matchProfileId);
+
         LOGGER.info("Total number of unseen matchProfiles: {}", unseenProfiles.size());
         return unseenProfiles;
     }
 
     public List<MatchProfile> getAllUnseenMatchProfilesForMatchProfileWithZipFilter(Long matchProfileId, int radius) {
-        int zipRadius = radius > 0 && radius < MAX_RADIUS ? radius : DEFAULT_ZIP_RADIUS;
+        int zipRadius = radius > 0 && radius <= MAX_RADIUS ? radius : DEFAULT_ZIP_RADIUS;
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
         if (m.isPresent()) {
             List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), String.valueOf(zipRadius));
 
-            List<Long> idList = getPastMatcherResultsForMatchProfile(matchProfileId);
+            List<Long> idList = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfileId);
 
-            if (idList.isEmpty()) {
-                return matchProfileRepo.findAllByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(matchProfileId, zipcodesInRange);
-            }
-            return matchProfileRepo.
-                    findAllByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(idList, matchProfileId, zipcodesInRange);
+            List<MatchProfile> unseenProfiles = matchProfileRepo.
+                    findAllByIdIsNotInAndUserProfile_ZipIsInOrderByScoreDesc(idList, zipcodesInRange);
+
+            unseenProfiles.remove(m.get());
+            return unseenProfiles;
         }
         return null;
     }
@@ -166,25 +162,20 @@ public class MatcherService {
         List<String> zipcodesInRange =
                 zipCodeAPIClient.getZipCodesInRadius(matchProfile.getUserProfile().getZip(), String.valueOf(zipRadius));
         if (zipcodesInRange.isEmpty()) {
-            LOGGER.info("No zipcodes were found within the specified radius of the profile's zipcode.");
+            LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
             return new ArrayList<>();
         }
-        List<Long> viewedMatchProfileIds = getPastMatcherResultsForMatchProfile(matchProfile.getId());
+        List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
 
-        if (viewedMatchProfileIds.isEmpty()) {
-            return matchProfileRepo.findTop5ByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(matchProfile.getId(),
-                    zipcodesInRange);
-        }
-        List<MatchProfile> nextBatch = matchProfileRepo.
-                findTop5ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(viewedMatchProfileIds,
+        List<MatchProfile> nextBatch =
+                matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(viewedMatchProfileIds,
                         matchProfile.getId(), zipcodesInRange);
+
         LOGGER.info("Number of profiles in the next batch: {}", nextBatch.size());
         return nextBatch;
     }
 
-    //    @Transactional
     void createBlankMatchResultRecordsForBatch(Long matchProfileId, List<MatchProfile> matchProfiles) {
-        LOGGER.info("Creating empty match_result records for outgoing batch of matcher data");
         matchProfiles.forEach(each -> insertOrUpdateMatchResult(matchProfileId, each.getId(), null));
     }
 
@@ -216,7 +207,7 @@ public class MatcherService {
     }
 
     public MatcherDataResponse updateMatcherResults (Long matchProfileId, MatcherDataRequest request) {
-        LOGGER.info("{} match_result records to update data for", request.getMap().size());
+        LOGGER.info("Request contains {} match_result records to update.", request.getMap().size());
         AtomicInteger updateCount = new AtomicInteger();
         if (!request.getMatchProfileId().equals(matchProfileId)) {
             return createMatcherDataResponse(false, null, HttpStatus.BAD_REQUEST, IDS_MISMATCH);
@@ -234,7 +225,7 @@ public class MatcherService {
         return createMatcherDataResponse(true, null, OK, DEFAULT_DESCRIPTION);
     }
 
-    public List<MatchResult> retrieveMatchResultDataForMatchProfile(Long matchProfileId) {
+    public List<MatchResult> retrieveCompletedMatchResultsForMatchProfile(Long matchProfileId) {
         List<MatchResult> completedMatchResults =
                 matchResultRepo.findCompletedMatchResultsForMatchProfile(matchProfileId);
         LOGGER.info("Found {} completed matchResults corresponding to matchProfileId={}",
@@ -284,10 +275,14 @@ public class MatcherService {
         return result;
     }
 
-    public void updateRecordExpiresForAllFields() {
-        Instant batchSent = Instant.now();
-        Instant recordExpires = batchSent.plus(DEFAULT_EXPIRES, ChronoUnit.HOURS);
-        matchResultRepo.updateRecordExpiresTimeTest(recordExpires);
+    public Integer retrieveNumberOfExpiredIncompleteRecords() {
+        return matchResultRepo.getExpiredIncompleteRecordsCount(Instant.now());
+    }
+
+    public void extendResultExpirationPeriodForIncompleteRecords() {
+        Instant newExpiresAt = Instant.now().plus(DEFAULT_EXPIRES, ChronoUnit.HOURS);
+        LOGGER.info("Extending expiration for expired/incomplete records to '{}'", getIsoFormatTimestamp(newExpiresAt));
+        matchResultRepo.extendExpirationForIncompleteRecords(newExpiresAt);
     }
 
 }

@@ -36,7 +36,7 @@ public class MatchProfileController {
 
     @GetMapping(path="/matchProfile", params = {"sortBy", "limit"})
     public List<MatchProfile> getAllMatchProfilesWithFilters(@RequestParam("sortBy") String sort, @RequestParam("limit") String limit) {
-        return matchProfileFilterService.getMatchProfilesWithFilters(sort, limit);
+        return matchProfileFilterService.getMatchProfilesWithLastLoginSortLimitFilters(sort, limit);
     }
 
     @GetMapping(path="/user/{userId}/matchProfile")
@@ -104,7 +104,7 @@ public class MatchProfileController {
     }
 
     @GetMapping(path="/matchProfile/score", params = {"matchProfileId"})
-    public void getMatchProfileScoreUpdate(@RequestParam("matchProfileId") Long matchProfileId) {
+    public void getMatchProfileScoreAdjustment(@RequestParam("matchProfileId") Long matchProfileId) {
         profileScoreService.calculateMatchProfileScoreAdjustmentForMatchProfile(matchProfileId);
     }
 }

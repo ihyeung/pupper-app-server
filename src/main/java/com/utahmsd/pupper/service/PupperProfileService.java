@@ -4,10 +4,8 @@ import com.amazonaws.util.StringUtils;
 import com.utahmsd.pupper.dao.BreedRepo;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
-import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.PupperProfile;
-import com.utahmsd.pupper.dto.BreedResponse;
 import com.utahmsd.pupper.dto.PupperProfileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.utahmsd.pupper.dto.BreedResponse.createBreedResponse;
 import static com.utahmsd.pupper.dto.PupperProfileResponse.createPupperProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
 import static com.utahmsd.pupper.util.ProfileUtils.dobToLifeStage;
@@ -144,14 +141,6 @@ public class PupperProfileService {
         return createPupperProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public PupperProfileResponse getPupperProfilesByBreedId(Long breedId) {
-        Optional<List<PupperProfile>> results = pupperProfileRepo.findAllByBreedId(breedId);
-        if (!results.isPresent()) {
-            return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
-        }
-
-        return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
-    }
 
     public PupperProfileResponse getPupperProfilesByMatchProfileId(Long userId, Long matchProfileId) {
         Optional<List<PupperProfile>> results = pupperProfileRepo.findAllByMatchProfileId(matchProfileId);
@@ -168,17 +157,6 @@ public class PupperProfileService {
         }
 
         return createPupperProfileResponse(true, results.get(), HttpStatus.OK, DEFAULT_DESCRIPTION);
-    }
-
-    public BreedResponse getBreeds() {
-        Sort sortCriteria = new Sort(new Sort.Order(Sort.Direction.ASC, "name"));
-        Iterable<Breed> breeds = breedRepo.findAll(sortCriteria);
-        List<Breed> breedList = new ArrayList<>();
-        if (breeds.iterator().hasNext()) {
-            breeds.forEach(breedList::add);
-            return createBreedResponse(true, breedList, HttpStatus.OK, DEFAULT_DESCRIPTION);
-        }
-        return createBreedResponse(false, null, HttpStatus.NOT_FOUND, NO_QUERY_RESULTS);
     }
 
 }

@@ -26,9 +26,6 @@ public interface MatchProfileRepo extends JpaRepository<MatchProfile, Long> {
     @Query("SELECT m FROM MatchProfile m WHERE m.userProfile.zip = :zip ORDER BY m.userProfile.lastLogin")
     List<MatchProfile> findAllByZip(@Param("zip") String zip);
 
-    @Query("SELECT m FROM MatchProfile m WHERE m.userProfile.lastLogin BETWEEN :lastLoginStart AND :lastLoginEnd")
-    List<MatchProfile> findAllByUserProfileLastLogin(@Param("lastLoginStart") Date dateStart, @Param("lastLoginEnd") Date dateEnd);
-
     @Query("FROM MatchProfile m JOIN UserProfile u ON m.userProfile = u WHERE m.userProfile.userAccount.username = :username")
     List<MatchProfile> findAllByUserEmail(@Param("username") String username);
 
@@ -43,33 +40,11 @@ public interface MatchProfileRepo extends JpaRepository<MatchProfile, Long> {
 
     List<MatchProfile> findAllByIdIsNotInAndIdIsNotOrderByScoreDesc(List<Long> idsToFilter, Long matchProfileId);
 
-    List<MatchProfile> findAllByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(List<Long> idsToFilter,
-                                                                                            Long matchProfileId,
-                                                                                            List<String> zipcodes);
+    List<MatchProfile> findAllByIdIsNotInAndUserProfile_ZipIsInOrderByScoreDesc(List<Long> idsToFilter,
+                                                                               List<String> zipcodes);
 
-    List<MatchProfile> findAllByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(Long matchProfileId, List<String> zips);
+    List<MatchProfile> findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(List<Long> matchProfileIds,
+                                                                                           Long id, List<String> zips);
 
-    /**
-     * Retrieves the next 5 matchProfiles that have not yet been displayed to the user, that are located within
-     * a predefined radius of the user.
-     * @param idsToFilter a list of ids corresponding to matchProfiles that the user has already seen.
-     * @param matchProfileId the user's matchProfileId
-     * @param zipcodes a list of valid zipcodes within a given radius of the user's location.
-     * @return
-     */
-    List<MatchProfile> findTop5ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(List<Long> idsToFilter,
-                                                                                           Long matchProfileId,
-                                                                                           List<String> zipcodes);
-
-    /**
-     * Retrieves the next 5 matchProfiles that have not yet been displayed to the user, that are located within
-     * a predefined radius of the user.
-     *
-     * Results are returned in descending order of score.
-     * @param matchProfileId matchProfileId retrieving the batch of profiles
-     * @param zips a list of zip codes that fall within a predefined radius of the user's zip code.
-     * @return
-     */
-    List<MatchProfile> findTop5ByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(Long matchProfileId, List<String> zips);
 
 }

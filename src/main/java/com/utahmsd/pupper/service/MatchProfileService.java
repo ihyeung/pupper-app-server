@@ -11,7 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.MatchProfileResponse.createMatchProfileResponse;
 import static com.utahmsd.pupper.util.Constants.*;
@@ -142,12 +145,13 @@ public class MatchProfileService {
     }
 
     public List<MatchProfile> retrieveMatchesForMatchProfile(Long matchProfileId) {
-        List<MatchProfile> activeMatches = matchResultRepo.findActiveMatches(matchProfileId);
-        List<MatchProfile> passiveMatches = matchResultRepo.findPassiveMatches(matchProfileId);
+        List<Integer> matchesIdList = matchResultRepo.retrieveIdsOfAllMutualMatches(matchProfileId, matchProfileId);
+        //Cast ids from result set from Integers to Longs in order to make repo call to retrieve match profiles
+        List<Long> matchProfileIds = new ArrayList<>();
+        matchesIdList.forEach(id -> matchProfileIds.add(id.longValue()));
 
-        Set<MatchProfile> distinctMatchProfiles = new HashSet<>(activeMatches);
-        distinctMatchProfiles.addAll(passiveMatches);
-//        List<Long> allMatchProfiles = matchResultRepo.retrieveMatchProfileIdsOfAllMatches(matchProfileId, matchProfileId);
-        return new ArrayList<>(distinctMatchProfiles);
+        List<MatchProfile> mutualMatches = matchProfileRepo.findAllById(matchProfileIds);
+
+        return new ArrayList<>(mutualMatches);
     }
 }

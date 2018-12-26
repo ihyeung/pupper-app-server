@@ -52,9 +52,12 @@ public class ZipCodeAPIClient {
 
     public Map<String,Integer> getDistanceBetweenZipCodeAndMultipleZipCodes(String zipcode, List<String> zipcodeList) {
         Map<String,Integer> distanceMap = new HashMap<>();
-        String zipString = createMultiZipcodeStringForUrl(zipcodeList);
+        String zipString = createMultiZipcodeStringForUrl(zipcode, zipcodeList);
         if (!isValidZipcode(zipcode) || zipString == null) {
             return distanceMap;
+        }
+        if (zipcodeList.contains(zipcode)) {
+            distanceMap.put(zipcode, 0);
         }
         String responseBody = executeHttpGet(DIST_BETWEEN_ZIPCODE_LIST, zipcode, zipString);
         if (!StringUtils.isNullOrEmpty(responseBody)) {
@@ -132,13 +135,18 @@ public class ZipCodeAPIClient {
         return Collections.emptyList();
     }
 
-    private String createMultiZipcodeStringForUrl(List<String> list) {
+    private String createMultiZipcodeStringForUrl(String zipcode, List<String> list) {
+        if (list.isEmpty()) {
+            return null;
+        }
         StringBuilder zipString = new StringBuilder();
         for (String zip : list) {
             if (!isValidZipcode(zip)) {
                 return null;
             }
-            zipString.append(",").append(zip);
+            if (!zip.equals(zipcode)) { //Skip concatenating a zip code if it matches the zipcode making the api call
+                zipString.append(",").append(zip);
+            }
         }
         return zipString.substring(1);
     }

@@ -17,7 +17,7 @@ import static com.utahmsd.pupper.util.Constants.*;
 public class MatchProfileFilterService {
 
     private static final String DEFAULT_SORT = "score";
-    private static final Sort.Direction SORT_DIRECTION = Sort.Direction.DESC; //For dates and scores, this makes sense. Everything else might make more sense in ascending order..?
+    private static final Sort.Direction SORT_DIRECTION = Sort.Direction.DESC; //Sort matchProfiles by descending score
 
     private final MatchProfileRepo matchProfileRepo;
 
@@ -26,7 +26,7 @@ public class MatchProfileFilterService {
         this.matchProfileRepo = matchProfileRepo;
     }
 
-    public List<MatchProfile> getMatchProfilesWithFilters(String sort, String limit) {
+    public List<MatchProfile> getMatchProfilesWithLastLoginSortLimitFilters(String sort, String limit) {
         int resultSize = Integer.valueOf(limit) > PAGE_SIZE ? PAGE_SIZE : Integer.valueOf(limit);
         String sortBy = isValidMatchProfileSort(sort) ? sort : DEFAULT_SORT;
         Sort sortCriteria = new Sort(new Sort.Order(SORT_DIRECTION, sortBy));

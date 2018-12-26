@@ -1,6 +1,5 @@
 package com.utahmsd.pupper.dao;
 
-import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.MatchResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -45,7 +44,9 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "(m.matchProfileOne.id = :id2 AND m.matchProfileTwo.id = :id1) ")
     MatchResult findMatcherRecord(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
 
-    @Query("DELETE FROM MatchResult m WHERE m.resultCompleted IS NULL AND m.recordExpires < :now")
+    @Query("DELETE FROM MatchResult m WHERE m.recordExpires < :now AND " +
+            "(m.matchForProfileOne IS NULL OR m.matchForProfileTwo IS NULL) " +
+            "OR (m.resultCompleted IS NULL)")
     void deleteIncompleteExpiredMatcherRecords(@Param("now") Instant currentInstant);
 
     @Query("FROM MatchResult m WHERE (m.resultCompleted IS NOT NULL OR " +
@@ -53,20 +54,21 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "AND (m.matchProfileOne.id = :id OR m.matchProfileTwo.id = :id)")
     List<MatchResult> findCompletedMatchResultsForMatchProfile(@Param("id") Long matchProfileId);
 
-    @Query("SELECT COUNT(m) FROM MatchResult m WHERE (m.resultCompleted IS NOT NULL OR " +
-            "(m.matchForProfileOne IS NOT NULL AND m.matchForProfileTwo IS NOT NULL)) " +
-            "AND (m.matchProfileOne.id = :id OR m.matchProfileTwo.id = :id)")
-    Integer getCompletedMatchResultCount(@Param("id") Long matchProfileId);
-
     @Query("SELECT COUNT(m) FROM MatchResult m WHERE " +
             "(m.matchForProfileOne = true AND m.matchForProfileTwo = true) " +
             "AND (m.matchProfileOne.id = :id OR m.matchProfileTwo.id = :id)")
     Integer getMutualMatchesCount(@Param("id") Long matchProfileId);
 
     @Query("SELECT COUNT(m) FROM MatchResult m WHERE " +
-            "(m.matchProfileOne.id = :id AND m.matchForProfileOne = true) " +
-            "OR (m.matchProfileTwo.id = :id AND m.matchForProfileTwo = true)")
+            "(m.matchProfileOne.id = :id AND m.matchForProfileOne = true AND m.matchForProfileTwo IS NOT NULL) " +
+            "OR (m.matchProfileTwo.id = :id AND m.matchForProfileTwo = true AND m.matchForProfileOne IS NOT NULL)")
     Integer getLikesByMatchProfileId(@Param("id") Long matchProfileId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE MatchResult m set m.recordExpires = :expiresAt WHERE " +
+            "(m.matchForProfileOne IS NULL OR m.matchForProfileTwo IS NULL) OR (m.resultCompleted is null)")
+    void extendExpirationForIncompleteRecords(@Param("expiresAt") Instant expiresAt);
 
     @Transactional
     @Modifying
@@ -76,26 +78,10 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
 
     void deleteMatchResultByMatchProfileOne_IdOrMatchProfileTwo_Id(Long matchProfileId1, Long matchProfileId2);
 
-    /**
-     * Finds all profiles for which the corresponding match_result was a mutual match for a given matchProfileId,
-     * where this matchProfileId was the first to retrieve a matcher batch containing the other.
-     */
-    @Query("select r.matchProfileTwo from MatchResult r where r.matchProfileOne.id = :id " +
-            "AND r.matchForProfileOne = TRUE AND r.matchForProfileTwo = TRUE")
-    List<MatchProfile> findActiveMatches(@Param("id") Long matchProfileId);
-
-    /**
-     * Finds all profiles for which the corresponding match_result was a mutual match for a given matchProfileId,
-     * where this matchProfileId was NOT the first to retrieve a matcher batch containing the other user.
-     */
-    @Query("select r.matchProfileOne from MatchResult r where r.matchProfileTwo.id = :id " +
-            "AND (r.matchForProfileOne = true AND r.matchForProfileTwo = true) ")
-    List<MatchProfile> findPassiveMatches(@Param("id") Long matchProfileId);
-
-    @Transactional
-    @Modifying
-    @Query(value = "UPDATE match_result set record_expires = ? WHERE record_expires is not null", nativeQuery = true)
-    void updateRecordExpiresTimeTest(Instant newExpiresTime);
+    @Query("SELECT COUNT(m) FROM MatchResult m WHERE m.recordExpires < :now AND " +
+            "(m.matchForProfileOne is null or m.matchForProfileTwo IS NULL) " +
+            "OR (m.resultCompleted is null)")
+    Integer getExpiredIncompleteRecordsCount(@Param("now") Instant now);
 
     /**
      * Alternative method for retrieving matchProfiles previously rated for a given matchProfileId, in a single
@@ -121,4 +107,10 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             " r.resultCompleted is not null)")
     List<Long> findMatchProfilesInPreviouslySentBatchesNotExpired(@Param("id") Long matchProfileId,
                                                                      @Param("now") Instant now);
+
+    @Query(value = "(select match_profile_id_fk_2 from match_result where match_profile_id_fk_1 = ? " +
+            "and match_profile_1_result = true and match_profile_2_result = true) " +
+            "union (select match_profile_id_fk_1 from match_result where match_profile_id_fk_2 = ? " +
+            "and match_profile_1_result = true and match_profile_2_result = true)" , nativeQuery = true)
+    List<Integer> retrieveIdsOfAllMutualMatches(Long matchProfileId, Long matchProfileId1);
 }

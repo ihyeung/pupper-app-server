@@ -8,7 +8,7 @@ RESTful Server Application For Pupper Mobile App
 
 === Version information
 [%hardbreaks]
-__Version__ : 0.1.2
+__Version__ : 0.1.3
 
 
 === License information
@@ -32,6 +32,7 @@ __BasePath__ : /
 * message-controller : Message Controller
 * pupper-profile-controller : Pupper Profile Controller
 * user-profile-controller : User Profile Controller
+* utility-controller : Utility Controller
 
 
 
