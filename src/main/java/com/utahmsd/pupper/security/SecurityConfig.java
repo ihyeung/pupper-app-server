@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static com.utahmsd.pupper.security.SecurityConstants.REGISTER_ENDPOINT;
-import static com.utahmsd.pupper.security.SecurityConstants.SWAGGER_WHITELIST;
 
 @Configuration
 @EnableWebSecurity
