@@ -21,9 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,7 +39,8 @@ import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static com.utahmsd.pupper.util.Constants.INVALID_PATH_VARIABLE;
 import static org.springframework.http.HttpStatus.*;
 
-@Component
+@Named
+@Singleton
 public class AmazonAwsClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AmazonAwsClient.class);

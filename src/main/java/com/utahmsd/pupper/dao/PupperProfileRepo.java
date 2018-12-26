@@ -2,12 +2,10 @@ package com.utahmsd.pupper.dao;
 
 import com.utahmsd.pupper.dao.entity.PupperProfile;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface PupperProfileRepo extends PagingAndSortingRepository<PupperProfile, Long> {
     Optional<PupperProfile> findByMatchProfileIdAndName (Long matchProfileId, String name);
     Optional<List<PupperProfile>> findAllByMatchProfileId (Long matchProfileId);
