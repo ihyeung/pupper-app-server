@@ -14,7 +14,10 @@ import javax.validation.constraints.Past;
 import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static com.utahmsd.pupper.util.Constants.DATE_FORMAT;
 import static com.utahmsd.pupper.util.Constants.DATE_FORMATTER;
@@ -115,7 +118,8 @@ public class MatchProfile implements Serializable {
             matchProfile.setNames((String) entityObject.get("names"));
             matchProfile.setBirthdate(DATE_FORMATTER.parse((String) entityObject.get("birthdate")));
             matchProfile.setSex(Gender.valueOf((String) entityObject.get("sex")));
-            matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
+//            matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
+            matchProfile.setNumDogs(1);
             matchProfile.setBreed(Breed.createFromObject(entityObject.get("breed")));
             matchProfile.setSize(Size.valueOf((String) entityObject.get("size")));
             matchProfile.setEnergyLevel(Energy.valueOf((String) entityObject.get("energyLevel")));

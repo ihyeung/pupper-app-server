@@ -202,10 +202,14 @@ __optional__|string
 __optional__|string
 |**distance** +
 __optional__|string
+|**energyLevel** +
+__optional__|string
 |**lastActive** +
 __optional__|string
 |**name** +
 __optional__|string
+|**numDogs** +
+__optional__|integer (int32)
 |**profileId** +
 __optional__|integer (int64)
 |**profileImage** +
