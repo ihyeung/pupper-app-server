@@ -43,7 +43,7 @@
 //                .license("Copyright (C) 2018 Irene Yeung")
 //                .termsOfServiceUrl("Pending Publication")
 //                .description("Server/Back-End For Pupper")
-//                .version(System.getProperty("application.version", null))
+//                .version("0.1.4"))
 //                .build();
 //    }
 //
