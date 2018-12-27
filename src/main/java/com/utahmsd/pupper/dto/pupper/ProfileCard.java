@@ -25,9 +25,9 @@ public class ProfileCard {
     private String aboutMe;
     private String lastActive;
     private String profileImage;
-//    private String energyLevel;
+    private String energyLevel;
 //    private boolean isFixed;
-//    private int numDogs;
+    private int numDogs;
 
     public static ArrayList<ProfileCard> matchProfileToProfileCardMapper(List<MatchProfile> matchProfileList) {
         ArrayList<ProfileCard> profileCards = new ArrayList<>();
@@ -42,19 +42,19 @@ public class ProfileCard {
         card.setSex(matchProfile.getSex().value());
         card.setAgeWithUnits(createAgeStringFromDate(matchProfile.getBirthdate()));
         card.setBreedName(matchProfile.getBreed().getName());
-//        card.setLocation("SOUTH JORDAN, UTAH");
         card.setDistance(matchProfile.getUserProfile().getZip());
         card.setAboutMe(StringUtils.isNullOrEmpty(matchProfile.getAboutMe()) ? DEFAULT_ABOUT_ME : matchProfile.getAboutMe());
         card.setLastActive(lastActivityFromLastLogin(matchProfile.getUserProfile().getLastLogin()));
         card.setProfileImage(matchProfile.getProfileImage());
-//        card.setNumDogs(matchProfile.getNumDogs());
+        card.setEnergyLevel(matchProfile.getEnergyLevel().value());
+        card.setNumDogs(matchProfile.getNumDogs());
 
         return card;
     }
 
     public static ProfileCard createFromPupperProfile(PupperProfile pupperProfile) {
         ProfileCard card = new ProfileCard();
-        card.setProfileId(pupperProfile.getId());
+        card.setProfileId(pupperProfile.getMatchProfile().getId());
         card.setName(pupperProfile.getName());
         card.setSex(pupperProfile.getSex().value());
         card.setAgeWithUnits(createAgeStringFromDate(pupperProfile.getBirthdate()));
@@ -62,6 +62,8 @@ public class ProfileCard {
         card.setAboutMe(DEFAULT_ABOUT_ME);
         card.setLastActive(lastActivityFromLastLogin(pupperProfile.getMatchProfile().getUserProfile().getLastLogin()));
         card.setProfileImage(pupperProfile.getMatchProfile().getProfileImage());
+        card.setEnergyLevel(pupperProfile.getEnergyLevel().value());
+        card.setNumDogs(1);
 
         return card;
     }
@@ -136,27 +138,15 @@ public class ProfileCard {
         this.profileImage = profileImage;
     }
 
-    //    public String getEnergyLevel() {
-//        return energyLevel;
-//    }
-//
-//    public void setEnergyLevel(String energyLevel) {
-//        this.energyLevel = energyLevel;
-//    }
-//
-//    public boolean isFixed() {
-//        return isFixed;
-//    }
-//
-//    public void setFixed(boolean fixed) {
-//        isFixed = fixed;
-//    }
+    public String getEnergyLevel() { return energyLevel; }
 
-//    public int getNumDogs() {
-//        return numDogs;
-//    }
+    public void setEnergyLevel(String energyLevel) { this.energyLevel = energyLevel; }
+
+//    public boolean isFixed() { return isFixed; }
 //
-//    public void setNumDogs(int numDogs) {
-//        this.numDogs = numDogs;
-//    }
+//    public void setFixed(boolean fixed) { isFixed = fixed; }
+//
+    public int getNumDogs() { return numDogs; }
+
+    public void setNumDogs(int numDogs) { this.numDogs = numDogs; }
 }

@@ -48,8 +48,12 @@ public class MatchProfileService {
         return createMatchProfileResponse(true, matchProfileList, HttpStatus.OK, NO_QUERY_RESULTS);
 
     }
+    public MatchProfile getMatchProfileByMatchProfileId(Long matchProfileId) {
+        Optional<MatchProfile> result = matchProfileRepo.findById(matchProfileId);
+        return result.orElse(null);
+    }
 
-    public MatchProfileResponse getMatchProfileById(Long userId, Long matchProfileId) {
+        public MatchProfileResponse getMatchProfileByIds(Long userId, Long matchProfileId) {
         Optional<MatchProfile> result = matchProfileRepo.findById(matchProfileId);
         if (!result.isPresent() || !userId.equals(result.get().getUserProfile().getId())) {
             LOGGER.error(IDS_MISMATCH);
