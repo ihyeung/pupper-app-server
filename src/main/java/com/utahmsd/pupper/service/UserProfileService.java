@@ -106,4 +106,9 @@ public class UserProfileService {
         userProfileRepo.updateProfileImage(userId, imageUrl);
         return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
+
+//    @Transactional
+    public void deleteUserProfileByEmail(String email) {
+        userProfileRepo.deleteByUserAccount_Username(email);
+    }
 }

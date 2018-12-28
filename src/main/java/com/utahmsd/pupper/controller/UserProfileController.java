@@ -79,4 +79,9 @@ public class UserProfileController {
         return userProfileService.updateProfileImageById(userId, profilePic);
     }
 
+    @DeleteMapping()
+    public void deleteUserProfileByEmail(@RequestParam("email") String email) {
+        userProfileService.deleteUserProfileByEmail(email);
+    }
+
 }
