@@ -38,4 +38,7 @@ public interface UserProfileRepo extends PagingAndSortingRepository<UserProfile,
     @Query("UPDATE UserProfile u SET u.profileImage = :url WHERE u.id = :id")
     void updateProfileImage(@Param("id") Long userId, @Param("url") String imageUrl);
 
+    @Transactional
+    void deleteByUserAccount_Username(String username);
+
 }
