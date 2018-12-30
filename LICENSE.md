@@ -1,4 +1,5 @@
 MIT License
+
 Copyright (c) 2018 Irene Yeung
 
 This project is licensed under the terms of the MIT license.
