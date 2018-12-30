@@ -6,22 +6,19 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
+@Repository
 public interface MessageRepo extends PagingAndSortingRepository<PupperMessage, Long> {
-    Optional<List<PupperMessage>> findAllByMatchProfileSender_IdOrMatchProfileReceiver_Id(Long matchProfileId1, Long matchProfileId2);
-    Optional<List<PupperMessage>> findAllByMatchProfileSender_IdAndMatchProfileReceiver_Id(Long matchProfileId1, Long matchProfileId2);
-
-
     @Query("FROM PupperMessage p WHERE (p.matchProfileSender.id = :id1 AND p.matchProfileReceiver.id = :id2) OR " +
             "(p.matchProfileSender.id = :id2 AND p.matchProfileReceiver.id = :id1) ORDER BY p.timestamp ASC")
     List<PupperMessage> retrieveMessageHistoryOldestToNewest(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
 
     @Query(value = "SELECT * FROM pupper_message WHERE (from_match_profile_id_fk = ? AND to_match_profile_id_fk = ?) OR " +
-            "(from_match_profile_id_fk = ? AND to_match_profile_id_fk = ?) ORDER BY timestamp ASC LIMIT 5", nativeQuery = true)
+            "(from_match_profile_id_fk = ? AND to_match_profile_id_fk = ?) ORDER BY timestamp DESC LIMIT 5", nativeQuery = true)
     List<PupperMessage> retrieve5MostRecentMessagesBetweenMatchProfiles(Long matchProfileId1, Long matchProfileId2,
                                                                          Long matchProfileId3, Long matchProfileId4);
 
@@ -34,18 +31,6 @@ public interface MessageRepo extends PagingAndSortingRepository<PupperMessage, L
      * @return
      */
     List<PupperMessage> findTop10ByMatchProfileSender_IdAndMatchProfileReceiver_IdOrMatchProfileReceiver_IdAndMatchProfileSender_IdOrderByTimestampDesc(Long id1,
-                                                                                                                                                        Long id2,
-                                                                                                                                                        Long id3,
-                                                                                                                                                        Long id4);
-    /**
-     * Retrieves entire message history between two  matchProfiles.
-     * @param id1 matchProfile #1
-     * @param id2 matchProfile #2
-     * @param id3 matchProfile #1
-     * @param id4 matchProfile #2
-     * @return
-     */
-    List<PupperMessage> findAllByMatchProfileSender_IdAndMatchProfileReceiver_IdOrMatchProfileReceiver_IdAndMatchProfileSender_IdOrderByTimestampDesc(Long id1,
                                                                                                                                                         Long id2,
                                                                                                                                                         Long id3,
                                                                                                                                                         Long id4);

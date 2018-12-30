@@ -6,6 +6,11 @@
 Server/Back-End For Pupper
 
 
+=== Version information
+[%hardbreaks]
+__Version__ : 0.1.4
+
+
 === License information
 [%hardbreaks]
 __License__ : Copyright (C) 2018 Irene Yeung
@@ -25,7 +30,6 @@ __BasePath__ : /
 * match-profile-controller : Match Profile Controller
 * matcher-controller : Matcher Controller
 * message-controller : Message Controller
-* pupper-profile-controller : Pupper Profile Controller
 * user-profile-controller : User Profile Controller
 * utility-controller : Utility Controller
 

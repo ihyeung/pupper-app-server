@@ -1,5 +1,6 @@
 package com.utahmsd.pupper;
 
+import com.utahmsd.pupper.config.SwaggerConfig;
 import io.github.swagger2markup.Swagger2MarkupConverter;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,8 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//@SpringBootTest(classes = {PupperApplication.class, SwaggerConfig.class})
-@SpringBootTest
+@SpringBootTest(classes = {PupperApplication.class, SwaggerConfig.class})
 @AutoConfigureRestDocs(outputDir = "build/asciidoc/snippets")
 @WebAppConfiguration
 @AutoConfigureMockMvc

@@ -5,23 +5,11 @@ import org.junit.Test;
 import java.time.Instant;
 import java.util.Date;
 
-import static com.utahmsd.pupper.util.Utils.getIsoFormatTimestampFromDate;
 import static com.utahmsd.pupper.util.Utils.getIsoFormatTimestamp;
+import static com.utahmsd.pupper.util.Utils.getIsoFormatTimestampFromDate;
 import static org.junit.Assert.assertEquals;
 
 public class UtilsUnitTest {
-
-    @Test
-    public void testComputeHash() {
-    }
-
-    @Test
-    public void testConcatBytes() {
-    }
-
-    @Test
-    public void testGenerateSalt() {
-    }
 
     @Test
     public void testGetIsoFormatDate() {

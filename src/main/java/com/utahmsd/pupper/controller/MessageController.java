@@ -22,11 +22,6 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @GetMapping()
-    public List<PupperMessage> getAllMessages() {
-        return messageService.getAllMessages();
-    }
-
     /**
      * Retrieves a specified number of messages, returned in order from newest to oldest.
      * @param messageLimit the number of messages to retrieve. If the limit specified exceeds a server-defined max,
@@ -36,16 +31,6 @@ public class MessageController {
     @GetMapping(params = {"limit"})
     public List<PupperMessage> getAllMessagesWithLimit(@RequestParam("limit") int messageLimit) {
         return messageService.getMessagesWithLimit(messageLimit);
-    }
-
-    /**
-     * Retrieves all messages ever sent or received by a given matchProfileId.
-     * @param matchProfileId
-     * @return
-     */
-    @GetMapping(params = {"matchProfileId1"})
-    public List<PupperMessage> getMessagesByMatchProfileId(@RequestParam("matchProfileId") Long matchProfileId) {
-        return messageService.getAllMessagesByMatchProfileId(matchProfileId);
     }
 
     /**
@@ -62,7 +47,7 @@ public class MessageController {
     }
 
     /**
-     * Retrieves all conversations between a given matchProfileId and its matches.
+     * Endpoint to hit when the 'messages' segment button of the Messaging tab is clicked.
      *
      * NOTE: For performance reasons, this method has been modified to only retrieve the 5 most recent messages in each message
      * history between a given match profile and its matches.
@@ -70,7 +55,7 @@ public class MessageController {
      * @param matchProfileId1
      * @return
      */
-    @GetMapping(params = {"matchProfileId"})
+    @GetMapping(path="/recent", params = {"matchProfileId"})
     public List<List<PupperMessage>> getRecentMessagesForAllMatches(@RequestParam("matchProfileId") Long matchProfileId1) {
         return messageService.getRecentMessageHistoriesForAllMatches(matchProfileId1);
     }

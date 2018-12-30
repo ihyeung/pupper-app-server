@@ -10,14 +10,13 @@ import com.utahmsd.pupper.service.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.UserProfileResponse.createUserProfileResponse;
@@ -56,17 +55,8 @@ public class UserProfileFilterService {
         return createUserProfileResponse(true, userList, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public UserProfileResponse getUserProfilesFilterByZip(String zipCode) {
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER));
-        Page<UserProfile> results = userProfileRepo.findByZip(zipCode, PageRequest.of(PAGE_NUM, PAGE_SIZE, sort));
-        long numResults = results.getTotalElements();
-        LOGGER.info("Number of results with zipcode {}: {}", zipCode,  numResults);
-        if (numResults > 0) {
-            return createUserProfileResponse(true, results.getContent(), HttpStatus.OK, DEFAULT_DESCRIPTION);
-        }
-        LOGGER.info("No user profiles found with zipcode '%d'", zipCode);
-        return createUserProfileResponse(true, null, HttpStatus.OK, NO_QUERY_RESULTS);
-
+    public List<UserProfile> getUserProfilesFilterByZip(String zipCode) {
+        return userProfileRepo.findAllByZip(zipCode);
     }
 
     public UserProfileResponse getUserProfileFilterByEmail(String email) {
