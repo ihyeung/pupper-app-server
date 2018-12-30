@@ -39,10 +39,10 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Pupper API")
-                .license("Copyright (C) 2018 Irene Yeung")
+                .license("MIT License: Copyright (C) 2018 Irene Yeung")
                 .termsOfServiceUrl("Pending Publication")
                 .description("Server/Back-End For Pupper")
-                .version("0.1.4")
+                .version("v0.1.5")
                 .build();
     }
 
