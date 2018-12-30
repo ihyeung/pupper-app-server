@@ -45,9 +45,4 @@ public class UtilityController {
         return pupperProfileFilterService.getBreedFilterByName(breedName);
     }
 
-    @GetMapping(path ="/breed", params = {"size"})
-    public List<Breed> getBreedsBySize(@RequestParam("size") String size) {
-        return pupperProfileFilterService.getBreedsFilterBySize(size);
-    }
-
 }

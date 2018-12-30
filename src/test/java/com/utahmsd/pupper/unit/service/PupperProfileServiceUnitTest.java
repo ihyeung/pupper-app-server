@@ -70,47 +70,17 @@ public class PupperProfileServiceUnitTest {
 
     @Test
     public void testCreateOrUpdatePupperProfile() {
-//            given(userProfileRepo.save(any(UserProfile.class))).willReturn(userProfile);
-//
-//            userProfileService.createOrUpdateUserProfile(userProfile);
-//
-//            verify(userProfileRepo, times(1)).findByUserAccount_Username(anyString());
-//            verify(userProfileRepo, times(1)).save(any(UserProfile.class));
     }
 
     @Test
     public void testUpdatePupperProfileByPupperProfileId() {
-//            userProfile.setId(3L);
-//
-//            given(userProfileRepo.save(any(UserProfile.class))).willReturn(userProfile);
-//            given(userProfileRepo.findById(anyLong())).willReturn(Optional.of(userProfile));
-//
-//            userProfileService.updateUserProfileByUserProfileId(userProfile.getId(), userProfile);
-//
-//            verify(userProfileRepo, times(1)).findById(anyLong());
-//            verify(userProfileRepo, times(1)).save(any(UserProfile.class));
     }
 
     @Test
     public void testUpdateUserProfileByPupperProfileId_idsMismatch() {
-//            userProfile.setId(3L);
-//
-//            given(userProfileRepo.findById(anyLong())).willReturn(Optional.of(userProfile));
-//
-//            userProfileService.updateUserProfileByUserProfileId(4L, userProfile);
-//
-//            verify(userProfileRepo, times(1)).findById(anyLong());
-//            verify(userProfileRepo, times(0)).save(any(UserProfile.class));
     }
 
     @Test
     public void testDeletePupperProfileById_invalidId() {
-//            given(userProfileRepo.findById(anyLong())).willReturn(Optional.empty());
-//
-//            userProfileService.deleteUserProfileById(anyLong());
-//
-//            verify(userProfileRepo).findById(anyLong());
-//            verify(userProfileRepo, times(0)).deleteById(anyLong());
     }
-
 }

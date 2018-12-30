@@ -16,11 +16,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static com.utahmsd.pupper.dto.MessageResponse.createMessageResponse;
 import static com.utahmsd.pupper.util.Constants.*;
-import static java.util.Collections.emptyList;
 
 @Service
 public class MessageService {
@@ -43,13 +45,6 @@ public class MessageService {
         this.matcherService = matcherService;
     }
 
-    public List<PupperMessage> getAllMessages() {
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, DEFAULT_SORT_ORDER)); //Sorts messages from oldest to newest
-        Page<PupperMessage> results = messageRepo.findAll(PageRequest.of(PAGE_NUM, PAGE_SIZE, sort));
-
-        return results.getContent();
-    }
-
     public List<PupperMessage> getMessagesWithLimit(int limit) {
         int messageLimit = !isWithinAcceptableMessageLimit(limit) ? MAX_MESSAGES : limit;
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, DEFAULT_SORT_ORDER)); //Sorts messages from newest to oldest
@@ -58,17 +53,6 @@ public class MessageService {
         LOGGER.info("Number of messages returned: {}", numResults);
 
         return results.getContent();
-    }
-
-    public List<PupperMessage> getAllMessagesByMatchProfileId(Long matchProfileId) {
-        Optional<List<PupperMessage>> messageList =
-                messageRepo.findAllByMatchProfileSender_IdOrMatchProfileReceiver_Id(matchProfileId, matchProfileId);
-        if (!messageList.isPresent()) {
-            LOGGER.error("No messages were found for matchProfileId={}", matchProfileId);
-            return null;
-        }
-        LOGGER.info("{} messages found that were sent/received by matchProfileId={}", messageList.get().size(), matchProfileId);
-        return messageList.get();
     }
 
     public List<PupperMessage> getCompleteMessageHistoryBetweenMatchProfiles(Long matchProfileId1, Long matchProfileId2) {
@@ -90,45 +74,11 @@ public class MessageService {
     public List<List<PupperMessage>> getRecentMessageHistoriesForAllMatches(Long matchProfileId) {
         List<MatchProfile> matchProfiles = matchProfileService.retrieveMatchesForMatchProfile(matchProfileId);
         List<List<PupperMessage>> allMessageHistories = new ArrayList<>(new ArrayList<>());
-//        matchProfiles.forEach(each -> allMessageHistories
-//                .add(messageRepo.retrieveMessageHistoryOldestToNewest(matchProfileId, each.getId())));
+
         matchProfiles.forEach(each -> allMessageHistories
                 .add(messageRepo.retrieve5MostRecentMessagesBetweenMatchProfiles(matchProfileId, each.getId(),
                                                                                 each.getId(), matchProfileId)));
         return allMessageHistories;
-    }
-
-    //Original implementation for retrieving message history, way more cluttered
-    public List<PupperMessage> getMessageHistoryByMatchProfileIds(Long matchProfileId1, Long matchProfileId2) {
-        Optional<List<PupperMessage>> messagesFrom1To2 =
-                messageRepo.findAllByMatchProfileSender_IdAndMatchProfileReceiver_Id(matchProfileId1, matchProfileId2);
-        Optional<List<PupperMessage>> messagesFrom2To1 =
-                messageRepo.findAllByMatchProfileSender_IdAndMatchProfileReceiver_Id(matchProfileId2, matchProfileId1);
-
-        if (!messagesFrom1To2.isPresent() && !messagesFrom2To1.isPresent()) {
-            LOGGER.error("No messages were exchanged between matchProfileId={} and received by matchProfileId={}", matchProfileId1, matchProfileId2);
-
-            return emptyList();
-        }
-
-        ArrayList<PupperMessage> messageHistory = new ArrayList<>();
-        if (messagesFrom1To2.isPresent()) {
-            LOGGER.info("{} messages were sent from matchProfileId={} and received by matchProfileId={}",
-                    messagesFrom1To2.get().size(), matchProfileId1, matchProfileId2);
-            messageHistory.addAll(messagesFrom1To2.get());
-        }
-        if (messagesFrom2To1.isPresent()) {
-            LOGGER.info("{} messages were sent from matchProfileId={} and received by matchProfileId={}",
-                    messagesFrom2To1.get().size(), matchProfileId2, matchProfileId1);
-            messageHistory.addAll(messagesFrom2To1.get());
-        }
-
-        LOGGER.info("{} messages were exchanged between matchProfileId={} and matchProfileId={}",
-                messageHistory.size(), matchProfileId1, matchProfileId2);
-
-        messageHistory.sort(Comparator.comparing(PupperMessage::getTimestamp)); //Sort messages by oldest to newest
-
-        return messageHistory;
     }
 
     public MessageResponse sendMessage(Long senderId, Long receiverId, PupperMessage pupperMessage) {

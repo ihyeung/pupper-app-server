@@ -46,16 +46,6 @@ public class UserProfileController {
         return userProfileService.updateUserProfileByUserProfileId(userProfileId, userProfile);
     }
 
-    @DeleteMapping(path = "/{userId}")
-    public UserProfileResponse deleteUserProfileById(@PathVariable("userId") Long userProfileId) {
-        return userProfileService.deleteUserProfileById(userProfileId);
-    }
-
-    @GetMapping(params = {"zip"})
-    public UserProfileResponse getUserProfilesWithZip(@RequestParam(value = "zip") String zip) {
-        return userProfileFilterService.getUserProfilesFilterByZip(zip);
-    }
-
     @GetMapping(params = {"email"})
     public UserProfileResponse findUserProfileByUserAccountEmail(@RequestParam(value = "email") String email) {
         return userProfileFilterService.getUserProfileFilterByEmail(email);
@@ -77,6 +67,11 @@ public class UserProfileController {
     public UserProfileResponse updateProfileImageForMatchProfile(@PathVariable("userId") Long userId,
                                                                   @RequestParam("profilePic") String profilePic) {
         return userProfileService.updateProfileImageById(userId, profilePic);
+    }
+
+    @DeleteMapping(path = "/{userId}")
+    public UserProfileResponse deleteUserProfileById(@PathVariable("userId") Long userProfileId) {
+        return userProfileService.deleteUserProfileById(userProfileId);
     }
 
     @DeleteMapping()
