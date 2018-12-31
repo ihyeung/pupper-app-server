@@ -176,20 +176,41 @@ public class MatcherService {
     }
 
     void createBlankMatchResultRecordsForBatch(Long matchProfileId, List<MatchProfile> matchProfiles) {
-        matchProfiles.forEach(each -> insertOrUpdateMatchResult(matchProfileId, each.getId(), null));
+        matchProfiles.forEach(each -> {
+            List<Boolean> wasMatchForOther = new ArrayList<>();
+            Optional<MatchResult> result = matchResultRepo.getMatchResult(matchProfileId, each.getId());
+            if (!result.isPresent()) {
+                wasMatchForOther.add(null);
+            } else {
+                result.ifPresent(r -> {
+                    if (r.getMatchProfileOne().getId().equals(matchProfileId)) {
+                        wasMatchForOther.add(r.isMatchForProfileTwo());
+                    }
+                    wasMatchForOther.add(r.isMatchForProfileOne());
+                });
+            }
+            insertOrUpdateMatchResult(matchProfileId, each.getId(), null);
+        });
     }
 
-    public void insertOrUpdateMatchResult(Long matchProfileOneId, Long matchProfileTwoId, Boolean isMatch) {
-        MatchResult result = matchResultRepo.findMatcherRecord(matchProfileOneId, matchProfileTwoId);
-        if (result == null) {
-            Instant batchSent = Instant.now();
-            Instant recordExpires = batchSent.plus(DEFAULT_EXPIRES, ChronoUnit.HOURS);
-            matchResultRepo.insertMatchResult(matchProfileOneId, matchProfileTwoId, isMatch, batchSent, recordExpires);
+    public void insertOrUpdateMatchResult(Long matchProfileOneId, Long matchProfileTwoId, Boolean isMatch, Boolean recordExists) {
+        if (isMatch == null) { //Definitively know no match result exists, perform insert
+            insertMatchResult(matchProfileOneId, matchProfileTwoId, null);
             return;
         }
-        if (isMatch != null) {
-            updateMatchResultRecord(matchProfileOneId, matchProfileTwoId, isMatch, result);
+        Optional<MatchResult> result = matchResultRepo.getMatchResult(matchProfileOneId, matchProfileTwoId);
+        if (result.isPresent()) {
+            updateMatchResultRecord(matchProfileOneId, matchProfileTwoId, isMatch, result.get());
+        } else {
+            insertMatchResult(matchProfileOneId, matchProfileTwoId, isMatch);
         }
+    }
+
+    private void insertMatchResult(Long matchProfileOneId, Long matchProfileTwoId, Boolean isMatch) {
+        Instant batchSent = Instant.now();
+        Instant recordExpires = batchSent.plus(DEFAULT_EXPIRES, ChronoUnit.HOURS);
+        matchResultRepo.insertMatchResult(matchProfileOneId, matchProfileTwoId, isMatch, batchSent, recordExpires);
+        return;
     }
 
     private void updateMatchResultRecord(Long matchProfileId, Long resultForMatchProfileId, Boolean isMatch, MatchResult matchResult) {

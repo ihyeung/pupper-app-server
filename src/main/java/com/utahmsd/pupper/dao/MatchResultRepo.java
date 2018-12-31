@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
@@ -39,10 +40,9 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
     @Query("UPDATE MatchResult m SET m.resultCompleted = :now WHERE m.id = :id")
     void markMatchResultAsCompleted(@Param("id") Long matchResultId, @Param("now") Instant now);
 
-
-    @Query("FROM MatchResult m WHERE (m.matchProfileOne.id = :id1 AND m.matchProfileTwo.id = :id2) OR " +
-            "(m.matchProfileOne.id = :id2 AND m.matchProfileTwo.id = :id1) ")
-    MatchResult findMatcherRecord(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
+//    @Query("FROM MatchResult m WHERE (m.matchProfileOne.id = :id1 AND m.matchProfileTwo.id = :id2) OR " +
+//            "(m.matchProfileOne.id = :id2 AND m.matchProfileTwo.id = :id1) ")
+//    MatchResult findMatcherRecord(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
 
     @Query("DELETE FROM MatchResult m WHERE m.recordExpires < :now AND " +
             "(m.matchForProfileOne IS NULL OR m.matchForProfileTwo IS NULL) " +
@@ -113,4 +113,8 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "union (select match_profile_id_fk_1 from match_result where match_profile_id_fk_2 = ? " +
             "and match_profile_1_result = true and match_profile_2_result = true)" , nativeQuery = true)
     List<Integer> retrieveIdsOfAllMutualMatches(Long matchProfileId, Long matchProfileId1);
+
+    @Query("FROM MatchResult m WHERE (m.matchProfileOne.id = :id1 AND m.matchProfileTwo.id = :id2) OR " +
+            "(m.matchProfileOne.id = :id2 AND m.matchProfileTwo.id = :id1) ")
+    Optional<MatchResult> getMatchResult(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
 }
