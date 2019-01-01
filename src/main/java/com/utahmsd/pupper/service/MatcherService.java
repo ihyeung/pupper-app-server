@@ -50,20 +50,28 @@ public class MatcherService {
 
     public List<ProfileCard> retrieveMatcherDataProfileCards(Long matchProfileId, int radius) {
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
+
         if (m.isPresent()) {
             List<MatchProfile> matchProfilesBatchWithRadiusFilter = getNextMatchProfileBatchWithZipFilter(m.get(), radius);
             if (matchProfilesBatchWithRadiusFilter.isEmpty()) {
-                return new ArrayList<>();
+                return Collections.emptyList();
             }
-            createBlankMatchResultRecordsForBatch(matchProfileId, matchProfilesBatchWithRadiusFilter);
+            Map<Long, Boolean> otherUserOutcomesForMatchProfile =
+                    createBlankMatchResultRecordsForBatch(matchProfileId, matchProfilesBatchWithRadiusFilter);
+
             List<ProfileCard> profileCards = matchProfileToProfileCardMapper(matchProfilesBatchWithRadiusFilter);
-            updateProfileCardDistancesFromZipcode(m.get(), profileCards);
+
+            setProfileCardDistancesUsingZipCodes(m.get(), profileCards);
+
+            profileCards.forEach(card ->
+                    card.setMatch(otherUserOutcomesForMatchProfile.get(card.getProfileId())));
+
             return profileCards;
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
-    private void updateProfileCardDistancesFromZipcode(MatchProfile m, List<ProfileCard> profileCards) {
+    private void setProfileCardDistancesUsingZipCodes(MatchProfile m, List<ProfileCard> profileCards) {
         if (profileCards.isEmpty()) {
             return;
         }
@@ -99,13 +107,11 @@ public class MatcherService {
      * @return
      */
     private List<Long> getIdsOfPreviouslyShownProfilesForMatchProfile(Long matchProfileId) {
-
         //Native query referencing matchProfileIds returns a list of Integers **
         List<Integer> previouslyRatedProfileIds =
                 matchResultRepo.retrieveAllIdsforMatchProfilesPreviouslyRated(matchProfileId, matchProfileId);
 
         LOGGER.info("Number of profiles that this matchprofile has rated: {}", previouslyRatedProfileIds.size());
-
         Set<Long> distinctMatchProfileIds = new HashSet<>();
         //Cast each Integer to a Long to prevent hashset from including duplicate values
         previouslyRatedProfileIds.forEach(each -> distinctMatchProfileIds.add(each.longValue()));
@@ -163,37 +169,53 @@ public class MatcherService {
                 zipCodeAPIClient.getZipCodesInRadius(matchProfile.getUserProfile().getZip(), String.valueOf(zipRadius));
         if (zipcodesInRange.isEmpty()) {
             LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
 
         List<MatchProfile> nextBatch =
-                matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(viewedMatchProfileIds,
-                        matchProfile.getId(), zipcodesInRange);
+                matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(
+                        viewedMatchProfileIds,
+                        matchProfile.getId(),
+                        zipcodesInRange);
 
         LOGGER.info("Number of profiles in the next batch: {}", nextBatch.size());
         return nextBatch;
     }
 
-    void createBlankMatchResultRecordsForBatch(Long matchProfileId, List<MatchProfile> matchProfiles) {
+    /**
+     *
+     * @param matchProfileId The active user requesting or updating matching data.
+     * @param matchProfiles The list of profiles that the active user has requested or is making updates for.
+     * @return Returns a Map<Long,Boolean> containing match result data for match profiles in matchProfiles that have
+     * separately already liked/disliked the profile of matchProfileId. Each key-value pair in the map corresponds to
+     * the a match prfoile id and their response regarding the active user.
+     *
+     * If the other user has not yet rated the active user, the corresponding value in the map is null.
+     */
+    Map<Long, Boolean> createBlankMatchResultRecordsForBatch(Long matchProfileId, List<MatchProfile> matchProfiles) {
+        Map<Long, Boolean> wasMatchForOtherUsers = new HashMap<>();
+
         matchProfiles.forEach(each -> {
-            List<Boolean> wasMatchForOther = new ArrayList<>();
             Optional<MatchResult> result = matchResultRepo.getMatchResult(matchProfileId, each.getId());
             if (!result.isPresent()) {
-                wasMatchForOther.add(null);
+                wasMatchForOtherUsers.put(each.getId(), null);
             } else {
                 result.ifPresent(r -> {
                     if (r.getMatchProfileOne().getId().equals(matchProfileId)) {
-                        wasMatchForOther.add(r.isMatchForProfileTwo());
+                        wasMatchForOtherUsers.put(each.getId(), r.isMatchForProfileTwo());
+                    } else {
+                        wasMatchForOtherUsers.put(each.getId(), r.isMatchForProfileOne());
                     }
-                    wasMatchForOther.add(r.isMatchForProfileOne());
                 });
             }
             insertOrUpdateMatchResult(matchProfileId, each.getId(), null);
         });
+
+        return wasMatchForOtherUsers;
     }
 
-    public void insertOrUpdateMatchResult(Long matchProfileOneId, Long matchProfileTwoId, Boolean isMatch, Boolean recordExists) {
+    public void insertOrUpdateMatchResult(Long matchProfileOneId, Long matchProfileTwoId, Boolean isMatch) {
         if (isMatch == null) { //Definitively know no match result exists, perform insert
             insertMatchResult(matchProfileOneId, matchProfileTwoId, null);
             return;
@@ -234,12 +256,12 @@ public class MatcherService {
             return createMatcherDataResponse(false, null, HttpStatus.BAD_REQUEST, IDS_MISMATCH);
         }
         request.getMap().forEach((id,isMatch) -> {
-            MatchResult matchResultRecord = matchResultRepo.findMatcherRecord(matchProfileId, id);
-            if (matchResultRecord == null) {
-                LOGGER.error("Trying to update a matchResult record in batch but record does not exist.");
-            } else {
-                updateMatchResultRecord(matchProfileId, id, isMatch, matchResultRecord);
+            Optional<MatchResult> matchResultRecord = matchResultRepo.getMatchResult(matchProfileId, id);
+            if (matchResultRecord.isPresent()) {
+                updateMatchResultRecord(matchProfileId, id, isMatch, matchResultRecord.get());
                 updateCount.getAndIncrement();
+            } else {
+                LOGGER.error("Trying to update a matchResult record in batch but record does not exist.");
             }
         });
         LOGGER.info("{} records were successfully updated", updateCount);
@@ -258,14 +280,13 @@ public class MatcherService {
     public void unmatchWithMatchProfile(Long matchProfileId, Long matchProfileToUnmatchWith) {
         MatchResult result = checkForTwoWayMatch(matchProfileId, matchProfileToUnmatchWith);
         if (result != null) {
-
             Instant unmatchTimestamp = Instant.now();
             if (result.getMatchProfileOne().getId().equals(matchProfileId)) {
-                matchResultRepo.updateMatchResultByMatchProfileOne(false,
-                        matchProfileId, matchProfileToUnmatchWith);
-            } else if (result.getMatchProfileTwo().getId().equals(matchProfileId)) {
-                matchResultRepo.updateMatchResultByMatchProfileTwo(false,
-                        matchProfileToUnmatchWith, matchProfileId);
+                matchResultRepo.updateMatchResultByMatchProfileOne(false, matchProfileId,
+                        matchProfileToUnmatchWith);
+            } else {
+                matchResultRepo.updateMatchResultByMatchProfileTwo(false, matchProfileToUnmatchWith,
+                        matchProfileId);
             }
             matchResultRepo.markMatchResultAsCompleted(result.getId(), unmatchTimestamp);
         }
@@ -288,12 +309,16 @@ public class MatcherService {
     }
 
     public MatchResult checkForTwoWayMatch(Long matchProfileId, Long matchProfileId2) {
-        MatchResult result = matchResultRepo.findMatcherRecord(matchProfileId, matchProfileId2);
-        if (result == null || !result.isMatchForProfileOne() || !result.isMatchForProfileTwo()) {
-            LOGGER.info("Invalid match result.");
+        Optional<MatchResult> result = matchResultRepo.getMatchResult(matchProfileId, matchProfileId2);
+        if (!result.isPresent()) {
+            LOGGER.error("Invalid match result.");
             return null;
         }
-        return result;
+        else if (!result.get().isMatchForProfileOne() || !result.get().isMatchForProfileTwo()) {
+            LOGGER.error("Not a mutual match.");
+            return null;
+        }
+        return result.get();
     }
 
     public Integer retrieveNumberOfExpiredIncompleteRecords() {
