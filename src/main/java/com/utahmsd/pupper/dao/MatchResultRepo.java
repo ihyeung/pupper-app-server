@@ -37,8 +37,9 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
                                             @Param("id2") Long matchProfileTwo);
     @Transactional
     @Modifying
-    @Query("UPDATE MatchResult m SET m.resultCompleted = :now WHERE m.id = :id")
-    void markMatchResultAsCompleted(@Param("id") Long matchResultId, @Param("now") Instant now);
+    @Query("UPDATE MatchResult m SET m.resultCompleted = :now WHERE m.id = :id " +
+            "AND m.matchForProfileOne is not null AND m.matchForProfileTwo is not null")
+    void updateMatchResultRecordIfCompleted(@Param("id") Long matchResultId, @Param("now") Instant now);
 
 //    @Query("FROM MatchResult m WHERE (m.matchProfileOne.id = :id1 AND m.matchProfileTwo.id = :id2) OR " +
 //            "(m.matchProfileOne.id = :id2 AND m.matchProfileTwo.id = :id1) ")
