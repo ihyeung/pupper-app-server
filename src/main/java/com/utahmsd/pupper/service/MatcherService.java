@@ -50,32 +50,36 @@ public class MatcherService {
 
     public List<ProfileCard> retrieveMatcherDataProfileCards(Long matchProfileId, int radius) {
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
+
         if (m.isPresent()) {
             List<MatchProfile> matchProfilesBatchWithRadiusFilter = getNextMatchProfileBatchWithZipFilter(m.get(), radius);
             if (matchProfilesBatchWithRadiusFilter.isEmpty()) {
-                return new ArrayList<>();
+                return Collections.emptyList();
             }
-            createBlankMatchResultRecordsForBatch(matchProfileId, matchProfilesBatchWithRadiusFilter);
+            Map<Long, Boolean> otherUserOutcomesForMatchProfile =
+                    createBlankMatchResultRecordsForBatch(matchProfileId, matchProfilesBatchWithRadiusFilter);
+
             List<ProfileCard> profileCards = matchProfileToProfileCardMapper(matchProfilesBatchWithRadiusFilter);
-            updateProfileCardDistancesFromZipcode(m.get(), profileCards);
+
+            setProfileCardDistancesUsingZipCodes(m.get(), profileCards);
+
+            profileCards.forEach(card ->
+                    card.setMatch(otherUserOutcomesForMatchProfile.get(card.getProfileId())));
+
             return profileCards;
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
-    private void updateProfileCardDistancesFromZipcode(MatchProfile m, List<ProfileCard> profileCards) {
+    private void setProfileCardDistancesUsingZipCodes(MatchProfile m, List<ProfileCard> profileCards) {
         if (profileCards.isEmpty()) {
             return;
         }
         String zipCode = m.getUserProfile().getZip();
-        List<String> zipcodeList = new ArrayList<>();
-        profileCards.forEach(each -> {
-            if (!zipcodeList.contains(each.getDistance())) {
-                zipcodeList.add(each.getDistance());
-            }
-        });
+        Set<String> zipCodeList = new HashSet<>();
+        profileCards.forEach(card -> zipCodeList.add(card.getDistance()));
         Map<String, Integer> zipcodeDistances =
-                zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(zipCode, zipcodeList);
+                zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(zipCode, new ArrayList<>(zipCodeList));
 
         profileCards.forEach(profileCard -> {
             Integer numMilesAway = zipcodeDistances.get(profileCard.getDistance());
@@ -99,13 +103,11 @@ public class MatcherService {
      * @return
      */
     private List<Long> getIdsOfPreviouslyShownProfilesForMatchProfile(Long matchProfileId) {
-
         //Native query referencing matchProfileIds returns a list of Integers **
         List<Integer> previouslyRatedProfileIds =
                 matchResultRepo.retrieveAllIdsforMatchProfilesPreviouslyRated(matchProfileId, matchProfileId);
 
-        LOGGER.info("Number of profiles that this matchprofile has rated: {}", previouslyRatedProfileIds.size());
-
+//        LOGGER.info("Number of profiles that this matchprofile has rated: {}", previouslyRatedProfileIds.size());
         Set<Long> distinctMatchProfileIds = new HashSet<>();
         //Cast each Integer to a Long to prevent hashset from including duplicate values
         previouslyRatedProfileIds.forEach(each -> distinctMatchProfileIds.add(each.longValue()));
@@ -113,11 +115,11 @@ public class MatcherService {
         //JPQL query referencing matchProfileIds returns a list of Longs **
         List<Long> previouslySentRecords =
                 matchResultRepo.findMatchProfilesInPreviouslySentBatchesNotExpired(matchProfileId, Instant.now());
-        LOGGER.info("Number of records in batches that were previously sent to the user (that are not expired): {}", previouslySentRecords.size());
+//        LOGGER.info("Number of records in batches that were previously sent to the user (that are not expired): {}", previouslySentRecords.size());
 
         distinctMatchProfileIds.addAll(previouslySentRecords);
 
-        LOGGER.info("Number of distinct ids in the combined queries: {}", distinctMatchProfileIds.size());
+//        LOGGER.info("Number of distinct ids in the combined queries: {}", distinctMatchProfileIds.size());
         return new ArrayList<>(distinctMatchProfileIds);
     }
 
@@ -131,29 +133,7 @@ public class MatcherService {
      */
     public List<MatchProfile> getAllUnseenMatchProfilesForMatchProfile(Long matchProfileId) {
         List<Long> matchProfileIdsToExclude = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfileId);
-
-        List<MatchProfile> unseenProfiles =
-                matchProfileRepo.findAllByIdIsNotInAndIdIsNotOrderByScoreDesc(matchProfileIdsToExclude, matchProfileId);
-
-        LOGGER.info("Total number of unseen matchProfiles: {}", unseenProfiles.size());
-        return unseenProfiles;
-    }
-
-    public List<MatchProfile> getAllUnseenMatchProfilesForMatchProfileWithZipFilter(Long matchProfileId, int radius) {
-        int zipRadius = radius > 0 && radius <= MAX_RADIUS ? radius : DEFAULT_ZIP_RADIUS;
-        Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
-        if (m.isPresent()) {
-            List<String> zipcodesInRange = zipCodeAPIClient.getZipCodesInRadius(m.get().getUserProfile().getZip(), String.valueOf(zipRadius));
-
-            List<Long> idList = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfileId);
-
-            List<MatchProfile> unseenProfiles = matchProfileRepo.
-                    findAllByIdIsNotInAndUserProfile_ZipIsInOrderByScoreDesc(idList, zipcodesInRange);
-
-            unseenProfiles.remove(m.get());
-            return unseenProfiles;
-        }
-        return null;
+        return matchProfileRepo.findAllByIdIsNotInAndIdIsNotOrderByScoreDesc(matchProfileIdsToExclude, matchProfileId);
     }
 
     private List<MatchProfile> getNextMatchProfileBatchWithZipFilter(MatchProfile matchProfile, int radius) {
@@ -162,63 +142,91 @@ public class MatcherService {
         List<String> zipcodesInRange =
                 zipCodeAPIClient.getZipCodesInRadius(matchProfile.getUserProfile().getZip(), String.valueOf(zipRadius));
         if (zipcodesInRange.isEmpty()) {
-            LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
-            return new ArrayList<>();
+//            LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
+            return Collections.emptyList();
         }
         List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
 
-        List<MatchProfile> nextBatch =
-                matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(viewedMatchProfileIds,
-                        matchProfile.getId(), zipcodesInRange);
-
-        LOGGER.info("Number of profiles in the next batch: {}", nextBatch.size());
-        return nextBatch;
+        return matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(
+                        viewedMatchProfileIds,
+                        matchProfile.getId(),
+                        zipcodesInRange);
     }
 
-    void createBlankMatchResultRecordsForBatch(Long matchProfileId, List<MatchProfile> matchProfiles) {
-        matchProfiles.forEach(each -> insertOrUpdateMatchResult(matchProfileId, each.getId(), null));
+    /**
+     *
+     * @param matchProfileId The active user requesting or updating matching data.
+     * @param matchProfiles The list of profiles that the active user has requested or is making updates for.
+     * @return Returns a Map<Long,Boolean> containing match result data for match profiles in matchProfiles that have
+     * separately already liked/disliked the profile of matchProfileId. Each key-value pair in the map corresponds to
+     * the a match prfoile id and their response regarding the active user.
+     *
+     * If the other user has not yet rated the active user, the corresponding value in the map is null.
+     */
+    Map<Long, Boolean> createBlankMatchResultRecordsForBatch(Long matchProfileId, List<MatchProfile> matchProfiles) {
+        Map<Long, Boolean> wasMatchForOtherUsers = new HashMap<>(); //Map storing other users' responses to the active user
+
+        matchProfiles.forEach(each -> {
+            Optional<MatchResult> result = matchResultRepo.getMatchResult(matchProfileId, each.getId());
+            if (!result.isPresent()) {
+                wasMatchForOtherUsers.put(each.getId(), null);
+            } else {
+                result.ifPresent(r -> {
+                    if (r.getMatchProfileOne().getId().equals(matchProfileId)) {
+                        wasMatchForOtherUsers.put(each.getId(), r.isMatchForProfileTwo());
+                    } else {
+                        wasMatchForOtherUsers.put(each.getId(), r.isMatchForProfileOne());
+                    }
+                });
+            }
+            //Use map-stored value for each profile id key to help with logic determining whether to insert/update
+            insertOrUpdateMatchResult(matchProfileId, each.getId(), wasMatchForOtherUsers.get(each.getId()));
+        });
+
+        return wasMatchForOtherUsers;
     }
 
     public void insertOrUpdateMatchResult(Long matchProfileOneId, Long matchProfileTwoId, Boolean isMatch) {
-        MatchResult result = matchResultRepo.findMatcherRecord(matchProfileOneId, matchProfileTwoId);
-        if (result == null) {
-            Instant batchSent = Instant.now();
-            Instant recordExpires = batchSent.plus(DEFAULT_EXPIRES, ChronoUnit.HOURS);
-            matchResultRepo.insertMatchResult(matchProfileOneId, matchProfileTwoId, isMatch, batchSent, recordExpires);
+        if (isMatch == null) { //Definitively know no match result exists, perform insert
+            insertMatchResult(matchProfileOneId, matchProfileTwoId, null);
             return;
         }
-        if (isMatch != null) {
-            updateMatchResultRecord(matchProfileOneId, matchProfileTwoId, isMatch, result);
+        Optional<MatchResult> result = matchResultRepo.getMatchResult(matchProfileOneId, matchProfileTwoId);
+        if (result.isPresent()) {
+            updateMatchResultRecord(matchProfileOneId, matchProfileTwoId, isMatch, result.get());
+        } else {
+            insertMatchResult(matchProfileOneId, matchProfileTwoId, isMatch);
         }
+    }
+
+    private void insertMatchResult(Long matchProfileOneId, Long matchProfileTwoId, Boolean isMatch) {
+        Instant batchSent = Instant.now();
+        Instant recordExpires = batchSent.plus(DEFAULT_EXPIRES, ChronoUnit.HOURS);
+        matchResultRepo.insertMatchResult(matchProfileOneId, matchProfileTwoId, isMatch, batchSent, recordExpires);
     }
 
     private void updateMatchResultRecord(Long matchProfileId, Long resultForMatchProfileId, Boolean isMatch, MatchResult matchResult) {
-        Instant resultCompleted = Instant.now();
         if (matchResult.getMatchProfileOne().getId().equals(matchProfileId)) {
             matchResultRepo.updateMatchResultByMatchProfileOne(isMatch, matchProfileId, resultForMatchProfileId);
-        }
-        else {
+        } else {
             matchResultRepo.updateMatchResultByMatchProfileTwo(isMatch, resultForMatchProfileId, matchProfileId);
         }
-        if (matchResult.isMatchForProfileOne() != null && matchResult.isMatchForProfileTwo() != null) {
-            LOGGER.info("Both match profiles have rated each other, marking matchResult record as completed");
-            matchResultRepo.markMatchResultAsCompleted(matchResult.getId(), resultCompleted);
-        }
+        matchResultRepo.updateMatchResultRecordIfCompleted(matchResult.getId(), Instant.now());
     }
 
     public MatcherDataResponse updateMatcherResults (Long matchProfileId, MatcherDataRequest request) {
-        LOGGER.info("Request contains {} match_result records to update.", request.getMap().size());
+//        LOGGER.info("Request contains {} match_result records to update.", request.getMap().size());
         AtomicInteger updateCount = new AtomicInteger();
         if (!request.getMatchProfileId().equals(matchProfileId)) {
             return createMatcherDataResponse(false, null, HttpStatus.BAD_REQUEST, IDS_MISMATCH);
         }
         request.getMap().forEach((id,isMatch) -> {
-            MatchResult matchResultRecord = matchResultRepo.findMatcherRecord(matchProfileId, id);
-            if (matchResultRecord == null) {
-                LOGGER.error("Trying to update a matchResult record in batch but record does not exist.");
-            } else {
-                updateMatchResultRecord(matchProfileId, id, isMatch, matchResultRecord);
+            Optional<MatchResult> matchResultRecord = matchResultRepo.getMatchResult(matchProfileId, id);
+            if (matchResultRecord.isPresent()) {
+                updateMatchResultRecord(matchProfileId, id, isMatch, matchResultRecord.get());
                 updateCount.getAndIncrement();
+            } else {
+                LOGGER.error("Trying to update a matchResult record in batch but record does not exist.");
             }
         });
         LOGGER.info("{} records were successfully updated", updateCount);
@@ -228,8 +236,8 @@ public class MatcherService {
     public List<MatchResult> retrieveCompletedMatchResultsForMatchProfile(Long matchProfileId) {
         List<MatchResult> completedMatchResults =
                 matchResultRepo.findCompletedMatchResultsForMatchProfile(matchProfileId);
-        LOGGER.info("Found {} completed matchResults corresponding to matchProfileId={}",
-                completedMatchResults.size(), matchProfileId);
+//        LOGGER.info("Found {} completed matchResults corresponding to matchProfileId={}",
+//                completedMatchResults.size(), matchProfileId);
 
         return completedMatchResults;
     }
@@ -237,16 +245,15 @@ public class MatcherService {
     public void unmatchWithMatchProfile(Long matchProfileId, Long matchProfileToUnmatchWith) {
         MatchResult result = checkForTwoWayMatch(matchProfileId, matchProfileToUnmatchWith);
         if (result != null) {
-
             Instant unmatchTimestamp = Instant.now();
             if (result.getMatchProfileOne().getId().equals(matchProfileId)) {
-                matchResultRepo.updateMatchResultByMatchProfileOne(false,
-                        matchProfileId, matchProfileToUnmatchWith);
-            } else if (result.getMatchProfileTwo().getId().equals(matchProfileId)) {
-                matchResultRepo.updateMatchResultByMatchProfileTwo(false,
-                        matchProfileToUnmatchWith, matchProfileId);
+                matchResultRepo.updateMatchResultByMatchProfileOne(false, matchProfileId,
+                        matchProfileToUnmatchWith);
+            } else {
+                matchResultRepo.updateMatchResultByMatchProfileTwo(false, matchProfileToUnmatchWith,
+                        matchProfileId);
             }
-            matchResultRepo.markMatchResultAsCompleted(result.getId(), unmatchTimestamp);
+            matchResultRepo.updateMatchResultRecordIfCompleted(result.getId(), unmatchTimestamp);
         }
     }
 
@@ -267,12 +274,16 @@ public class MatcherService {
     }
 
     public MatchResult checkForTwoWayMatch(Long matchProfileId, Long matchProfileId2) {
-        MatchResult result = matchResultRepo.findMatcherRecord(matchProfileId, matchProfileId2);
-        if (result == null || !result.isMatchForProfileOne() || !result.isMatchForProfileTwo()) {
-            LOGGER.info("Invalid match result.");
+        Optional<MatchResult> result = matchResultRepo.getMatchResult(matchProfileId, matchProfileId2);
+        if (!result.isPresent()) {
+            LOGGER.error("Invalid match result.");
             return null;
         }
-        return result;
+        else if (!result.get().isMatchForProfileOne() || !result.get().isMatchForProfileTwo()) {
+            LOGGER.error("Not a mutual match.");
+            return null;
+        }
+        return result.get();
     }
 
     public Integer retrieveNumberOfExpiredIncompleteRecords() {

@@ -42,7 +42,7 @@ public class SwaggerConfig {
                 .license("MIT License: Copyright (C) 2018 Irene Yeung")
                 .termsOfServiceUrl("Pending Publication")
                 .description("Server/Back-End For Pupper")
-                .version("v0.1.5")
+                .version("v0.1.5.1")
                 .build();
     }
 

@@ -28,6 +28,8 @@ public class ProfileCard {
     private String energyLevel;
 //    private boolean isFixed;
     private int numDogs;
+    private Long userId;
+    private Boolean isMatch; //Optionally set field for a profile displayed to the active user that has already rated the current user
 
     public static ArrayList<ProfileCard> matchProfileToProfileCardMapper(List<MatchProfile> matchProfileList) {
         ArrayList<ProfileCard> profileCards = new ArrayList<>();
@@ -48,6 +50,7 @@ public class ProfileCard {
         card.setProfileImage(matchProfile.getProfileImage());
         card.setEnergyLevel(matchProfile.getEnergyLevel().value());
         card.setNumDogs(matchProfile.getNumDogs());
+        card.setUserId(matchProfile.getUserProfile().getId());
 
         return card;
     }
@@ -64,6 +67,7 @@ public class ProfileCard {
         card.setProfileImage(pupperProfile.getMatchProfile().getProfileImage());
         card.setEnergyLevel(pupperProfile.getEnergyLevel().value());
         card.setNumDogs(1);
+        card.setUserId(pupperProfile.getMatchProfile().getUserProfile().getId());
 
         return card;
     }
@@ -149,4 +153,12 @@ public class ProfileCard {
     public int getNumDogs() { return numDogs; }
 
     public void setNumDogs(int numDogs) { this.numDogs = numDogs; }
+
+    public Long getUserId() { return userId; }
+
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public Boolean getMatch() { return isMatch; }
+
+    public void setMatch(Boolean match) { isMatch = match; }
 }
