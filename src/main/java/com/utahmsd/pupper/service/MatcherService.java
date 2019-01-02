@@ -142,7 +142,7 @@ public class MatcherService {
         List<String> zipcodesInRange =
                 zipCodeAPIClient.getZipCodesInRadius(matchProfile.getUserProfile().getZip(), String.valueOf(zipRadius));
         if (zipcodesInRange.isEmpty()) {
-            LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
+//            LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
             return Collections.emptyList();
         }
         List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
@@ -236,8 +236,8 @@ public class MatcherService {
     public List<MatchResult> retrieveCompletedMatchResultsForMatchProfile(Long matchProfileId) {
         List<MatchResult> completedMatchResults =
                 matchResultRepo.findCompletedMatchResultsForMatchProfile(matchProfileId);
-        LOGGER.info("Found {} completed matchResults corresponding to matchProfileId={}",
-                completedMatchResults.size(), matchProfileId);
+//        LOGGER.info("Found {} completed matchResults corresponding to matchProfileId={}",
+//                completedMatchResults.size(), matchProfileId);
 
         return completedMatchResults;
     }

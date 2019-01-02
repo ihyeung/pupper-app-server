@@ -41,10 +41,6 @@ public interface MatchResultRepo extends JpaRepository<MatchResult, Long> {
             "AND m.matchForProfileOne is not null AND m.matchForProfileTwo is not null")
     void updateMatchResultRecordIfCompleted(@Param("id") Long matchResultId, @Param("now") Instant now);
 
-//    @Query("FROM MatchResult m WHERE (m.matchProfileOne.id = :id1 AND m.matchProfileTwo.id = :id2) OR " +
-//            "(m.matchProfileOne.id = :id2 AND m.matchProfileTwo.id = :id1) ")
-//    MatchResult findMatcherRecord(@Param("id1") Long matchProfileId1, @Param("id2") Long matchProfileId2);
-
     @Query("DELETE FROM MatchResult m WHERE m.recordExpires < :now AND " +
             "(m.matchForProfileOne IS NULL OR m.matchForProfileTwo IS NULL) " +
             "OR (m.resultCompleted IS NULL)")
