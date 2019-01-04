@@ -148,7 +148,7 @@ public class ZipCodeAPIClient {
                 zipString.append(",").append(zip);
             }
         }
-        return zipString.substring(1);
+        return zipString.length() > 1 ? zipString.substring(1) : null;
     }
 
 }

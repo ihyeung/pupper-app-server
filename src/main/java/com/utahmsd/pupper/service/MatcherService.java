@@ -107,7 +107,7 @@ public class MatcherService {
         List<Integer> previouslyRatedProfileIds =
                 matchResultRepo.retrieveAllIdsforMatchProfilesPreviouslyRated(matchProfileId, matchProfileId);
 
-//        LOGGER.info("Number of profiles that this matchprofile has rated: {}", previouslyRatedProfileIds.size());
+        // LOGGER.info("Number of profiles that this matchprofile has rated: {}", previouslyRatedProfileIds.size());
         Set<Long> distinctMatchProfileIds = new HashSet<>();
         //Cast each Integer to a Long to prevent hashset from including duplicate values
         previouslyRatedProfileIds.forEach(each -> distinctMatchProfileIds.add(each.longValue()));
@@ -115,11 +115,11 @@ public class MatcherService {
         //JPQL query referencing matchProfileIds returns a list of Longs **
         List<Long> previouslySentRecords =
                 matchResultRepo.findMatchProfilesInPreviouslySentBatchesNotExpired(matchProfileId, Instant.now());
-//        LOGGER.info("Number of records in batches that were previously sent to the user (that are not expired): {}", previouslySentRecords.size());
+        // LOGGER.info("Number of records in batches that were previously sent to the user (that are not expired): {}", previouslySentRecords.size());
 
         distinctMatchProfileIds.addAll(previouslySentRecords);
 
-//        LOGGER.info("Number of distinct ids in the combined queries: {}", distinctMatchProfileIds.size());
+        // LOGGER.info("Number of distinct ids in the combined queries: {}", distinctMatchProfileIds.size());
         return new ArrayList<>(distinctMatchProfileIds);
     }
 
@@ -142,15 +142,17 @@ public class MatcherService {
         List<String> zipcodesInRange =
                 zipCodeAPIClient.getZipCodesInRadius(matchProfile.getUserProfile().getZip(), String.valueOf(zipRadius));
         if (zipcodesInRange.isEmpty()) {
-//            LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
+            LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
             return Collections.emptyList();
         }
         List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
 
-        return matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(
+        List<MatchProfile> profiles = matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(
                         viewedMatchProfileIds,
                         matchProfile.getId(),
                         zipcodesInRange);
+        LOGGER.info("Profiles in next batch : {}", profiles.size());
+        return profiles;
     }
 
     /**
