@@ -65,8 +65,7 @@ public class MatcherService {
                 setProfileCardDistancesUsingZipCodes(m.get(), profileCards);
             }
 
-            profileCards.forEach(card ->
-                    card.setMatch(otherUserOutcomesForMatchProfile.get(card.getProfileId())));
+            profileCards.forEach(card -> card.setMatch(otherUserOutcomesForMatchProfile.get(card.getProfileId())));
 
             return profileCards;
         }
@@ -140,9 +139,7 @@ public class MatcherService {
 
     private List<MatchProfile> getNextMatchProfileBatch(MatchProfile matchProfile, boolean randomize) {
         List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
-
         if (randomize) { //Don't make zipcode api call, just retrieve match profiles randomly
-            LOGGER.info("Randomize flag turned on, ignoring zip radius filter and retrieving randomly located match profiles");
             return matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotOrderByScoreDesc(viewedMatchProfileIds, matchProfile.getId());
         } else {
             return getNextMatchProfileBatchWithZipFilter(matchProfile, viewedMatchProfileIds);
@@ -161,12 +158,10 @@ public class MatcherService {
             LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
             return Collections.emptyList();
         }
-        List<MatchProfile> profiles = matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(
+        return matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(
                         viewedProfileIds,
                         matchProfile.getId(),
                         zipcodesInRange);
-        LOGGER.info("Profiles in next batch : {}", profiles.size());
-        return profiles;
     }
 
     /**
@@ -186,6 +181,7 @@ public class MatcherService {
             Optional<MatchResult> result = matchResultRepo.getMatchResult(matchProfileId, each.getId());
             if (!result.isPresent()) {
                 wasMatchForOtherUsers.put(each.getId(), null);
+
             } else {
                 result.ifPresent(r -> {
                     if (r.getMatchProfileOne().getId().equals(matchProfileId)) {

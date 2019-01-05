@@ -75,7 +75,7 @@ public class UserProfile implements Serializable {
     private String profileImage;
 
     @Column(name = "active_match_profile_id")
-    private int activeMatchProfileId;
+    private Long activeMatchProfileId;
 
     public UserProfile(){}
 
@@ -181,7 +181,7 @@ public class UserProfile implements Serializable {
         this.profileImage = profileImage;
     }
 
-    public int getActiveMatchProfileId() { return activeMatchProfileId; }
+    public Long getActiveMatchProfileId() { return activeMatchProfileId; }
 
-    public void setActiveMatchProfileId(int activeMatchProfileId) { this.activeMatchProfileId = activeMatchProfileId; }
+    public void setActiveMatchProfileId(Long activeMatchProfileId) { this.activeMatchProfileId = activeMatchProfileId; }
 }

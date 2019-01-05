@@ -158,7 +158,11 @@ public class ProfileCard {
 
     public void setUserId(Long userId) { this.userId = userId; }
 
-    public Boolean getMatch() { return isMatch; }
+    public Boolean isMatch() {
+        return isMatch;
+    }
 
-    public void setMatch(Boolean match) { isMatch = match; }
+    public void setMatch(Boolean match) {
+        isMatch = match;
+    }
 }
