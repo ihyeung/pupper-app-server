@@ -8,12 +8,12 @@ Server/Back-End For Pupper
 
 === Version information
 [%hardbreaks]
-__Version__ : 0.1.4
+__Version__ : v0.1.5.2
 
 
 === License information
 [%hardbreaks]
-__License__ : Copyright (C) 2018 Irene Yeung
+__License__ : MIT License: Copyright (C) 2018 Irene Yeung
 __Terms of service__ : Pending Publication
 
 

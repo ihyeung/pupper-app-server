@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
-import javax.ws.rs.DefaultValue;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
@@ -74,6 +73,9 @@ public class UserProfile implements Serializable {
     @Column(name = "profile_image")
     @javax.validation.constraints.Size(max = 100)
     private String profileImage;
+
+    @Column(name = "active_match_profile_id")
+    private int activeMatchProfileId;
 
     public UserProfile(){}
 
@@ -178,4 +180,8 @@ public class UserProfile implements Serializable {
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
+
+    public int getActiveMatchProfileId() { return activeMatchProfileId; }
+
+    public void setActiveMatchProfileId(int activeMatchProfileId) { this.activeMatchProfileId = activeMatchProfileId; }
 }
