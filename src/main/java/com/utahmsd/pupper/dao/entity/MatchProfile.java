@@ -100,13 +100,17 @@ public class MatchProfile implements Serializable {
     @javax.validation.constraints.Size(max = 100)
     private String profileImage;
 
+    @DefaultValue("5")
+    @Column(name = "zip_radius")
+    private int zipRadius;
+
     /**
      * Returns a list of field names that are valid param keys to filter matchProfiles by.
      * @return
      */
     public static List<String> matchProfileFieldList() {
         return Arrays.asList("id", "numDogs", "names", "sex", "birthdate", "breed", "size", "energyLevel", "lifeStage",
-                "score", "aboutMe", "profileImage", "userProfile");
+                "score", "aboutMe", "profileImage", "userProfile", "zipRadius");
     }
 
     public static MatchProfile createFromObject(Object object) throws ParseException {
@@ -127,7 +131,7 @@ public class MatchProfile implements Serializable {
             matchProfile.setScore(((Double) entityObject.get("score")).floatValue());
             matchProfile.setAboutMe((String) entityObject.get("aboutMe"));
             matchProfile.setProfileImage((String) entityObject.get("profileImage"));
-
+            matchProfile.setZipRadius(((Long) entityObject.get("zipRadius")).intValue());
             return matchProfile;
         }
         return null;
@@ -184,4 +188,8 @@ public class MatchProfile implements Serializable {
     public String getProfileImage() { return profileImage; }
 
     public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
+
+    public int getZipRadius() { return zipRadius; }
+
+    public void setZipRadius(int zipRadius) { this.zipRadius = zipRadius; }
 }

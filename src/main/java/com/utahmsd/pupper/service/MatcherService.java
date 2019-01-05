@@ -137,7 +137,9 @@ public class MatcherService {
     }
 
     private List<MatchProfile> getNextMatchProfileBatchWithZipFilter(MatchProfile matchProfile, int radius) {
-        int zipRadius = radius > 0 && radius <= MAX_RADIUS ? radius : DEFAULT_ZIP_RADIUS;
+        LOGGER.info("Match profile id={} has a zip code radius of {} miles", matchProfile.getId(), matchProfile.getZipRadius());
+        int zipRadius =
+                matchProfile.getZipRadius() > 0 && matchProfile.getZipRadius() <= MAX_RADIUS ? matchProfile.getZipRadius() : DEFAULT_ZIP_RADIUS;
 
         List<String> zipcodesInRange =
                 zipCodeAPIClient.getZipCodesInRadius(matchProfile.getUserProfile().getZip(), String.valueOf(zipRadius));
