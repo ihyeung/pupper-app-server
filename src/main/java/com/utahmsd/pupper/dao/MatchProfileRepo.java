@@ -40,11 +40,10 @@ public interface MatchProfileRepo extends JpaRepository<MatchProfile, Long> {
 
     List<MatchProfile> findAllByIdIsNotInAndIdIsNotOrderByScoreDesc(List<Long> idsToFilter, Long matchProfileId);
 
-    List<MatchProfile> findAllByIdIsNotInAndUserProfile_ZipIsInOrderByScoreDesc(List<Long> idsToFilter,
-                                                                               List<String> zipcodes);
-
     List<MatchProfile> findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(List<Long> matchProfileIds,
                                                                                            Long id, List<String> zips);
+
+    List<MatchProfile> findTop3ByIdIsNotInAndIdIsNotOrderByScoreDesc(List<Long> matchProfileIds, Long id);
 
 
 }

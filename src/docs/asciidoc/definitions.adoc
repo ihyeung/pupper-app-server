@@ -86,6 +86,8 @@ __optional__||enum (FEMALE, MALE, UNKNOWN)
 __optional__||enum (TOY, SMALL, MID, LARGE, XLARGE)
 |**userProfile** +
 __optional__||<<_userprofile,UserProfile>>
+|**zipRadius** +
+__optional__||integer (int32)
 |===
 
 
@@ -206,6 +208,8 @@ __optional__|string
 __optional__|string
 |**lastActive** +
 __optional__|string
+|**match** +
+__optional__|boolean
 |**name** +
 __optional__|string
 |**numDogs** +
@@ -216,6 +220,8 @@ __optional__|integer (int64)
 __optional__|string
 |**sex** +
 __optional__|string
+|**userId** +
+__optional__|integer (int64)
 |===
 
 
@@ -278,6 +284,8 @@ __optional__|< <<_useraccount,UserAccount>> > array
 [options="header", cols=".^3a,.^11a,.^4a"]
 |===
 |Name|Description|Schema
+|**activeMatchProfileId** +
+__optional__||integer (int32)
 |**birthdate** +
 __optional__|**Example** : `"yyyy-MM-dd"`|string
 |**dateJoin** +

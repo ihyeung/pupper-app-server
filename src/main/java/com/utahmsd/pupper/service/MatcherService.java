@@ -48,11 +48,11 @@ public class MatcherService {
         this.zipCodeAPIClient = zipCodeAPIClient;
     }
 
-    public List<ProfileCard> retrieveMatcherDataProfileCards(Long matchProfileId, int radius) {
+    public List<ProfileCard> retrieveMatcherDataProfileCards(Long matchProfileId, boolean randomize, boolean calculateDistances) {
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
 
         if (m.isPresent()) {
-            List<MatchProfile> matchProfilesBatchWithRadiusFilter = getNextMatchProfileBatchWithZipFilter(m.get(), radius);
+            List<MatchProfile> matchProfilesBatchWithRadiusFilter = getNextMatchProfileBatch(m.get(), randomize);
             if (matchProfilesBatchWithRadiusFilter.isEmpty()) {
                 return Collections.emptyList();
             }
@@ -61,7 +61,9 @@ public class MatcherService {
 
             List<ProfileCard> profileCards = matchProfileToProfileCardMapper(matchProfilesBatchWithRadiusFilter);
 
-            setProfileCardDistancesUsingZipCodes(m.get(), profileCards);
+            if (calculateDistances) { //Convert zip codes on profile cards to distances using additional zip code api calls
+                setProfileCardDistancesUsingZipCodes(m.get(), profileCards);
+            }
 
             profileCards.forEach(card ->
                     card.setMatch(otherUserOutcomesForMatchProfile.get(card.getProfileId())));
@@ -136,8 +138,20 @@ public class MatcherService {
         return matchProfileRepo.findAllByIdIsNotInAndIdIsNotOrderByScoreDesc(matchProfileIdsToExclude, matchProfileId);
     }
 
-    private List<MatchProfile> getNextMatchProfileBatchWithZipFilter(MatchProfile matchProfile, int radius) {
-        LOGGER.info("Match profile id={} has a zip code radius of {} miles", matchProfile.getId(), matchProfile.getZipRadius());
+    private List<MatchProfile> getNextMatchProfileBatch(MatchProfile matchProfile, boolean randomize) {
+        List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
+
+        if (randomize) { //Don't make zipcode api call, just retrieve match profiles randomly
+            LOGGER.info("Randomize flag turned on, ignoring zip radius filter and retrieving randomly located match profiles");
+            return matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotOrderByScoreDesc(viewedMatchProfileIds, matchProfile.getId());
+        } else {
+            return getNextMatchProfileBatchWithZipFilter(matchProfile, viewedMatchProfileIds);
+        }
+    }
+
+    private List<MatchProfile> getNextMatchProfileBatchWithZipFilter(MatchProfile matchProfile, List<Long> viewedProfileIds) {
+
+        LOGGER.info("Retrieving match profiles with zip filter: matchProfileId={} has a zip code radius of {} miles", matchProfile.getId(), matchProfile.getZipRadius());
         int zipRadius =
                 matchProfile.getZipRadius() > 0 && matchProfile.getZipRadius() <= MAX_RADIUS ? matchProfile.getZipRadius() : DEFAULT_ZIP_RADIUS;
 
@@ -147,10 +161,8 @@ public class MatcherService {
             LOGGER.error("No zipcodes were found within the specified radius of the profile's zipcode.");
             return Collections.emptyList();
         }
-        List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
-
         List<MatchProfile> profiles = matchProfileRepo.findTop3ByIdIsNotInAndIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(
-                        viewedMatchProfileIds,
+                        viewedProfileIds,
                         matchProfile.getId(),
                         zipcodesInRange);
         LOGGER.info("Profiles in next batch : {}", profiles.size());

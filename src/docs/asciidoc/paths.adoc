@@ -2,11 +2,21 @@
 [[_paths]]
 == Paths
 
-[[_getallaccountsusingget]]
-=== getAllAccounts
+[[_getaccountbyuserprofileidusingget]]
+=== getAccountByUserProfileId
 ....
 GET /account
 ....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**userId** +
+__required__|userId|string
+|===
 
 
 ==== Responses
@@ -263,21 +273,11 @@ __required__|accountId|integer (int64)
 * auth-controller
 
 
-[[_getbreedbynameusingget]]
-=== getBreedByName
+[[_getallbreedsusingget]]
+=== getAllBreeds
 ....
 GET /breed
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**name** +
-__required__|name|string
-|===
 
 
 ==== Responses
@@ -285,7 +285,7 @@ __required__|name|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|<<_breed,Breed>>
+|**200**|OK|< <<_breed,Breed>> > array
 |===
 
 
@@ -299,23 +299,11 @@ __required__|name|string
 * utility-controller
 
 
-[[_getallmatchprofileswithfiltersusingget]]
-=== getAllMatchProfilesWithFilters
+[[_getallmatchprofilesusingget]]
+=== getAllMatchProfiles
 ....
 GET /matchProfile
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
-|**Query**|**sortBy** +
-__required__|sortBy|string
-|===
 
 
 ==== Responses
@@ -323,7 +311,7 @@ __required__|sortBy|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|< <<_matchprofile,MatchProfile>> > array
+|**200**|OK|<<_matchprofileresponse,MatchProfileResponse>>
 |===
 
 
@@ -421,10 +409,12 @@ GET /matcher
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
+|**Query**|**calculateDistances** +
+__required__|calculateDistances|string
 |**Query**|**matchProfileId** +
 __required__|matchProfileId|string
-|**Query**|**zipRadius** +
-__required__|zipRadius|string
+|**Query**|**randomize** +
+__required__|randomize|string
 |===
 
 
@@ -526,8 +516,8 @@ __required__|unmatchWith|string
 * matcher-controller
 
 
-[[_getexpiredincompleterecordsusingget]]
-=== getExpiredIncompleteRecords
+[[_getmatchresultdataformatchprofileusingget]]
+=== getMatchResultDataForMatchProfile
 ....
 GET /matcher/result
 ....
@@ -538,8 +528,8 @@ GET /matcher/result
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**expired** +
-__required__|expired|string
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
 |===
 
 
@@ -548,7 +538,7 @@ __required__|expired|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|integer (int32)
+|**200**|OK|< <<_matchresult,MatchResult>> > array
 |===
 
 
@@ -562,8 +552,8 @@ __required__|expired|string
 * matcher-controller
 
 
-[[_deletematchresultformatchprofileoneandmatchprofiletwousingdelete]]
-=== deleteMatchResultForMatchProfileOneAndMatchProfileTwo
+[[_deleteallmatchresultsformatchprofileusingdelete]]
+=== deleteAllMatchResultsForMatchProfile
 ....
 DELETE /matcher/result
 ....
@@ -574,10 +564,8 @@ DELETE /matcher/result
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**matchProfileId1** +
-__required__|matchProfileId1|string
-|**Query**|**matchProfileId2** +
-__required__|matchProfileId2|string
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
 |===
 
 
@@ -755,8 +743,8 @@ __required__|pupperMessage|<<_puppermessage,PupperMessage>>
 * message-controller
 
 
-[[_getallmessageswithlimitusingget]]
-=== getAllMessagesWithLimit
+[[_getmessagehistoryusingget]]
+=== getMessageHistory
 ....
 GET /message
 ....
@@ -767,8 +755,10 @@ GET /message
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
+|**Query**|**matchProfileId1** +
+__required__|matchProfileId1|string
+|**Query**|**matchProfileId2** +
+__required__|matchProfileId2|string
 |===
 
 
@@ -865,8 +855,8 @@ __required__|matchProfileId|integer (int64)
 * message-controller
 
 
-[[_getrecentmessagehistoryusingget]]
-=== getRecentMessageHistory
+[[_getrecentmessagesforallmatchesusingget]]
+=== getRecentMessagesForAllMatches
 ....
 GET /message/recent
 ....
@@ -877,10 +867,8 @@ GET /message/recent
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**matchProfileId1** +
-__required__|matchProfileId1|string
-|**Query**|**matchProfileId2** +
-__required__|matchProfileId2|string
+|**Query**|**matchProfileId** +
+__required__|matchProfileId|string
 |===
 
 
@@ -889,7 +877,7 @@ __required__|matchProfileId2|string
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|< <<_puppermessage,PupperMessage>> > array
+|**200**|OK|< < <<_puppermessage,PupperMessage>> > array > array
 |===
 
 
@@ -1183,8 +1171,8 @@ __required__|userId|integer (int64)
 * user-profile-controller
 
 
-[[_updatelastloginusingput]]
-=== updateLastLogin
+[[_updateuserprofilebyidusingput]]
+=== updateUserProfileById
 ....
 PUT /user/{userId}
 ....
@@ -1197,8 +1185,8 @@ PUT /user/{userId}
 |Type|Name|Description|Schema
 |**Path**|**userId** +
 __required__|userId|integer (int64)
-|**Query**|**lastLogin** +
-__required__|lastLogin|string
+|**Body**|**userProfile** +
+__required__|userProfile|<<_userprofile,UserProfile>>
 |===
 
 

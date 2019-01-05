@@ -30,23 +30,17 @@ public class MatcherController {
     }
 
     /**
-     * Retrieves ALL unseen match profiles for a given matchProfileId.
-     * @param matchProfileId
-     * @return
-     */
-    @GetMapping(path="/all", params = {"matchProfileId"})
-    public List<MatchProfile> getAllUnseenProfilesForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
-        return matcherService.getAllUnseenMatchProfilesForMatchProfile(matchProfileId);
-    }
-    /**
      * Retrieves next batch of profile cards to display to the user.
      * @param matchProfileId
+     * @param randomize whether match profile queries should be randomized instead of using a zip code filter via external API call.
+     * @param mapZipCodesToDistances boolean flag indicating whether to map profileCard zip codes to distances using additonal external API calls.
      * @return
      */
-    @GetMapping(params = {"matchProfileId", "zipRadius"})
+    @GetMapping(params = {"matchProfileId", "randomize", "calculateDistances"})
     public List<ProfileCard> fetchMatcherDataBatch(@RequestParam("matchProfileId") Long matchProfileId,
-                                                   @RequestParam("zipRadius") int zipRadius) {
-        return matcherService.retrieveMatcherDataProfileCards(matchProfileId, zipRadius);
+                                                   @RequestParam("randomize") boolean randomize,
+                                                   @RequestParam("calculateDistances") boolean mapZipCodesToDistances) {
+        return matcherService.retrieveMatcherDataProfileCards(matchProfileId, randomize, mapZipCodesToDistances);
     }
 
     /**
@@ -61,6 +55,46 @@ public class MatcherController {
                                                              @RequestBody MatcherDataRequest matcherRequest) {
         return matcherService.updateMatcherResults(matchProfileId, matcherRequest);
     }
+
+    /**
+     * Resets a specific match result record between two match profiles.
+     *
+     * This endpoint should be used when a given match profile wants to un-match with a previously matched match profile.
+     * @param matchProfileId match profile one
+     * @param matchProfileToUnmatchWith match profile two
+     */
+    @PostMapping(path = "/result", params = {"matchProfileId", "unmatchWith"})
+    public void unmatchWithMatchProfileByMatchProfileIds(@RequestParam("matchProfileId") Long matchProfileId,
+                                                          @RequestParam("unmatchWith") Long matchProfileToUnmatchWith) {
+        matcherService.unmatchWithMatchProfile(matchProfileId, matchProfileToUnmatchWith);
+    }
+
+    /**
+     * Delete endpoint that should be used when a matchProfile or userProfile is deleted, which will remove all matchResult records
+     * corresponding to a given matchProfileId.
+     * This endpoint will likely be hit together with a call to the delete endpoint in MessageController that deletes all
+     * messages sent/received by a given matchProfileId.
+     * @param matchProfileId
+     * @return
+     */
+    @DeleteMapping(path = "/result", params = {"matchProfileId"})
+    public void deleteAllMatchResultsForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
+        matcherService.deleteAllMatchResultDataByMatchProfileId(matchProfileId);
+    }
+
+
+    ///////////////////////// ENDPOINTS FOR TESTING/ETC (NOT EXPLICITLY USED BY CLIENT) //////////////////////////////////
+
+    /**
+     * Retrieves ALL unseen match profiles for a given matchProfileId.
+     * @param matchProfileId
+     * @return
+     */
+    @GetMapping(path="/all", params = {"matchProfileId"})
+    public List<MatchProfile> getAllUnseenProfilesForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
+        return matcherService.getAllUnseenMatchProfilesForMatchProfile(matchProfileId);
+    }
+
 
     /**
      * Explicit crud endpoint to retrieve a match result record between a pair of match profiles.
@@ -91,19 +125,6 @@ public class MatcherController {
     }
 
     /**
-     * Delete endpoint that should be used when a matchProfile or userProfile is deleted, which will remove all matchResult records
-     * corresponding to a given matchProfileId.
-     * This endpoint will likely be hit together with a call to the delete endpoint in MessageController that deletes all
-     * messages sent/received by a given matchProfileId.
-     * @param matchProfileId
-     * @return
-     */
-    @DeleteMapping(path = "/result", params = {"matchProfileId"})
-    public void deleteAllMatchResultsForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
-        matcherService.deleteAllMatchResultDataByMatchProfileId(matchProfileId);
-    }
-
-    /**
      * Retrieves all matchResult completed records relating to a given matchProfileId.
      * @param matchProfileId
      * @return
@@ -111,19 +132,6 @@ public class MatcherController {
     @GetMapping(path = "/result", params = {"matchProfileId"})
     public List<MatchResult> getMatchResultDataForMatchProfile(@RequestParam("matchProfileId") Long matchProfileId) {
         return matcherService.retrieveCompletedMatchResultsForMatchProfile(matchProfileId);
-    }
-
-    /**
-     * Resets a specific match result record between two match profiles.
-     *
-     * This endpoint should be used when a given match profile wants to un-match with a previously matched match profile.
-     * @param matchProfileId match profile one
-     * @param matchProfileToUnmatchWith match profile two
-     */
-    @PostMapping(path = "/result", params = {"matchProfileId", "unmatchWith"})
-    public void unmatchWithMatchProfileByMatchProfileIds(@RequestParam("matchProfileId") Long matchProfileId,
-                                                          @RequestParam("unmatchWith") Long matchProfileToUnmatchWith) {
-        matcherService.unmatchWithMatchProfile(matchProfileId, matchProfileToUnmatchWith);
     }
 
     /**

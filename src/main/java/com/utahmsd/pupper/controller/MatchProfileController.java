@@ -29,40 +29,9 @@ public class MatchProfileController {
         this.profileScoreService = profileScoreService;
     }
 
-    @GetMapping(path="/matchProfile")
-    public MatchProfileResponse getAllMatchProfiles() {
-        return matchProfileService.getAllMatchProfiles();
-    }
-
-    @GetMapping(path="/matchProfile", params = {"sortBy", "limit"})
-    public List<MatchProfile> getAllMatchProfilesWithFilters(@RequestParam("sortBy") String sort, @RequestParam("limit") String limit) {
-        return matchProfileFilterService.getMatchProfilesWithLastLoginSortLimitFilters(sort, limit);
-    }
-
     @GetMapping(path="/user/{userId}/matchProfile")
     public MatchProfileResponse getMatchProfilesByUserProfileId(@PathVariable("userId") Long userId) {
         return matchProfileService.getAllMatchProfilesByUserId(userId);
-    }
-
-    @GetMapping(path="/matchProfile", params = {"userEmail"})
-    public List<MatchProfile> getMatchProfilesFilterByUserEmail(@RequestParam("userEmail") @Email String email) {
-        return matchProfileFilterService.getMatchProfilesFilterByUserEmail(email);
-    }
-
-    @GetMapping(path="/matchProfile", params = {"zip"})
-    public List<MatchProfile> getMatchProfilesFilterByUserZip(@RequestParam("zip") String zipcode) {
-        return matchProfileFilterService.getMatchProfilesFilterByUserProfileZip(zipcode);
-    }
-
-    @GetMapping(path="/matchProfile", params = {"breed"})
-    public List<MatchProfile> getMatchProfilesFilterByBreed(@RequestParam("breed") String breed) {
-        return matchProfileFilterService.getMatchProfilesFilterByBreed(breed);
-    }
-
-    @GetMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
-    public MatchProfileResponse getMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userProfileId,
-                                                                                @PathVariable("matchProfileId") Long matchProfileId) {
-        return matchProfileService.getMatchProfileByIds(userProfileId, matchProfileId);
     }
 
     @GetMapping(path="/matchProfile", params = {"matchProfileId"})
@@ -106,6 +75,40 @@ public class MatchProfileController {
     @DeleteMapping(path="/matchProfile", params = {"userId"})
     public MatchProfileResponse deleteMatchProfilesByUserProfileId(@RequestParam("userId") Long userId) {
         return matchProfileService.deleteMatchProfilesByUserProfileId(userId);
+    }
+
+
+    ///////////////////////// ENDPOINTS FOR TESTING/ETC (NOT EXPLICITLY USED BY CLIENT) //////////////////////////////////
+
+    @GetMapping(path="/matchProfile")
+    public MatchProfileResponse getAllMatchProfiles() {
+        return matchProfileService.getAllMatchProfiles();
+    }
+
+    @GetMapping(path="/matchProfile", params = {"sortBy", "limit"})
+    public List<MatchProfile> getAllMatchProfilesWithFilters(@RequestParam("sortBy") String sort, @RequestParam("limit") String limit) {
+        return matchProfileFilterService.getMatchProfilesWithLastLoginSortLimitFilters(sort, limit);
+    }
+
+    @GetMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
+    public MatchProfileResponse getMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userProfileId,
+                                                                                @PathVariable("matchProfileId") Long matchProfileId) {
+        return matchProfileService.getMatchProfileByIds(userProfileId, matchProfileId);
+    }
+
+    @GetMapping(path="/matchProfile", params = {"userEmail"})
+    public List<MatchProfile> getMatchProfilesFilterByUserEmail(@RequestParam("userEmail") @Email String email) {
+        return matchProfileFilterService.getMatchProfilesFilterByUserEmail(email);
+    }
+
+    @GetMapping(path="/matchProfile", params = {"zip"})
+    public List<MatchProfile> getMatchProfilesFilterByUserZip(@RequestParam("zip") String zipcode) {
+        return matchProfileFilterService.getMatchProfilesFilterByUserProfileZip(zipcode);
+    }
+
+    @GetMapping(path="/matchProfile", params = {"breed"})
+    public List<MatchProfile> getMatchProfilesFilterByBreed(@RequestParam("breed") String breed) {
+        return matchProfileFilterService.getMatchProfilesFilterByBreed(breed);
     }
 
     @GetMapping(path="/matchProfile/score", params = {"matchProfileId"})
