@@ -167,7 +167,7 @@ public class MatchProfileService {
         Optional<MatchProfile> matchProfile = matchProfileRepo.findByUserProfileIdAndId(userId, matchProfileId);
         if (!matchProfile.isPresent()) {
             LOGGER.error("Error deleting matchProfile with userProfileId={} and matchProfileId={}", userId, matchProfileId);
-            return createMatchProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND);
+            return createMatchProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
         matchProfileRepo.delete(matchProfile.get());
         return createMatchProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);

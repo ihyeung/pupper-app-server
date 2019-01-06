@@ -58,16 +58,6 @@ public class ProfileUtils {
     }
 
     /**
-     * Shortens age string to abbreviated form. eg. "12 years old" to "12Y".
-     * @param ageString
-     * @return
-     */
-    private static String formatAgeString(String ageString) {
-        String [] ageWords = ageString.split(" ");
-        return ageWords[0] + ageWords[1].substring(0, 1).toUpperCase();
-    }
-
-    /**
      * Converts a Date object to a displayable age string. e.g. "4 years old" or "12 weeks old".
      * @param dob
      * @return
