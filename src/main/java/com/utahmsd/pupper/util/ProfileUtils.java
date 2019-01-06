@@ -1,7 +1,6 @@
 package com.utahmsd.pupper.util;
 
 import com.utahmsd.pupper.dto.pupper.LifeStage;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 public class ProfileUtils {
@@ -33,37 +33,28 @@ public class ProfileUtils {
         return String.format("Last active %d days ago", lastActivity.getDays());
     }
 
-    private static LifeStage ageToStage(String age) throws ValidationException {
-        if (age == null || age.length() < 2) {
-            throw new ValidationException("Invalid input format");
-        }
-        CharSequence ageUnits = "YMD";
-        if (!StringUtils.containsAny(ageUnits, age.toUpperCase())) {
-            throw new ValidationException("Missing Y/M/D units");
-        }
-
-        return null;
-    }
-
     public static LifeStage dobToLifeStage(Date date) {
-        String ageString = createAgeStringFromDate(date);
-
-        try {
-            return ageToStage(formatAgeString(ageString));
-        } catch (ValidationException e) {
-            e.printStackTrace();
+        if (date.after(Date.from(Instant.now()))) {
+            try {
+                throw new ValidationException("Invalid future birthdate");
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
-    }
+        Date twelveMonths = Date.from(Instant.now().minus(365, ChronoUnit.DAYS));
+        Date twoYears = Date.from(Instant.now().minus(365 * 2, ChronoUnit.DAYS));
+        Date eightYears = Date.from(Instant.now().minus(365 * 8, ChronoUnit.DAYS));
 
-    /**
-     * Shortens age string to abbreviated form. eg. "12 years old" to "12Y".
-     * @param ageString
-     * @return
-     */
-    private static String formatAgeString(String ageString) {
-        String [] ageWords = ageString.split(" ");
-        return ageWords[0] + ageWords[1].substring(0, 1).toUpperCase();
+        if (date.after(twelveMonths)) {
+            return LifeStage.PUPPY;
+        }
+        else if (date.after(twoYears)) {
+            return LifeStage.YOUNG;
+        }
+        else if (date.after(eightYears)) {
+            return LifeStage.ADULT;
+        }
+        return LifeStage.MATURE;
     }
 
     /**

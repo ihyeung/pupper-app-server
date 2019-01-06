@@ -5,7 +5,8 @@ public enum Size {
     SMALL,
     MID,
     LARGE,
-    XLARGE;
+    XLARGE,
+    UNKNOWN;
 
     public String value() { return name(); }
 
