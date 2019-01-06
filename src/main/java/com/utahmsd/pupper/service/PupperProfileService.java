@@ -1,6 +1,5 @@
 package com.utahmsd.pupper.service;
 
-import com.amazonaws.util.StringUtils;
 import com.utahmsd.pupper.dao.BreedRepo;
 import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.PupperProfileRepo;
@@ -88,7 +87,7 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
-        if (StringUtils.isNullOrEmpty(pupperProfile.getLifeStage().value())) {
+        if (pupperProfile.getLifeStage() == null) {
             pupperProfile.setLifeStage(dobToLifeStage(pupperProfile.getBirthdate()));
         }
 
@@ -116,7 +115,7 @@ public class PupperProfileService {
             return createPupperProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
 
-        if (StringUtils.isNullOrEmpty(pupperProfile.getLifeStage().value())) {
+        if (pupperProfile.getLifeStage() == null) {
             pupperProfile.setLifeStage(dobToLifeStage(pupperProfile.getBirthdate()));
         }
         PupperProfile profile = pupperProfileRepo.save(pupperProfile);

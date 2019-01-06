@@ -89,7 +89,7 @@ public class MatchProfile implements Serializable {
 
     @Column(name = "score")
     @DefaultValue("100")
-    private float score;
+    private Float score;
 
     @NotBlank
     @javax.validation.constraints.Size(max = 130)
@@ -177,9 +177,9 @@ public class MatchProfile implements Serializable {
 
     public void setLifeStage(LifeStage lifeStage) { this.lifeStage = lifeStage; }
 
-    public float getScore() { return score; }
+    public Float getScore() { return score; }
 
-    public void setScore(float score) { this.score = score; }
+    public void setScore(Float score) { this.score = score; }
 
     public String getAboutMe() { return aboutMe; }
 

@@ -1,5 +1,6 @@
 package com.utahmsd.pupper.util;
 
+import com.utahmsd.pupper.dto.pupper.LifeStage;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -48,6 +49,20 @@ public class ProfileUtilsUnitTest {
         assertEquals("Last active 0 days ago", lastActivityFromLastLogin(zeroDaysAgo));
         assertEquals("Last active 3 days ago", lastActivityFromLastLogin(threeDaysAgo));
         assertEquals("Last active 1 months ago", lastActivityFromLastLogin(oneMonthAgo));
+    }
 
+    @Test
+    public void testDobToLifeStage() {
+        Date oneMonthAgo = Date.from(Instant.now().minus(31, ChronoUnit.DAYS));
+        Date twelveMonthsMinusOneDay = Date.from(Instant.now().minus(364, ChronoUnit.DAYS));
+        Date eighteenMonths = Date.from(Instant.now().minus(547, ChronoUnit.DAYS));
+        Date twoYears = Date.from(Instant.now().minus(365 * 2, ChronoUnit.DAYS));
+        Date eightYears = Date.from(Instant.now().minus(365 * 8, ChronoUnit.DAYS));
+
+        assertEquals(LifeStage.PUPPY, dobToLifeStage(oneMonthAgo));
+        assertEquals(LifeStage.PUPPY, dobToLifeStage(twelveMonthsMinusOneDay));
+        assertEquals(LifeStage.YOUNG, dobToLifeStage(eighteenMonths));
+        assertEquals(LifeStage.ADULT, dobToLifeStage(twoYears));
+        assertEquals(LifeStage.MATURE, dobToLifeStage(eightYears));
     }
 }
