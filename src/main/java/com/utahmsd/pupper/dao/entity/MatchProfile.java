@@ -104,13 +104,15 @@ public class MatchProfile implements Serializable {
     @Column(name = "zip_radius")
     private int zipRadius;
 
+    @Column(name = "is_default")
+    private Boolean isDefault;
     /**
      * Returns a list of field names that are valid param keys to filter matchProfiles by.
      * @return
      */
     public static List<String> matchProfileFieldList() {
         return Arrays.asList("id", "numDogs", "names", "sex", "birthdate", "breed", "size", "energyLevel", "lifeStage",
-                "score", "aboutMe", "profileImage", "userProfile", "zipRadius");
+                "score", "aboutMe", "profileImage", "userProfile", "zipRadius", "isDefault");
     }
 
     public static MatchProfile createFromObject(Object object) throws ParseException {
@@ -122,8 +124,8 @@ public class MatchProfile implements Serializable {
             matchProfile.setNames((String) entityObject.get("names"));
             matchProfile.setBirthdate(DATE_FORMATTER.parse((String) entityObject.get("birthdate")));
             matchProfile.setSex(Gender.valueOf((String) entityObject.get("sex")));
-//            matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
-            matchProfile.setNumDogs(1);
+            matchProfile.setNumDogs(((Long) entityObject.get("numDogs")).intValue());
+//            matchProfile.setNumDogs(1);
             matchProfile.setBreed(Breed.createFromObject(entityObject.get("breed")));
             matchProfile.setSize(Size.valueOf((String) entityObject.get("size")));
             matchProfile.setEnergyLevel(Energy.valueOf((String) entityObject.get("energyLevel")));
@@ -132,6 +134,7 @@ public class MatchProfile implements Serializable {
             matchProfile.setAboutMe((String) entityObject.get("aboutMe"));
             matchProfile.setProfileImage((String) entityObject.get("profileImage"));
             matchProfile.setZipRadius(((Long) entityObject.get("zipRadius")).intValue());
+            matchProfile.setDefault(Boolean.valueOf((String)entityObject.get("isDefault")));
             return matchProfile;
         }
         return null;
@@ -192,4 +195,8 @@ public class MatchProfile implements Serializable {
     public int getZipRadius() { return zipRadius; }
 
     public void setZipRadius(int zipRadius) { this.zipRadius = zipRadius; }
+
+    public Boolean getDefault() { return isDefault; }
+
+    public void setDefault(Boolean aDefault) { isDefault = aDefault; }
 }

@@ -42,39 +42,32 @@ public class UserProfileService {
                 String.format(USER_PROFILE_NOT_FOUND, id));
     }
 
-    public UserProfileResponse createOrUpdateUserProfile(UserProfile userProfile) {
+    public UserProfileResponse createUserProfile(UserProfile userProfile) {
         UserProfile result = userProfileRepo.findByUserAccount_Username(userProfile.getUserAccount().getUsername());
         if (result != null) {
-            LOGGER.info("User profile already exists. Updating existing user profile with id={}", result.getId());
-
-            userProfile.setUserAccount(result.getUserAccount());
-            userProfile.setId(result.getId());
-            UserProfile savedResult = userProfileRepo.save(userProfile);
-
-            return createUserProfileResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
+            LOGGER.error("A user profile for that username already exists, userProfileId={}", result.getId());
+            return createUserProfileResponse(false, null, HttpStatus.BAD_REQUEST, INVALID_INPUT);
         }
-        LOGGER.info("Creating a new user profile.");
         UserProfile profile = userProfileRepo.save(userProfile);
 
         return createUserProfileResponse(true, Arrays.asList(profile), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserProfileResponse updateUserProfileByUserProfileId(Long userId, UserProfile userProfile) {
-        Optional<UserProfile> result = userProfileRepo.findById(userId);
-        if (!result.isPresent()) {
-            LOGGER.error(ID_NOT_FOUND, "User profile", userId);
-
-            return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, NOT_FOUND);
-        }
-        else if (!userId.equals(userProfile.getId())) {
+        if (!userId.equals(userProfile.getId())) {
             LOGGER.error(IDS_MISMATCH);
             return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
         }
+        Optional<UserProfile> result = userProfileRepo.findById(userId);
+        if (!result.isPresent()) {
+            LOGGER.error(USER_PROFILE_NOT_FOUND, userId);
+            return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        }
+
         userProfile.setUserAccount(result.get().getUserAccount());
         userProfile.setId(result.get().getId());
         UserProfile savedResult = userProfileRepo.save(userProfile);
 
-        LOGGER.info("User profile with id={} was found, updating existing profile", userId);
         return createUserProfileResponse(true, Arrays.asList(savedResult), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
@@ -84,8 +77,11 @@ public class UserProfileService {
         }
         Optional<UserProfile> result = userProfileRepo.findById(userProfileId);
         if (result.isPresent()) {
-            userProfileRepo.updateLastLogin(userProfileId, Date.valueOf(lastLogin));
-            return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+            Date lastLoginUpdate = Date.valueOf(lastLogin);
+            userProfileRepo.updateLastLogin(userProfileId, lastLoginUpdate);
+            UserProfile updatedUser = result.get();
+            updatedUser.setLastLogin(lastLoginUpdate);
+            return createUserProfileResponse(true, Arrays.asList(updatedUser), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
         return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
     }
@@ -103,8 +99,14 @@ public class UserProfileService {
     }
 
     public UserProfileResponse updateProfileImageById(Long userId, String imageUrl) {
-        userProfileRepo.updateProfileImage(userId, imageUrl);
-        return createUserProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        Optional<UserProfile> result = userProfileRepo.findById(userId);
+        if (result.isPresent()) {
+            userProfileRepo.updateProfileImage(userId, imageUrl);
+            result.get().setProfileImage(imageUrl);
+            return createUserProfileResponse(true, Arrays.asList(result.get()), HttpStatus.OK, DEFAULT_DESCRIPTION);
+
+        }
+        return createUserProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
     }
 
     public void deleteUserProfileByEmail(String email) {

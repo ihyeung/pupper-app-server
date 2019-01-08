@@ -4,6 +4,7 @@ import com.utahmsd.pupper.TestUtils;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
+import com.utahmsd.pupper.dto.UserProfileResponse;
 import com.utahmsd.pupper.service.UserProfileService;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +12,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 
+import java.util.Arrays;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -48,14 +53,28 @@ public class UserProfileServiceUnitTest {
     }
 
     @Test
-    public void testCreateOrUpdateUserProfile() {
-        given(userProfileRepo.findByUserAccount_Username(anyString())).willReturn(userProfile);
+    public void testCreateUserProfile_success() {
+        given(userProfileRepo.findByUserAccount_Username(anyString())).willReturn(null);
         given(userProfileRepo.save(any(UserProfile.class))).willReturn(userProfile);
 
-        userProfileService.createOrUpdateUserProfile(userProfile);
+        UserProfileResponse response = userProfileService.createUserProfile(userProfile);
 
         verify(userProfileRepo, times(1)).findByUserAccount_Username(anyString());
         verify(userProfileRepo, times(1)).save(any(UserProfile.class));
+        assertEquals(Arrays.asList(userProfile), response.getUserProfileList());
+    }
+
+    @Test
+    public void testCreateUserProfile_userProfileAlreadyExists() {
+        given(userProfileRepo.findByUserAccount_Username(anyString())).willReturn(userProfile);
+        given(userProfileRepo.save(any(UserProfile.class))).willReturn(userProfile);
+
+        UserProfileResponse response = userProfileService.createUserProfile(userProfile);
+
+        verify(userProfileRepo, times(1)).findByUserAccount_Username(anyString());
+        verify(userProfileRepo, times(0)).save(any(UserProfile.class));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
+        assertThat(response.getUserProfileList()).isEmpty();
     }
 
     @Test

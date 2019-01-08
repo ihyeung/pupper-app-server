@@ -36,8 +36,8 @@ public class UserProfileController {
     }
 
     @PostMapping()
-    public UserProfileResponse createOrInsertUserProfile(@RequestBody @Valid UserProfile userProfile) {
-        return userProfileService.createOrUpdateUserProfile(userProfile);
+    public UserProfileResponse createUserProfile(@RequestBody @Valid UserProfile userProfile) {
+        return userProfileService.createUserProfile(userProfile);
     }
 
     @PutMapping(path = "/{userId}")

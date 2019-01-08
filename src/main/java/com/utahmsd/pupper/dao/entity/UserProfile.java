@@ -74,9 +74,6 @@ public class UserProfile implements Serializable {
     @javax.validation.constraints.Size(max = 100)
     private String profileImage;
 
-    @Column(name = "active_match_profile_id")
-    private Long activeMatchProfileId;
-
     public UserProfile(){}
 
     public static UserProfile createFromObject(Object object) throws ParseException {
@@ -180,8 +177,4 @@ public class UserProfile implements Serializable {
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
-
-    public Long getActiveMatchProfileId() { return activeMatchProfileId; }
-
-    public void setActiveMatchProfileId(Long activeMatchProfileId) { this.activeMatchProfileId = activeMatchProfileId; }
 }
