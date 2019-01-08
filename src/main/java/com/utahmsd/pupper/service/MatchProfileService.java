@@ -98,7 +98,7 @@ public class MatchProfileService {
         }
         Optional<List<MatchProfile>> matchProfiles = matchProfileRepo.findAllByUserProfile_Id(userId);
         if (!matchProfiles.isPresent()) {
-            return initEmptyMatchProfileFields(matchProfile);
+            return initEmptyMatchProfileFields(matchProfile, true);
         }
         for (MatchProfile profile: matchProfiles.get()) {
             if (profile.getNames().equals(matchProfile.getNames()) &&
@@ -107,10 +107,10 @@ public class MatchProfileService {
                         "Creating match profile with names and breed matching an existing match profile");
             }
         }
-        return initEmptyMatchProfileFields(matchProfile);
+        return initEmptyMatchProfileFields(matchProfile, null);
     }
 
-    private MatchProfileResponse initEmptyMatchProfileFields(MatchProfile matchProfile) {
+    private MatchProfileResponse initEmptyMatchProfileFields(MatchProfile matchProfile, Boolean makeDefault) {
         matchProfile.setScore(DEFAULT_MAX_SCORE);
 
         if (matchProfile.getSize() == null) {
@@ -120,6 +120,9 @@ public class MatchProfileService {
         if (matchProfile.getLifeStage() == null) {
             LifeStage lifeStage = ProfileUtils.dobToLifeStage(matchProfile.getBirthdate());
             matchProfile.setLifeStage(lifeStage);
+        }
+        if (makeDefault != null) {
+            matchProfile.setDefault(makeDefault); //Override makeDefault flag if creating first match profile for user
         }
         MatchProfile profile = matchProfileRepo.save(matchProfile);
         profile.setScore(null); //Hide score in response
