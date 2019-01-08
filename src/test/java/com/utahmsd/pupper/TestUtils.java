@@ -33,6 +33,7 @@ public class TestUtils {
         user.setMaritalStatus(MaritalStatus.SINGLE);
         user.setLastLogin(Date.from(Instant.now()));
         user.setDateJoin(Date.from(Instant.now()));
+        user.setProfileImage("https://www.shutterstock.com/image-photo/beautiful-young-woman-clean-fresh-skin-519177016");
 
         return user;
     }
@@ -51,6 +52,9 @@ public class TestUtils {
         matchProfile.setLifeStage(ProfileUtils.dobToLifeStage(matchProfile.getBirthdate()));
         matchProfile.setNumDogs(2);
         matchProfile.setSex(Gender.FEMALE);
+        matchProfile.setDefault(true);
+        matchProfile.setZipRadius(3);
+        matchProfile.setProfileImage("https://images.freeimages.com/images/large-previews/ae2/yorkie-3-1362057.jpg");
 
         return matchProfile;
     }

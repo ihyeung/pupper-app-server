@@ -20,7 +20,7 @@ public class MatchProfileFilterServiceUnitTest {
         assertTrue(isValidMatchProfileSort("id"));
         assertTrue(isValidMatchProfileSort("names"));
         assertTrue(isValidMatchProfileSort("zipRadius"));
-
+        assertTrue(isValidMatchProfileSort("isDefault"));
 
         assertFalse(isValidMatchProfileSort(null));
         assertFalse(isValidMatchProfileSort(""));
