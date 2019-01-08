@@ -51,7 +51,7 @@ public class MatchProfileController {
         return matchProfileService.createMatchProfileForUser(userId, matchProfile);
     }
 
-    @PostMapping(path="/user/{userId}/matchProfile/{matchProfileId}", params = {"profilePic"})
+    @PostMapping(path="/user/{userId}/matchProfile/{matchProfileId}", params = {"profilePic"}) //PostMapping to be consistent with implementation in AmazonAwsClient
     public MatchProfileResponse updateProfileImageForMatchProfile(@PathVariable("userId") Long userId,
                                                                  @PathVariable("matchProfileId") Long matchProfileId,
                                                                  @RequestParam("profilePic") String profilePic) {

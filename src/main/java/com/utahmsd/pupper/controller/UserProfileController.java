@@ -63,7 +63,7 @@ public class UserProfileController {
         return userProfileService.updateLastLoginForUserProfile(userProfileId, lastLogin);
     }
 
-    @PostMapping(path="/{userId}", params = {"profilePic"})
+    @PostMapping(path="/{userId}", params = {"profilePic"}) //PostMapping to be consistent with implementation in AmazonAwsClient
     public UserProfileResponse updateProfileImageForMatchProfile(@PathVariable("userId") Long userId,
                                                                   @RequestParam("profilePic") String profilePic) {
         return userProfileService.updateProfileImageById(userId, profilePic);
