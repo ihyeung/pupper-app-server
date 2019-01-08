@@ -67,9 +67,9 @@ public class MatchProfileController {
     }
 
     @DeleteMapping(path="/user/{userId}/matchProfile/{matchProfileId}")
-    public MatchProfileResponse deleteMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
-                                                                                   @PathVariable("matchProfileId") Long matchProfileId) {
-        return matchProfileService.deleteMatchProfile(userId, matchProfileId);
+    public void deleteMatchProfileByUserProfileIdAndMatchProfileId(@PathVariable("userId") Long userId,
+                                                                   @PathVariable("matchProfileId") Long matchProfileId) {
+        matchProfileService.deleteMatchProfile(userId, matchProfileId);
     }
 
     @DeleteMapping(path="/matchProfile", params = {"userId"})

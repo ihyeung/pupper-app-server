@@ -166,14 +166,13 @@ public class MatchProfileService {
     }
 
 
-    public MatchProfileResponse deleteMatchProfile(Long userId, Long matchProfileId) {
+    public void deleteMatchProfile(Long userId, Long matchProfileId) {
         Optional<MatchProfile> matchProfile = matchProfileRepo.findByUserProfileIdAndId(userId, matchProfileId);
         if (!matchProfile.isPresent()) {
             LOGGER.error("Error deleting matchProfile with userProfileId={} and matchProfileId={}", userId, matchProfileId);
-            return createMatchProfileResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+        } else {
+            matchProfileRepo.delete(matchProfile.get());
         }
-        matchProfileRepo.delete(matchProfile.get());
-        return createMatchProfileResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public MatchProfileResponse deleteMatchProfilesByUserProfileId(Long userId) {
