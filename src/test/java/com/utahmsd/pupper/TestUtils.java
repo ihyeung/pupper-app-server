@@ -74,4 +74,16 @@ public class TestUtils {
 
         return pupperProfile;
     }
+
+    public static MatchResult createMatchResult(MatchProfile matchProfile, MatchProfile matchProfile1) {
+        MatchResult result = new MatchResult();
+
+        return result;
+    }
+
+    public static PupperMessage createMessage(MatchProfile matchProfile, MatchProfile matchProfile1) {
+        PupperMessage message = new PupperMessage();
+
+        return message;
+    }
 }
