@@ -67,7 +67,6 @@ public class UserProfileServiceUnitTest {
     @Test
     public void testCreateUserProfile_userProfileAlreadyExists() {
         given(userProfileRepo.findByUserAccount_Username(anyString())).willReturn(userProfile);
-        given(userProfileRepo.save(any(UserProfile.class))).willReturn(userProfile);
 
         UserProfileResponse response = userProfileService.createUserProfile(userProfile);
 
@@ -93,12 +92,10 @@ public class UserProfileServiceUnitTest {
     @Test
     public void testUpdateUserProfileByUserProfileId_idsMismatch() {
         userProfile.setId(3L);
-
-        given(userProfileRepo.findById(anyLong())).willReturn(Optional.of(userProfile));
-
+        
         userProfileService.updateUserProfileByUserProfileId(4L, userProfile);
 
-        verify(userProfileRepo, times(1)).findById(anyLong());
+        verify(userProfileRepo, times(0)).findById(anyLong());
         verify(userProfileRepo, times(0)).save(any(UserProfile.class));
     }
 
