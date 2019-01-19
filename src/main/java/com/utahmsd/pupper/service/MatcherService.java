@@ -48,6 +48,14 @@ public class MatcherService {
         this.zipCodeAPIClient = zipCodeAPIClient;
     }
 
+    /**
+     * Main method that retrieves the next batch of match profiles that it maps to a list of profileCard objects.
+     * @param matchProfileId Id of the active match profile to retrieve matching data for.
+     * @param randomize Flag that, when set to true, returns profiles using random order, instead of making external API call.
+     * @param calculateDistances Flag that, when set to true, makes additional external API calls to calculate distances for each
+     *                           profile card that is returned to the user. If set to false, each card will instead display that user's zip code.
+     * @return A list of ProfileCards.
+     */
     public List<ProfileCard> retrieveMatcherDataProfileCards(Long matchProfileId, boolean randomize, boolean calculateDistances) {
         Optional<MatchProfile> m = matchProfileRepo.findById(matchProfileId);
 
@@ -137,6 +145,14 @@ public class MatcherService {
         return matchProfileRepo.findAllByIdIsNotInAndIdIsNotOrderByScoreDesc(matchProfileIdsToExclude, matchProfileId);
     }
 
+    /**
+     * Helper method that retrieves next batch of match profiles not previously displayed or sent to a given user.
+     *
+     * @param matchProfile
+     * @param randomize - optional flag that, when set to false, makes external API call to filter next batch of profiles by a zip
+     *                  code radius. Set to true to conserve on external API calls and instead randomize profiles.
+     * @return
+     */
     private List<MatchProfile> getNextMatchProfileBatch(MatchProfile matchProfile, boolean randomize) {
         List<Long> viewedMatchProfileIds = getIdsOfPreviouslyShownProfilesForMatchProfile(matchProfile.getId());
         if (randomize) { //Don't make zipcode api call, just retrieve match profiles randomly
