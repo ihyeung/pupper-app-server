@@ -2,21 +2,11 @@
 [[_paths]]
 == Paths
 
-[[_getaccountbyuserprofileidusingget]]
-=== getAccountByUserProfileId
+[[_getallaccountsusingget]]
+=== getAllAccounts
 ....
 GET /account
 ....
-
-
-==== Parameters
-
-[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
-|===
-|Type|Name|Description|Schema
-|**Query**|**userId** +
-__required__|userId|string
-|===
 
 
 ==== Responses
@@ -891,6 +881,78 @@ __required__|matchProfileId|string
 * message-controller
 
 
+[[_getpupperprofilesbylifestageusingget]]
+=== getPupperProfilesByLifeStage
+....
+GET /pupper
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**lifeStage** +
+__required__|lifeStage|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|< <<_pupperprofile,PupperProfile>> > array
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_findpupperprofilesbybreedidusingget]]
+=== findPupperProfilesByBreedId
+....
+GET /pupper/breed/{breedId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**breedId** +
+__required__|breedId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
 [[_uploadfileusingpost]]
 === uploadFile
 ....
@@ -934,8 +996,8 @@ __required__|requestBody|<<_imageuploadrequest,ImageUploadRequest>>
 * image-controller
 
 
-[[_createorinsertuserprofileusingpost]]
-=== createOrInsertUserProfile
+[[_createuserprofileusingpost]]
+=== createUserProfile
 ....
 POST /user
 ....
@@ -975,8 +1037,8 @@ __required__|userProfile|<<_userprofile,UserProfile>>
 * user-profile-controller
 
 
-[[_getalluserprofilesusingget]]
-=== getAllUserProfiles
+[[_finduserprofilebyuseraccountemailusingget]]
+=== findUserProfileByUserAccountEmail
 ....
 GET /user
 ....
@@ -987,10 +1049,8 @@ GET /user
 [options="header", cols=".^2a,.^3a,.^9a,.^4a"]
 |===
 |Type|Name|Description|Schema
-|**Query**|**limit** +
-__required__|limit|string
-|**Query**|**sortBy** +
-__required__|sortBy|string
+|**Query**|**email** +
+__required__|email|string
 |===
 
 
@@ -1171,8 +1231,8 @@ __required__|userId|integer (int64)
 * user-profile-controller
 
 
-[[_updateuserprofilebyidusingput]]
-=== updateUserProfileById
+[[_updatelastloginusingput]]
+=== updateLastLogin
 ....
 PUT /user/{userId}
 ....
@@ -1185,8 +1245,8 @@ PUT /user/{userId}
 |Type|Name|Description|Schema
 |**Path**|**userId** +
 __required__|userId|integer (int64)
-|**Body**|**userProfile** +
-__required__|userProfile|<<_userprofile,UserProfile>>
+|**Query**|**lastLogin** +
+__required__|lastLogin|string
 |===
 
 
@@ -1481,7 +1541,7 @@ __required__|userId|integer (int64)
 [options="header", cols=".^2a,.^14a,.^4a"]
 |===
 |HTTP Code|Description|Schema
-|**200**|OK|<<_matchprofileresponse,MatchProfileResponse>>
+|**200**|OK|No Content
 |===
 
 
@@ -1493,6 +1553,129 @@ __required__|userId|integer (int64)
 ==== Tags
 
 * match-profile-controller
+
+
+[[_createorupdatepupperprofilebyuserprofileidandmatchprofileidusingpost]]
+=== createOrUpdatePupperProfileByUserProfileIdAndMatchProfileId
+....
+POST /user/{userId}/matchProfile/{matchProfileId}/pupper
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|**Body**|**pupperProfile** +
+__required__|pupperProfile|<<_pupperprofile,PupperProfile>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_getpupperprofilesbyuserprofileidandmatchprofileidusingget]]
+=== getPupperProfilesByUserProfileIdAndMatchProfileId
+....
+GET /user/{userId}/matchProfile/{matchProfileId}/pupper
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_findpupperprofilebyidusingget]]
+=== findPupperProfileById
+....
+GET /user/{userId}/matchProfile/{matchProfileId}/pupper/{pupperId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**matchProfileId** +
+__required__|matchProfileId|integer (int64)
+|**Path**|**pupperId** +
+__required__|pupperId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
 
 
 [[_uploadprofileimageformatchprofileusingput]]
@@ -1580,6 +1763,125 @@ __required__|userId|integer (int64)
 ==== Tags
 
 * image-controller
+
+
+[[_getpupperprofilesbyuseridusingget]]
+=== getPupperProfilesByUserId
+....
+GET /user/{userId}/pupper
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_updatepupperprofilebyidusingput]]
+=== updatePupperProfileById
+....
+PUT /user/{userId}/pupper/{pupperId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**pupperId** +
+__required__|pupperId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|**Body**|**pupperProfile** +
+__required__|pupperProfile|<<_pupperprofile,PupperProfile>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Consumes
+
+* `application/json`
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
+
+
+[[_deletepupperprofilebyidusingdelete]]
+=== deletePupperProfileById
+....
+DELETE /user/{userId}/pupper/{pupperId}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2a,.^3a,.^9a,.^4a"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**pupperId** +
+__required__|pupperId|integer (int64)
+|**Path**|**userId** +
+__required__|userId|integer (int64)
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2a,.^14a,.^4a"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_pupperprofileresponse,PupperProfileResponse>>
+|===
+
+
+==== Produces
+
+* `\*/*`
+
+
+==== Tags
+
+* pupper-profile-controller
 
 
 [[_uploadprofileimageforuserprofileusingput]]
