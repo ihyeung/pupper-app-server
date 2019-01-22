@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource("classpath:application-test.properties")
 public class Swagger2MarkupTest {
 
-    private final String TEST_URL = System.getProperty("TEST_URL", "http://localhost:5000/");
+    private final String TEST_URL = System.getProperty("TEST_URL", "https://localhost:5000/");
 
     @Inject
     private MockMvc mockMvc;

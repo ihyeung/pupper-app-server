@@ -10,13 +10,12 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
 @ComponentScan(lazyInit = true)
-@EnableSwagger2
+//@EnableSwagger2
 public class SwaggerConfig {
 
     @Bean
@@ -43,7 +42,7 @@ public class SwaggerConfig {
                 .license("MIT License: Copyright (C) 2018 Irene Yeung")
                 .termsOfServiceUrl("Pending Publication")
                 .description("Server/Back-End For Pupper")
-                .version("v0.1.5.3")
+                .version("v0.1.5.4")
                 .build();
     }
 

@@ -92,7 +92,7 @@ public class UserProfileServiceUnitTest {
     @Test
     public void testUpdateUserProfileByUserProfileId_idsMismatch() {
         userProfile.setId(3L);
-        
+
         userProfileService.updateUserProfileByUserProfileId(4L, userProfile);
 
         verify(userProfileRepo, times(0)).findById(anyLong());

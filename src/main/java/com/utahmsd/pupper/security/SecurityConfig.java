@@ -40,13 +40,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf()
-                .disable().authorizeRequests()
+        http.cors().and().csrf().disable();
+
+        http.requiresChannel().anyRequest().requiresSecure();
+
+        http.authorizeRequests()
 //                .antMatchers(HttpMethod.GET, SWAGGER_WHITELIST).permitAll() //Uncomment for swagger2markup tests
                 .antMatchers(HttpMethod.POST, REGISTER_ENDPOINT).permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilter(new UserAuthenticationFilter(authenticationManager()))
+                .anyRequest().authenticated();
+
+        http.addFilter(new UserAuthenticationFilter(authenticationManager()))
                 .addFilter(new UserAuthorizationFilter(authenticationManager()))
                 // Disable session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
