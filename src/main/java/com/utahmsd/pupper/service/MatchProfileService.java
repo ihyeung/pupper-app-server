@@ -104,10 +104,20 @@ public class MatchProfileService {
             if (profile.getNames().equals(matchProfile.getNames()) &&
                     profile.getBreed().getName().equals(matchProfile.getBreed().getName())) { //Trying to create a match profile with name/breed matching an existing match profile
                 return createMatchProfileResponse(false, null, HttpStatus.BAD_REQUEST,
-                        "Creating match profile with names and breed matching an existing match profile");
+                        "Creating duplicate match profile for user with names and breed matching an existing match profile");
+            }
+            if (matchProfile.getDefault()) {
+                updateIsDefaultForMatchProfile(profile);
             }
         }
         return initEmptyMatchProfileFields(matchProfile, null);
+    }
+
+    private void updateIsDefaultForMatchProfile(MatchProfile matchProfileToUpdate) {
+        if (matchProfileToUpdate.getDefault()) { //Another match profile is current default, need to update
+            matchProfileToUpdate.setDefault(false);
+            matchProfileRepo.save(matchProfileToUpdate);
+        }
     }
 
     private MatchProfileResponse initEmptyMatchProfileFields(MatchProfile matchProfile, Boolean makeDefault) {
