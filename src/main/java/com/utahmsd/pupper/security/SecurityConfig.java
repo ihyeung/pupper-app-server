@@ -42,14 +42,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
 
-        http.requiresChannel().anyRequest().requiresSecure();
+//        http.requiresChannel().anyRequest().requiresInsecure();//TODO: figure out how to enable https for backend calls from front end
 
         http.authorizeRequests()
 //                .antMatchers(HttpMethod.GET, SWAGGER_WHITELIST).permitAll() //Uncomment for swagger2markup tests
                 .antMatchers(HttpMethod.POST, REGISTER_ENDPOINT).permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and()
 
-        http.addFilter(new UserAuthenticationFilter(authenticationManager()))
+        .addFilter(new UserAuthenticationFilter(authenticationManager()))
                 .addFilter(new UserAuthorizationFilter(authenticationManager()))
                 // Disable session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -65,7 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.applyPermitDefaultValues();
-        corsConfiguration.addAllowedMethod(HttpMethod.PUT);
         corsConfiguration.addExposedHeader("Authorization");
 
         source.registerCorsConfiguration("/**",
