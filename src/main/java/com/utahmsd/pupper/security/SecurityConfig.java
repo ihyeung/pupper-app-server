@@ -2,8 +2,8 @@ package com.utahmsd.pupper.security;
 
 import com.utahmsd.pupper.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,12 +16,17 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Collections;
+
 import static com.utahmsd.pupper.security.SecurityConstants.REGISTER_ENDPOINT;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(lazyInit = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${pupper.mobile.application.path:}")
+    private String appPathDevice;
+
 
     private final UserAccountService userAccountService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -66,8 +71,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.applyPermitDefaultValues();
+        corsConfiguration.addAllowedMethod(HttpMethod.PUT);
+        corsConfiguration.addAllowedMethod(HttpMethod.DELETE);
+        corsConfiguration.addAllowedMethod(HttpMethod.OPTIONS);
+
+        corsConfiguration.setAllowedOrigins(Collections.singletonList(appPathDevice));
+//
+//        corsConfiguration.addAllowedHeader("Origin");
+//        corsConfiguration.addAllowedHeader("X-Requested-With");
+//        corsConfiguration.addAllowedHeader("Allow-Control-Allow-Origin");
+//        corsConfiguration.addAllowedHeader("Content-Type");
+//
+//        corsConfiguration.setAllowCredentials(true);
         corsConfiguration.addExposedHeader("Authorization");
 
+//        corsConfiguration.addExposedHeader("Allow-Control-Allow-Origin");
         source.registerCorsConfiguration("/**",
                 corsConfiguration);
         return source;
