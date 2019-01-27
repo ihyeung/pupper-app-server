@@ -16,8 +16,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Collections;
-
 import static com.utahmsd.pupper.security.SecurityConstants.REGISTER_ENDPOINT;
 
 @Configuration
@@ -75,17 +73,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         corsConfiguration.addAllowedMethod(HttpMethod.DELETE);
         corsConfiguration.addAllowedMethod(HttpMethod.OPTIONS);
 
-        corsConfiguration.setAllowedOrigins(Collections.singletonList(appPathDevice));
-//
-//        corsConfiguration.addAllowedHeader("Origin");
-//        corsConfiguration.addAllowedHeader("X-Requested-With");
-//        corsConfiguration.addAllowedHeader("Allow-Control-Allow-Origin");
-//        corsConfiguration.addAllowedHeader("Content-Type");
-//
-//        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.addAllowedOrigin(appPathDevice);
+
         corsConfiguration.addExposedHeader("Authorization");
 
-//        corsConfiguration.addExposedHeader("Allow-Control-Allow-Origin");
         source.registerCorsConfiguration("/**",
                 corsConfiguration);
         return source;
