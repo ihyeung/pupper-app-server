@@ -156,7 +156,7 @@ public class UserAccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         UserAccount userResult = userAccountRepo.findByUsername(username);
         if (userResult == null) {
-            LOGGER.error(String.format(EMAIL_NOT_FOUND, "User account", username));
+            LOGGER.info(String.format(EMAIL_NOT_FOUND, "User account", username));
             return null;
         }
         return new org.springframework.security.core.userdetails.User(
