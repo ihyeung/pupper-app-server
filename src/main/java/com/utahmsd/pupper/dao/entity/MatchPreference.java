@@ -41,9 +41,7 @@ public class MatchPreference implements Serializable {
         this.matchProfile = matchProfile;
     }
 
-    public String getDogPreference() {
-        return dogPreference;
-    }
+    public String getDogPreference() { return dogPreference; }
 
     public void setDogPreference(String dogPreference) {
         this.dogPreference = dogPreference;
