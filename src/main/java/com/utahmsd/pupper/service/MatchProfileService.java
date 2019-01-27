@@ -106,7 +106,7 @@ public class MatchProfileService {
                 return createMatchProfileResponse(false, null, HttpStatus.BAD_REQUEST,
                         "Creating duplicate match profile for user with names and breed matching an existing match profile");
             }
-            if (matchProfile.getDefault()) {
+            if (matchProfile.getIsDefault()) {
                 updateIsDefaultForMatchProfile(profile);
             }
         }
@@ -114,8 +114,8 @@ public class MatchProfileService {
     }
 
     private void updateIsDefaultForMatchProfile(MatchProfile matchProfileToUpdate) {
-        if (matchProfileToUpdate.getDefault()) { //Another match profile is current default, need to update
-            matchProfileToUpdate.setDefault(false);
+        if (matchProfileToUpdate.getIsDefault()) { //Another match profile is current default, need to update
+            matchProfileToUpdate.setIsDefault(false);
             matchProfileRepo.save(matchProfileToUpdate);
         }
     }
@@ -132,7 +132,7 @@ public class MatchProfileService {
             matchProfile.setLifeStage(lifeStage);
         }
         if (makeDefault != null) {
-            matchProfile.setDefault(makeDefault); //Override makeDefault flag if creating first match profile for user
+            matchProfile.setIsDefault(makeDefault); //Override makeDefault flag if creating first match profile for user
         }
         MatchProfile profile = matchProfileRepo.save(matchProfile);
         profile.setScore(null); //Hide score in response

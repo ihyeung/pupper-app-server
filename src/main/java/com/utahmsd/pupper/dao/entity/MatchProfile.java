@@ -134,7 +134,7 @@ public class MatchProfile implements Serializable {
             matchProfile.setAboutMe((String) entityObject.get("aboutMe"));
             matchProfile.setProfileImage((String) entityObject.get("profileImage"));
             matchProfile.setZipRadius(((Long) entityObject.get("zipRadius")).intValue());
-            matchProfile.setDefault(Boolean.valueOf((String)entityObject.get("isDefault")));
+            matchProfile.setIsDefault(Boolean.valueOf((String)entityObject.get("isDefault")));
             return matchProfile;
         }
         return null;
@@ -196,7 +196,11 @@ public class MatchProfile implements Serializable {
 
     public void setZipRadius(int zipRadius) { this.zipRadius = zipRadius; }
 
-    public Boolean getDefault() { return isDefault; }
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
 
-    public void setDefault(Boolean aDefault) { isDefault = aDefault; }
+    public void setIsDefault(Boolean aDefault) {
+        isDefault = aDefault;
+    }
 }
