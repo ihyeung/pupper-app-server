@@ -10,6 +10,8 @@ import java.util.List;
 
 import static com.utahmsd.pupper.dto.pupper.ProfileCard.matchProfileToProfileCardMapper;
 
+
+//TODO: Rename these fields
 public class MatcherDataResponse extends BaseResponse {
 
     @JsonProperty("playerId")

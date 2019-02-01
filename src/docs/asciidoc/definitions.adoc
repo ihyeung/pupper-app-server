@@ -66,12 +66,12 @@ __optional__||string
 __optional__|**Example** : `"yyyy-MM-dd"`|string
 |**breed** +
 __optional__||<<_breed,Breed>>
-|**default** +
-__optional__||boolean
 |**energyLevel** +
 __optional__||enum (MIN, LOW, MED, HIGH, EXTREME)
 |**id** +
 __optional__||integer (int64)
+|**isDefault** +
+__optional__||boolean
 |**lifeStage** +
 __optional__||enum (PUPPY, YOUNG, ADULT, MATURE)
 |**names** +
