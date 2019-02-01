@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
 
-//        http.requiresChannel().anyRequest().requiresInsecure();//TODO: figure out how to enable https for backend calls from front end
+//        http.requiresChannel().anyRequest().requiresSecure();//TODO: figure out how to enable https for backend calls from front end
 
         http.authorizeRequests()
 //                .antMatchers(HttpMethod.GET, SWAGGER_WHITELIST).permitAll() //Uncomment for swagger2markup tests
