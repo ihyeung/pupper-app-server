@@ -1,6 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.utahmsd.pupper.dto.pupper.PreferenceType;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -12,18 +13,21 @@ import java.io.Serializable;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class MatchPreference implements Serializable {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id", updatable = false, nullable = false)
-        private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
 
-        @ManyToOne //A match profile can have many preferences, and a match preference is associated with one match profile
-        @JoinColumn(name = "match_profile_id_fk")
-        @Valid
-        private MatchProfile matchProfile;
+    @ManyToOne //A match profile can have many preferences, and a match preference is associated with one match profile
+    @JoinColumn(name = "match_profile_id_fk")
+    @Valid
+    private MatchProfile matchProfile;
 
-        @Column(name = "preference")
-        private String dogPreference;
+    @Column(name = "preference_type")
+    private PreferenceType preferenceType;
+
+    @Column(name = "preference")
+    private String matchingPreference;
 
     public Long getId() {
         return id;
@@ -41,9 +45,13 @@ public class MatchPreference implements Serializable {
         this.matchProfile = matchProfile;
     }
 
-    public String getDogPreference() { return dogPreference; }
+    public PreferenceType getPreferenceType() { return preferenceType; }
 
-    public void setDogPreference(String dogPreference) {
-        this.dogPreference = dogPreference;
+    public void setPreferenceType(PreferenceType preferenceType) { this.preferenceType = preferenceType; }
+
+    public String getMatchingPreference() { return matchingPreference; }
+
+    public void setMatchingPreference(String dogPreference) {
+        this.matchingPreference = dogPreference;
     }
 }
