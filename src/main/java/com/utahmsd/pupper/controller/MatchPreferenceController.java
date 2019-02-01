@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class MatchPreferenceController {
@@ -22,8 +23,8 @@ public class MatchPreferenceController {
     }
 
     @PutMapping(path = "/matchProfile/{matchId}/matchPreference")
-    public MatchPreferenceResponse insertMatchPreference(@PathVariable("matchId") Long matchProfileId,
-                                                         @RequestBody @Valid MatchPreference matchPreference) {
-        return matchPreferenceService.insertMatchPreference(matchProfileId, matchPreference);
+    public MatchPreferenceResponse insertMatchPreferences(@PathVariable("matchId") Long matchProfileId,
+                                                         @RequestBody @Valid List<MatchPreference> matchPreference) {
+        return matchPreferenceService.insertMatchPreferences(matchProfileId, matchPreference);
     }
 }
