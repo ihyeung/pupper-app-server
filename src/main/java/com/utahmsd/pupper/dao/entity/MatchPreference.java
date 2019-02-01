@@ -51,7 +51,7 @@ public class MatchPreference implements Serializable {
 
     public String getMatchingPreference() { return matchingPreference; }
 
-    public void setMatchingPreference(String dogPreference) {
-        this.matchingPreference = dogPreference;
+    public void setMatchingPreference(String matchingPreference) {
+        this.matchingPreference = matchingPreference;
     }
 }
