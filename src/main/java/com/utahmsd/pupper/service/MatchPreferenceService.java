@@ -44,7 +44,9 @@ public class MatchPreferenceService {
 
     public MatchPreferenceResponse updateMatchPreferences(Long matchProfileId, List<MatchPreference> matchPreferences) {
         matchPreferences.forEach(each -> {
-
+            //Match preferences NOT in list returned in db query --> delete from database table
+            //match preferences IN list not returned in db query --> add to database table
+            //TODO: match preferences in list in db query result --> update records with changes?
         });
         return MatchPreferenceResponse.createResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
