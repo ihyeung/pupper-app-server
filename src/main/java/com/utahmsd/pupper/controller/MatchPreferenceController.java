@@ -38,7 +38,7 @@ public class MatchPreferenceController {
 
     @DeleteMapping(path = "/matchProfile/{matchId}/matchPreference")
     public void deleteAllMatchPreferences(@PathVariable("matchId") Long matchProfileId) {
-        
+
     }
 
 
