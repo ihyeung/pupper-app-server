@@ -4,10 +4,7 @@ import com.utahmsd.pupper.dao.entity.MatchPreference;
 import com.utahmsd.pupper.dto.MatchPreferenceResponse;
 import com.utahmsd.pupper.service.MatchPreferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -22,9 +19,29 @@ public class MatchPreferenceController {
         this.matchPreferenceService = matchPreferenceService;
     }
 
-    @PutMapping(path = "/matchProfile/{matchId}/matchPreference")
+    @PostMapping(path = "/matchProfile/{matchId}/matchPreference")
     public MatchPreferenceResponse insertMatchPreferences(@PathVariable("matchId") Long matchProfileId,
                                                          @RequestBody @Valid List<MatchPreference> matchPreference) {
         return matchPreferenceService.insertMatchPreferences(matchProfileId, matchPreference);
     }
+
+    @GetMapping(path = "/matchProfile/{matchId}/matchPreference")
+    public MatchPreferenceResponse getMatchPreferences(@PathVariable("matchId") Long matchProfileId,
+                                                          @RequestBody @Valid List<MatchPreference> matchPreference) {
+        return null;
+    }
+
+    @PutMapping(path = "/matchProfile/{matchId}/matchPreference")
+    public MatchPreferenceResponse updateMatchPreferences(@PathVariable("matchId") Long matchProfileId,
+                                                       @RequestBody @Valid List<MatchPreference> matchPreference) {
+        return null;
+    }
+
+    @DeleteMapping(path = "/matchProfile/{matchId}/matchPreference")
+    public MatchPreferenceResponse deleteAllMatchPreferences(@PathVariable("matchId") Long matchProfileId,
+                                                          @RequestBody @Valid List<MatchPreference> matchPreference) {
+        return null;
+    }
+
+
 }
