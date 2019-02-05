@@ -26,8 +26,7 @@ public class MatchPreferenceController {
     }
 
     @GetMapping(path = "/matchProfile/{matchId}/matchPreference")
-    public MatchPreferenceResponse getMatchPreferences(@PathVariable("matchId") Long matchProfileId,
-                                                          @RequestBody @Valid List<MatchPreference> matchPreference) {
+    public MatchPreferenceResponse getMatchPreferences(@PathVariable("matchId") Long matchProfileId) {
         return null;
     }
 
@@ -38,9 +37,8 @@ public class MatchPreferenceController {
     }
 
     @DeleteMapping(path = "/matchProfile/{matchId}/matchPreference")
-    public MatchPreferenceResponse deleteAllMatchPreferences(@PathVariable("matchId") Long matchProfileId,
-                                                          @RequestBody @Valid List<MatchPreference> matchPreference) {
-        return null;
+    public void deleteAllMatchPreferences(@PathVariable("matchId") Long matchProfileId) {
+        
     }
 
 

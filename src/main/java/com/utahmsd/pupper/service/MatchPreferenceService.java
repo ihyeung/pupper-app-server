@@ -35,5 +35,15 @@ public class MatchPreferenceService {
         return MatchPreferenceResponse.createResponse(true, results, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    
+    public MatchPreferenceResponse getMatchPreferences(Long matchProfileId, List<MatchPreference> matchPreferences) {
+        List<MatchPreference> results = new ArrayList<>();
+        for (MatchPreference matchPreference: matchPreferences) {
+            if (!matchProfileId.equals(matchPreference.getMatchProfile().getId())) {
+                return MatchPreferenceResponse.createResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+            }
+            MatchPreference preference = matchPreferenceRepo.save(matchPreference);
+            results.add(preference);
+        }
+        return MatchPreferenceResponse.createResponse(true, results, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
 }
