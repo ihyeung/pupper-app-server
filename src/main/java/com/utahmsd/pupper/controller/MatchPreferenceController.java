@@ -21,25 +21,24 @@ public class MatchPreferenceController {
 
     @PostMapping(path = "/matchProfile/{matchId}/matchPreference")
     public MatchPreferenceResponse insertMatchPreferences(@PathVariable("matchId") Long matchProfileId,
-                                                         @RequestBody @Valid List<MatchPreference> matchPreference) {
-        return matchPreferenceService.insertMatchPreferences(matchProfileId, matchPreference);
+                                                         @RequestBody @Valid List<MatchPreference> matchPreferences) {
+        return matchPreferenceService.insertMatchPreferences(matchProfileId, matchPreferences);
     }
 
     @GetMapping(path = "/matchProfile/{matchId}/matchPreference")
     public MatchPreferenceResponse getMatchPreferences(@PathVariable("matchId") Long matchProfileId) {
-        return null;
+        return matchPreferenceService.getMatchPreferences(matchProfileId);
     }
 
     @PutMapping(path = "/matchProfile/{matchId}/matchPreference")
     public MatchPreferenceResponse updateMatchPreferences(@PathVariable("matchId") Long matchProfileId,
-                                                       @RequestBody @Valid List<MatchPreference> matchPreference) {
-        return null;
+                                                       @RequestBody @Valid List<MatchPreference> matchPreferences) {
+        return matchPreferenceService.updateMatchPreferences(matchProfileId, matchPreferences);
     }
 
     @DeleteMapping(path = "/matchProfile/{matchId}/matchPreference")
     public void deleteAllMatchPreferences(@PathVariable("matchId") Long matchProfileId) {
-
+        matchPreferenceService.deleteMatchPreferences(matchProfileId);
     }
-
 
 }
