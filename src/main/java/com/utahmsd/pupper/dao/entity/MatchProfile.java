@@ -130,7 +130,7 @@ public class MatchProfile implements Serializable {
             matchProfile.setSize(Size.valueOf((String) entityObject.get("size")));
             matchProfile.setEnergyLevel(Energy.valueOf((String) entityObject.get("energyLevel")));
             matchProfile.setLifeStage(LifeStage.valueOf((String) entityObject.get("lifeStage")));
-            matchProfile.setScore(((Double) entityObject.get("score")).floatValue());
+//            matchProfile.setScore(((Double) entityObject.get("score")).floatValue());
             matchProfile.setAboutMe((String) entityObject.get("aboutMe"));
             matchProfile.setProfileImage((String) entityObject.get("profileImage"));
             matchProfile.setZipRadius(((Long) entityObject.get("zipRadius")).intValue());
