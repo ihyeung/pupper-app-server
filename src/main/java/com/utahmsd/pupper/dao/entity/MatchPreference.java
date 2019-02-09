@@ -23,6 +23,7 @@ public class MatchPreference implements Serializable {
     @Valid
     private MatchProfile matchProfile;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "preference_type")
     private PreferenceType preferenceType;
 
