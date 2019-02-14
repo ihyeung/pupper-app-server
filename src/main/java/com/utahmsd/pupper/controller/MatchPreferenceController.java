@@ -31,7 +31,7 @@ public class MatchPreferenceController {
     }
 
     @GetMapping(path = "/matchProfile/{matchId}/matchPreference", params = {"type"})
-    public MatchPreferenceResponse getMatchPreferences(@PathVariable("matchId") Long matchProfileId,
+    public MatchPreferenceResponse getMatchPreferencesByType(@PathVariable("matchId") Long matchProfileId,
                                                        @RequestParam("type") String type) {
         return matchPreferenceService.getMatchPreferencesByMatchProfileIdFilterByType(matchProfileId, type);
     }
