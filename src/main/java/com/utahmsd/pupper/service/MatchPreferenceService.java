@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.utahmsd.pupper.util.Constants.*;
 
@@ -59,6 +61,21 @@ public class MatchPreferenceService {
         }
         deleteMatchPreferences(matchProfileId); //Permanently reset match preference data for the user
         return insertMatchPreferenceData(matchPreferences);
+    }
+
+    public MatchPreferenceResponse updateMatchPreferenceById(Long matchProfileId, Long matchPreferenceId,
+                                                             MatchPreference preference) {
+        MatchPreference matchPreference = matchPreferenceRepo.findByMatchProfile_IdAndId(matchProfileId, matchPreferenceId);
+        if (matchPreference == null) {
+            return MatchPreferenceResponse.createResponse(false, null, HttpStatus.NOT_FOUND,
+                    INVALID_PATH_VARIABLE);
+        }
+        matchPreferenceRepo.updateMatchPreference(preference.getPreferenceType(), preference.getMatchingPreference(), matchPreferenceId);
+        Optional<MatchPreference> result = matchPreferenceRepo.findById(matchPreferenceId);
+        if (result.isPresent()) {
+            return MatchPreferenceResponse.createResponse(true, Arrays.asList(result.get()), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        }
+        return MatchPreferenceResponse.createResponse(false, null, HttpStatus.BAD_REQUEST, INVALID_INPUT);
     }
 
     public void deleteMatchPreferences(Long matchProfileId) {
