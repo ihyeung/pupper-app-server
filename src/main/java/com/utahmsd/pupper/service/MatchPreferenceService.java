@@ -42,16 +42,35 @@ public class MatchPreferenceService {
        return MatchPreferenceResponse.createResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public MatchPreferenceResponse updateMatchPreferences(Long matchProfileId, List<MatchPreference> matchPreferences) {
-        matchPreferences.forEach(each -> {
-            //Match preferences NOT in list returned in db query --> delete from database table
-            //match preferences IN list not returned in db query --> add to database table
-            //TODO: match preferences in list in db query result --> update records with changes?
-        });
-        return MatchPreferenceResponse.createResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    /**
+     * Service method that permanently replaces all match_preference data for a given matchProfileId with a
+     * provided list of matchPreferences.
+     *
+     * Any matchPreference records initially contained in match_preference that are not included in the provided list
+     * will be permanently deleted.
+     * @param matchProfileId
+     * @param matchPreferences
+     * @return
+     */
+    public MatchPreferenceResponse updateAllMatchPreferences(Long matchProfileId, List<MatchPreference> matchPreferences) {
+        List<MatchPreference> queryResult = matchPreferenceRepo.findAllByMatchProfile_Id(matchProfileId);
+        if (queryResult.isEmpty()) {
+            return insertMatchPreferenceData(matchPreferences);
+        }
+        deleteMatchPreferences(matchProfileId); //Permanently reset match preference data for the user
+        return insertMatchPreferenceData(matchPreferences);
     }
 
     public void deleteMatchPreferences(Long matchProfileId) {
         matchPreferenceRepo.deleteAllByMatchProfile_Id(matchProfileId);
+    }
+
+    private MatchPreferenceResponse insertMatchPreferenceData(List<MatchPreference>  matchPreferences) {
+        List<MatchPreference> savedRecords = new ArrayList<>();
+        matchPreferences.forEach(each -> {
+            MatchPreference saved = matchPreferenceRepo.save(each);
+            savedRecords.add(saved);
+        });
+        return MatchPreferenceResponse.createResponse(true, savedRecords, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 }
