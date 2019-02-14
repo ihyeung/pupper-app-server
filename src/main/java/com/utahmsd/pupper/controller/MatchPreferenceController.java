@@ -31,9 +31,16 @@ public class MatchPreferenceController {
     }
 
     @PutMapping(path = "/matchProfile/{matchId}/matchPreference")
-    public MatchPreferenceResponse updateMatchPreferences(@PathVariable("matchId") Long matchProfileId,
+    public MatchPreferenceResponse updateAllMatchPreferences(@PathVariable("matchId") Long matchProfileId,
                                                        @RequestBody @Valid List<MatchPreference> matchPreferences) {
-        return matchPreferenceService.updateMatchPreferences(matchProfileId, matchPreferences);
+        return matchPreferenceService.updateAllMatchPreferences(matchProfileId, matchPreferences);
+    }
+
+    @PutMapping(path = "/matchProfile/{matchId}/matchPreference/{matchPreferenceId}")
+    public MatchPreferenceResponse updateMatchPreference(@PathVariable("matchId") Long matchProfileId,
+                                                          @PathVariable("matchPreferenceId") Long preferenceId,
+                                                          @RequestBody @Valid MatchPreference matchPreference) {
+        return matchPreferenceService.updateMatchPreferenceById(matchProfileId, preferenceId, matchPreference);
     }
 
     @DeleteMapping(path = "/matchProfile/{matchId}/matchPreference")
