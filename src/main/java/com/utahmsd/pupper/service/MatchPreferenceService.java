@@ -3,6 +3,7 @@ package com.utahmsd.pupper.service;
 import com.utahmsd.pupper.dao.MatchPreferenceRepo;
 import com.utahmsd.pupper.dao.entity.MatchPreference;
 import com.utahmsd.pupper.dto.MatchPreferenceResponse;
+import com.utahmsd.pupper.dto.pupper.PreferenceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -36,12 +37,21 @@ public class MatchPreferenceService {
         return MatchPreferenceResponse.createResponse(true, results, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
-    public MatchPreferenceResponse getMatchPreferences(Long matchProfileId) {
+    public MatchPreferenceResponse getMatchPreferencesByMatchProfileId(Long matchProfileId) {
        List<MatchPreference> matchPreferences = matchPreferenceRepo.findAllByMatchProfile_Id(matchProfileId);
        if (matchPreferences.isEmpty()) {
            return MatchPreferenceResponse.createResponse(false, null, HttpStatus.NOT_FOUND, NO_QUERY_RESULTS);
        }
        return MatchPreferenceResponse.createResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
+
+    public MatchPreferenceResponse getMatchPreferencesByMatchProfileIdFilterByType(Long matchProfileId, String preferenceType) {
+        List<MatchPreference> matchPreferences = matchPreferenceRepo.findAllByMatchProfile_IdAndPreferenceType(matchProfileId,
+                                                                                    PreferenceType.fromValue(preferenceType));
+        if (matchPreferences.isEmpty()) {
+            return MatchPreferenceResponse.createResponse(false, null, HttpStatus.NOT_FOUND, NO_QUERY_RESULTS);
+        }
+        return MatchPreferenceResponse.createResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     /**

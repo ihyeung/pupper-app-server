@@ -27,7 +27,13 @@ public class MatchPreferenceController {
 
     @GetMapping(path = "/matchProfile/{matchId}/matchPreference")
     public MatchPreferenceResponse getMatchPreferences(@PathVariable("matchId") Long matchProfileId) {
-        return matchPreferenceService.getMatchPreferences(matchProfileId);
+        return matchPreferenceService.getMatchPreferencesByMatchProfileId(matchProfileId);
+    }
+
+    @GetMapping(path = "/matchProfile/{matchId}/matchPreference", params = {"type"})
+    public MatchPreferenceResponse getMatchPreferences(@PathVariable("matchId") Long matchProfileId,
+                                                       @RequestParam("type") String type) {
+        return matchPreferenceService.getMatchPreferencesByMatchProfileIdFilterByType(matchProfileId, type);
     }
 
     @PutMapping(path = "/matchProfile/{matchId}/matchPreference")
