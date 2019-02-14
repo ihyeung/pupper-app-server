@@ -17,10 +17,13 @@ public interface MatchPreferenceRepo extends PagingAndSortingRepository<MatchPre
 
     List<MatchPreference> findAllByMatchProfile_IdAndPreferenceType(Long matchProfileId, PreferenceType preferenceType);
 
+    MatchPreference findByMatchProfile_IdAndId(Long matchProfileId, Long matchPreferenceId);
+
     @Transactional
     @Modifying
-    @Query("UPDATE MatchPreference mp SET mp.matchingPreference = :preference WHERE mp.id = :id")
-    void updateMatchPreference(@Param("preference") String preference, @Param("id") Long matchPreferenceId);
+    @Query("UPDATE MatchPreference mp SET mp.preferenceType = :preferenceType, mp.matchingPreference = :preference WHERE mp.id = :id")
+    void updateMatchPreference(@Param("preferenceType") PreferenceType type, @Param("preference") String preference,
+                               @Param("id") Long matchPreferenceId);
 
     void deleteAllByMatchProfile_Id(Long matchProfileId);
 }
