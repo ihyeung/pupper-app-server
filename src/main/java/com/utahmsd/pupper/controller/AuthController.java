@@ -52,13 +52,13 @@ public class AuthController {
         return userAccountService.findUserAccountByEmail(email);
     }
 
-    @PutMapping()
+    @PutMapping(params = {"email"})
     public UserAuthenticationResponse updateAccountByEmail(@RequestParam("email") String email,
                                                            @RequestBody @Valid final UserAccount userAccount) {
         return userAccountService.updateUserAccountByEmail(email, userAccount);
     }
 
-    @DeleteMapping()
+    @DeleteMapping(params = {"email"})
     public UserAuthenticationResponse deleteAccountByEmail(@RequestParam("email") String email) {
         return userAccountService.deleteUserAccountByEmail(email);
     }
