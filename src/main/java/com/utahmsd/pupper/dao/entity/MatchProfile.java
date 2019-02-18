@@ -106,13 +106,19 @@ public class MatchProfile implements Serializable {
 
     @Column(name = "is_default")
     private Boolean isDefault;
+
+    @Column(name = "show_similar")
+    private Boolean showSimilar;
+
+    @Column(name = "is_hidden")
+    private Boolean isHidden;
     /**
      * Returns a list of field names that are valid param keys to filter matchProfiles by.
      * @return
      */
     public static List<String> matchProfileFieldList() {
         return Arrays.asList("id", "numDogs", "names", "sex", "birthdate", "breed", "size", "energyLevel", "lifeStage",
-                "score", "aboutMe", "profileImage", "userProfile", "zipRadius", "isDefault");
+                "score", "aboutMe", "profileImage", "userProfile", "zipRadius", "isDefault", "showSimilar", "isHidden");
     }
 
     public static MatchProfile createFromObject(Object object) throws ParseException {
@@ -135,6 +141,8 @@ public class MatchProfile implements Serializable {
             matchProfile.setProfileImage((String) entityObject.get("profileImage"));
             matchProfile.setZipRadius(((Long) entityObject.get("zipRadius")).intValue());
             matchProfile.setIsDefault(Boolean.valueOf((String)entityObject.get("isDefault")));
+            matchProfile.setShowSimilar(Boolean.valueOf((String)entityObject.get("showSimilar")));
+            matchProfile.setIsHidden(Boolean.valueOf((String)entityObject.get("isHidden")));
             return matchProfile;
         }
         return null;
@@ -203,4 +211,12 @@ public class MatchProfile implements Serializable {
     public void setIsDefault(Boolean aDefault) {
         isDefault = aDefault;
     }
+
+    public Boolean getShowSimilar() {return showSimilar;}
+
+    public void setShowSimilar(Boolean showSimilar) { this.showSimilar = showSimilar; }
+
+    public Boolean getIsHidden() { return isHidden;}
+
+    public void setIsHidden(Boolean hidden) { isHidden = hidden; }
 }
