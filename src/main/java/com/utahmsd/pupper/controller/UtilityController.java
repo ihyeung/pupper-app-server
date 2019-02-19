@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,12 @@ public class UtilityController {
     public List<String> getZipcodesInRadius(@RequestParam("radius") String radius,
                                             @RequestParam("zipCode") String zipCode) {
 
-        return zipCodeAPIClient.getZipCodesInRadius(zipCode, radius);
+        try {
+            return zipCodeAPIClient.getZipCodesInRadius(zipCode, radius);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /*

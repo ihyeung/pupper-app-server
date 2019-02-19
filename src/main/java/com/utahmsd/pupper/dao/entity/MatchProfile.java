@@ -6,6 +6,7 @@ import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.Gender;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
 import com.utahmsd.pupper.dto.pupper.Size;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -102,15 +103,18 @@ public class MatchProfile implements Serializable {
 
     @DefaultValue("5")
     @Column(name = "zip_radius")
+    @Range(min = 3, max = 50)
     private int zipRadius;
 
     @Column(name = "is_default")
     private Boolean isDefault;
 
     @Column(name = "show_similar")
+    @DefaultValue("True")
     private Boolean showSimilar;
 
     @Column(name = "is_hidden")
+    @DefaultValue("False")
     private Boolean isHidden;
     /**
      * Returns a list of field names that are valid param keys to filter matchProfiles by.

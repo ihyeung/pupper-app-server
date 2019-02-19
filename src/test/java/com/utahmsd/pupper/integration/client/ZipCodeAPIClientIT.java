@@ -98,7 +98,7 @@ public class ZipCodeAPIClientIT {
     }
 
     @Test
-    public void testGetZipCodesInRadius_invalidZipCode() {
+    public void testGetZipCodesInRadius_invalidZipCode() throws IOException {
         zipCodeAPIClient.getZipCodesInRadius("TEST", "3");
 
         verifyZeroInteractions(mockHttpClient);
@@ -107,7 +107,7 @@ public class ZipCodeAPIClientIT {
     }
 
     @Test
-    public void testGetZipCodesInRadius_invalidRadius() {
+    public void testGetZipCodesInRadius_invalidRadius() throws IOException {
         zipCodeAPIClient.getZipCodesInRadius("84095", "hello");
 
         verifyZeroInteractions(mockHttpClient);

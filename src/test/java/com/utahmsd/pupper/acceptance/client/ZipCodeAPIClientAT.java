@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.json.JacksonJsonParser;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class ZipCodeAPIClientAT {
     }
 
     @Test
-    public void testGetZipCodesInRadius() {
+    public void testGetZipCodesInRadius() throws IOException {
 
         assertThat(zipCodeAPIClient.getZipCodesInRadius(DEFAULT_ZIP, "3").size()).isEqualTo(3);
         assertThat(zipCodeAPIClient.getZipCodesInRadius(DEFAULT_ZIP, "1").size()).isEqualTo(1);
@@ -36,23 +37,23 @@ public class ZipCodeAPIClientAT {
     }
 
     @Test
-    public void testGetDistanceBetweenZipcodes() {
+    public void testGetDistanceBetweenZipcodes() throws IOException {
         assertThat(zipCodeAPIClient.getDistanceBetweenZipcodes(DEFAULT_ZIP, "84601")).isNotZero();
     }
 
 
     @Test
-    public void testGetDistanceBetweenZipcodes_distanceBetweenDuplicateZipCodes() {
+    public void testGetDistanceBetweenZipcodes_distanceBetweenDuplicateZipCodes() throws IOException {
         assertThat(zipCodeAPIClient.getDistanceBetweenZipcodes(DEFAULT_ZIP, DEFAULT_ZIP)).isEqualTo(0);
     }
 
     @Test
-    public void testGetDistanceBetweenZipcodes_invalidZipcode() {
+    public void testGetDistanceBetweenZipcodes_invalidZipcode() throws IOException {
         assertThat(zipCodeAPIClient.getDistanceBetweenZipcodes(DEFAULT_ZIP, "ello")).isEqualTo(0);
     }
 
     @Test
-    public void testGetDistanceBetweenMultipleZipcodes() {
+    public void testGetDistanceBetweenMultipleZipcodes() throws IOException {
         List<String> zipcodeList = Arrays.asList(DEFAULT_ZIP, "84088");
         Map<String, Integer> distances =
                 zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(DEFAULT_ZIP, zipcodeList);
@@ -62,7 +63,7 @@ public class ZipCodeAPIClientAT {
     }
 
     @Test
-    public void testGetDistanceBetweenMultipleZipcodes_listContainsInvalidZipcode() {
+    public void testGetDistanceBetweenMultipleZipcodes_listContainsInvalidZipcode() throws IOException {
         List<String> zipcodeList = Arrays.asList("84601", "84088", "hello");
         assertThat(zipCodeAPIClient.getDistanceBetweenZipCodeAndMultipleZipCodes(DEFAULT_ZIP, zipcodeList)).isEmpty();
     }
