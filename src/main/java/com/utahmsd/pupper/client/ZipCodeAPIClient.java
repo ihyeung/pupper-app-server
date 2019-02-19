@@ -3,9 +3,11 @@ package com.utahmsd.pupper.client;
 import com.amazonaws.util.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.utahmsd.pupper.exception.ApiException;
 import com.utahmsd.pupper.util.ZipCodeRadiusResult;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.message.BasicHeader;
@@ -38,6 +40,7 @@ public class ZipCodeAPIClient {
     private static final String DIST_BETWEEN_ZIPCODE_LIST = String.format(BASE_URL, apiKey, "multi-distance", "%s", "%s");
     private static final String ZIP_CODES_RADIUS = String.format(BASE_URL, apiKey, "radius", "%s", "%s");
     public static final int MAX_RADIUS = 50;
+    public static final int MIN_RADIUS = 3;
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -50,7 +53,8 @@ public class ZipCodeAPIClient {
         this.jacksonJsonParser = jacksonJsonParser;
     }
 
-    public Map<String,Integer> getDistanceBetweenZipCodeAndMultipleZipCodes(String zipcode, List<String> zipcodeList) {
+    public Map<String,Integer> getDistanceBetweenZipCodeAndMultipleZipCodes(String zipcode,
+                                                                            List<String> zipcodeList) throws IOException {
         Map<String,Integer> distanceMap = new HashMap<>();
         String zipString = createMultiZipcodeStringForUrl(zipcode, zipcodeList);
         if (!isValidZipcode(zipcode) || zipString == null) {
@@ -81,7 +85,7 @@ public class ZipCodeAPIClient {
         return zipcodeString.split(", ");
     }
 
-    public Integer getDistanceBetweenZipcodes(String zipcode, String zipcode1) {
+    public Integer getDistanceBetweenZipcodes(String zipcode, String zipcode1) throws IOException {
         if (!isValidZipcode(zipcode) || !isValidZipcode(zipcode1) || zipcode.equals(zipcode1)) {
             return 0;
         }
@@ -93,39 +97,43 @@ public class ZipCodeAPIClient {
         return 0;
     }
 
-    public List<String> getZipCodesInRadius(String zipcode, String radius) {
+    public List<String> getZipCodesInRadius(String zipcode, String radius) throws IOException {
         List<String> zipCodes = new ArrayList<>();
         if (!isValidZipCodeRadius(radius) || !isValidZipcode(zipcode) || Integer.valueOf(radius) == 0) {
+            LOGGER.error("Invalid zipcode radius '{}' or zipcode: '{}'", radius, zipcode);
             return zipCodes;
         }
-        String responseBody = executeHttpGet(ZIP_CODES_RADIUS, zipcode, radius);
+        String responseBody;
+            responseBody = executeHttpGet(ZIP_CODES_RADIUS, zipcode, radius);
         if (!StringUtils.isNullOrEmpty(responseBody)) {
-            List<ZipCodeRadiusResult> zipcodeResults = parseZipcodeResultsFromApiResponse(responseBody);
+            List<ZipCodeRadiusResult> zipcodeResults = parseZipCodeResultsFromApiResponse(responseBody);
             zipcodeResults.forEach(each -> zipCodes.add(each.getZipcode()));
         }
         return zipCodes;
     }
 
-    private String executeHttpGet(String url, String zipcode, String apiParam) {
+    private String executeHttpGet(String url, String zipcode, String apiParam) throws IOException {
         HttpGet httpGet = new HttpGet(String.format(url, zipcode, apiParam));
         LOGGER.info("Sending HTTP GET to '{}'", httpGet.getURI());
         httpGet.setHeaders(HEADERS);
 
         HttpResponse response;
-        try {
-            response = httpClient.execute(httpGet);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
-                LOGGER.error("Maximum number of requests to ZipCode API exceeded. Please try again in an hour.");
-                return null;
-            }
-            return EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
-
+        response = httpClient.execute(httpGet);
+        StatusLine responseStatus = response.getStatusLine();
+        if (responseStatus.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
+            String API_USAGE_ERROR = "Maximum number of requests to ZipCode API exceeded. Please try again in an hour.";
+            LOGGER.error(API_USAGE_ERROR);
+            throw new ApiException(API_USAGE_ERROR);
         }
-        return null;
+        else if (response.getStatusLine().getStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
+            String API_KEY_ERROR = "API key is invalid";
+            LOGGER.error(API_KEY_ERROR);
+            throw new ApiException(API_KEY_ERROR);
+        }
+        return EntityUtils.toString(response.getEntity());
     }
 
-    private List<ZipCodeRadiusResult> parseZipcodeResultsFromApiResponse(String response) {
+    private List<ZipCodeRadiusResult> parseZipCodeResultsFromApiResponse(String response) {
         if (!StringUtils.isNullOrEmpty(response)) {
             Map<String, Object> responseMap = jacksonJsonParser.parseMap(response);
             Object zipCodeData = responseMap.getOrDefault("zip_codes", null);
