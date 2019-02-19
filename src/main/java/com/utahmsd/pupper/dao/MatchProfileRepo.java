@@ -45,5 +45,8 @@ public interface MatchProfileRepo extends JpaRepository<MatchProfile, Long> {
 
     List<MatchProfile> findTop3ByIdIsNotInAndIdIsNotOrderByScoreDesc(List<Long> matchProfileIds, Long id);
 
+    ///////// Database queries to use specifically if getIdsOfPreviouslyShownProfilesForMatchProfile() result is empty //////
+    List<MatchProfile> findTop3ByIdIsNotOrderByScoreDesc(Long id);
+    List<MatchProfile> findTop3ByIdIsNotAndUserProfile_ZipIsInOrderByScoreDesc(Long id, List<String> zipCodesInRadius);
 
 }
