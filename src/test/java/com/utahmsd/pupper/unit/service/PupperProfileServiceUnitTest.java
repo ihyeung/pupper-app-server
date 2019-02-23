@@ -47,7 +47,6 @@ public class PupperProfileServiceUnitTest {
         matchProfile = TestUtils.createMatchProfile(userProfile);
         pupperProfile = TestUtils.createPupperProfile(matchProfile);
 
-
     }
 
     @Test
