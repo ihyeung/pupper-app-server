@@ -1,10 +1,8 @@
-package com.utahmsd.pupper.acceptance;
+package com.utahmsd.pupper.acceptance.controller;
 
 import com.utahmsd.pupper.TestUtils;
 import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
-import com.utahmsd.pupper.dto.pupper.Gender;
-import com.utahmsd.pupper.dto.pupper.MaritalStatus;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;

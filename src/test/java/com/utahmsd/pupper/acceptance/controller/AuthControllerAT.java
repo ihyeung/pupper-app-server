@@ -1,4 +1,4 @@
-package com.utahmsd.pupper.acceptance;
+package com.utahmsd.pupper.acceptance.controller;
 
 import com.utahmsd.pupper.dao.entity.UserAccount;
 import io.restassured.RestAssured;

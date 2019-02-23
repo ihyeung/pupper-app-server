@@ -1,4 +1,4 @@
-package com.utahmsd.pupper.acceptance;
+package com.utahmsd.pupper.acceptance.controller;
 
 import com.utahmsd.pupper.TestUtils;
 import io.restassured.http.ContentType;
