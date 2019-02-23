@@ -1,15 +1,15 @@
 package com.utahmsd.pupper;
 
 import com.utahmsd.pupper.dao.entity.*;
-import com.utahmsd.pupper.dto.pupper.Energy;
-import com.utahmsd.pupper.dto.pupper.Gender;
-import com.utahmsd.pupper.dto.pupper.MaritalStatus;
-import com.utahmsd.pupper.dto.pupper.Size;
+import com.utahmsd.pupper.dto.pupper.*;
 import com.utahmsd.pupper.util.ProfileUtils;
+import com.utahmsd.pupper.util.Utils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TestUtils {
     
@@ -52,10 +52,11 @@ public class TestUtils {
         matchProfile.setLifeStage(ProfileUtils.dobToLifeStage(matchProfile.getBirthdate()));
         matchProfile.setNumDogs(2);
         matchProfile.setSex(Gender.FEMALE);
-        matchProfile.setIsDefault(true);
         matchProfile.setZipRadius(3);
         matchProfile.setProfileImage("https://images.freeimages.com/images/large-previews/ae2/yorkie-3-1362057.jpg");
-
+        matchProfile.setIsDefault(true);
+        matchProfile.setIsHidden(false);
+        matchProfile.setShowSimilar(false);
         return matchProfile;
     }
 
@@ -77,6 +78,13 @@ public class TestUtils {
 
     public static MatchResult createMatchResult(MatchProfile matchProfile, MatchProfile matchProfile1) {
         MatchResult result = new MatchResult();
+        result.setMatchProfileOne(matchProfile);
+        result.setMatchProfileTwo(matchProfile1);
+        result.setMatchForProfileOne(true);
+        result.setMatchForProfileTwo(true);
+        result.setBatchSent(Instant.now().minus(6L, ChronoUnit.HOURS));
+        result.setRecordExpires(Instant.now().plus(6L, ChronoUnit.HOURS));
+        result.setResultCompleted(Instant.now());
 
         return result;
     }
@@ -84,6 +92,31 @@ public class TestUtils {
     public static PupperMessage createMessage(MatchProfile matchProfile, MatchProfile matchProfile1) {
         PupperMessage message = new PupperMessage();
 
+        message.setMatchProfileSender(matchProfile);
+        message.setMatchProfileReceiver(matchProfile1);
+        message.setTimestamp(Utils.getIsoFormatTimestamp(Instant.now()));
+        message.setMessage("Test utils test message");
         return message;
+    }
+
+    public static List<MatchPreference> createMatchPreferences(MatchProfile matchProfile) {
+        List<MatchPreference> matchPreferences = new ArrayList<>();
+        matchPreferences.add(createMatchPreference(matchProfile, PreferenceType.AGE, "ALL"));
+        matchPreferences.add(createMatchPreference(matchProfile, PreferenceType.ENERGY, Energy.MED.value()));
+        matchPreferences.add(createMatchPreference(matchProfile, PreferenceType.ENERGY, Energy.LOW.value()));
+        matchPreferences.add(createMatchPreference(matchProfile, PreferenceType.ENERGY, Energy.MIN.value()));
+        matchPreferences.add(createMatchPreference(matchProfile, PreferenceType.SIZE, Size.TOY.value()));
+        matchPreferences.add(createMatchPreference(matchProfile, PreferenceType.SIZE, Size.SMALL.value()));
+
+        return matchPreferences;
+    }
+
+    private static MatchPreference createMatchPreference(MatchProfile matchProfile, PreferenceType type, String preference) {
+        MatchPreference matchPreference = new MatchPreference();
+        matchPreference.setMatchProfile(matchProfile);
+        matchPreference.setPreferenceType(type);
+        matchPreference.setMatchingPreference(preference);
+
+        return matchPreference;
     }
 }
