@@ -110,12 +110,12 @@ public class MatchProfile implements Serializable {
     private Boolean isDefault;
 
     @Column(name = "show_similar")
-    @DefaultValue("True")
-    private Boolean showSimilar;
+    @DefaultValue("False")
+    private Boolean showSimilar; //If true, additionally sort match profiles by profiles similar to user
 
     @Column(name = "is_hidden")
     @DefaultValue("False")
-    private Boolean isHidden;
+    private Boolean isHidden; //Whether to hide a user's match profile from appearing in matching
     /**
      * Returns a list of field names that are valid param keys to filter matchProfiles by.
      * @return
