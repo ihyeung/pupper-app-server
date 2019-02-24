@@ -5,7 +5,6 @@ import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.UserProfileRepo;
 import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
-import com.utahmsd.pupper.dao.entity.UserAccount;
 import com.utahmsd.pupper.dao.entity.UserProfile;
 import com.utahmsd.pupper.dto.MatchProfileResponse;
 import com.utahmsd.pupper.service.MatchProfileService;
@@ -15,11 +14,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -46,10 +45,8 @@ public class MatchProfileServiceUnitTest {
 
     @Before
     public void init() {
-        UserAccount userAccount = new UserAccount();
-        userAccount.setUsername("matchProfileServiceUnitTest" + UUID.randomUUID().toString().substring(24) + "@gmail.com");
 
-        userProfile = TestUtils.createUserProfile(userAccount);
+        userProfile = TestUtils.createUserProfile(TestUtils.createUserAccount());
         matchProfile = TestUtils.createMatchProfile(userProfile);
 
         given(userProfileRepo.findById(anyLong())).willReturn(Optional.of(userProfile));
@@ -58,7 +55,7 @@ public class MatchProfileServiceUnitTest {
     }
 
     @Test
-    public void testFindMatchProfileById_success() {
+    public void testGetMatchProfileByMatchProfileId_success() {
         given(matchProfileRepo.findById(anyLong())).willReturn(Optional.of(matchProfile));
 
         MatchProfile profile = matchProfileService.getMatchProfileByMatchProfileId(1L);
@@ -67,7 +64,7 @@ public class MatchProfileServiceUnitTest {
         assertEquals(matchProfile, profile);
     }
     @Test
-    public void testFindMatchProfileById_invalidId() {
+    public void testGetMatchProfileByMatchProfileId_invalidId() {
         given(matchProfileRepo.findById(anyLong())).willReturn(Optional.empty());
 
         MatchProfile matchProfile = matchProfileService.getMatchProfileByMatchProfileId(1L);
@@ -77,7 +74,7 @@ public class MatchProfileServiceUnitTest {
     }
 
     @Test
-    public void testCreateMatchProfile_noMatchProfilesForUser_success() {
+    public void testCreateMatchProfileForUser_noMatchProfilesForUser_success() {
         when(matchProfileRepo.findAllByUserProfile_Id(anyLong())).thenReturn(Optional.of(Collections.emptyList()));
 
         matchProfile.getUserProfile().setId(1L);
@@ -92,7 +89,7 @@ public class MatchProfileServiceUnitTest {
     }
 
     @Test
-    public void testCreateMatchProfile_otherMatchProfilesExistForUser_updateIsDefaultMatchProfile_success() {
+    public void testCreateMatchProfileForUser_otherMatchProfilesExistForUser_updateIsDefaultMatchProfile_success() {
         MatchProfile existingMatchProfile = TestUtils.createMatchProfile(userProfile);
         existingMatchProfile.setNames("Rocco");
         Breed breed = new Breed();
@@ -114,7 +111,7 @@ public class MatchProfileServiceUnitTest {
     }
 
     @Test
-    public void testCreateMatchProfile_creatingDuplicateMatchProfile_failure() {
+    public void testCreateMatchProfileForUser_creatingDuplicateMatchProfile_failure() {
         when(matchProfileRepo.findAllByUserProfile_Id(anyLong())).thenReturn(Optional.of(Arrays.asList(matchProfile)));
 
         matchProfile.getUserProfile().setId(1L);
@@ -125,14 +122,17 @@ public class MatchProfileServiceUnitTest {
         verify(matchProfileRepo, times(0)).save(any(MatchProfile.class));
 
         assertFalse(response.isSuccess());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
     }
 
     @Test
-    public void testCreateMatchProfile_idsMismatch() {
+    public void testCreateMatchProfileForUser_idsMismatch() {
         matchProfile.getUserProfile().setId(10L);
 
-        matchProfileService.createMatchProfileForUser(1L, matchProfile);
+        MatchProfileResponse response = matchProfileService.createMatchProfileForUser(1L, matchProfile);
 
         verifyZeroInteractions(matchProfileRepo);
+        assertFalse(response.isSuccess());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
     }
 }
