@@ -64,7 +64,7 @@ public class MatchProfileService {
         return result.orElse(null);
     }
 
-        public MatchProfileResponse getMatchProfileByIds(Long userId, Long matchProfileId) {
+    public MatchProfileResponse getMatchProfileByIds(Long userId, Long matchProfileId) {
         Optional<MatchProfile> result = matchProfileRepo.findById(matchProfileId);
         if (!result.isPresent() || !userId.equals(result.get().getUserProfile().getId())) {
             LOGGER.error(IDS_MISMATCH);
@@ -106,7 +106,7 @@ public class MatchProfileService {
                 return createMatchProfileResponse(false, null, HttpStatus.BAD_REQUEST,
                         "Creating duplicate match profile for user with names and breed matching an existing match profile");
             }
-            if (matchProfile.getIsDefault()) {
+            if (profile.getIsDefault() && matchProfile.getIsDefault()) { //Creating match profile marked as default when an existing profile is currently default
                 updateIsDefaultForMatchProfile(profile);
             }
         }
@@ -114,10 +114,8 @@ public class MatchProfileService {
     }
 
     private void updateIsDefaultForMatchProfile(MatchProfile matchProfileToUpdate) {
-        if (matchProfileToUpdate.getIsDefault()) { //Another match profile is current default, need to update
-            matchProfileToUpdate.setIsDefault(false);
-            matchProfileRepo.save(matchProfileToUpdate);
-        }
+        matchProfileToUpdate.setIsDefault(false);
+        matchProfileRepo.save(matchProfileToUpdate);
     }
 
     private MatchProfileResponse initEmptyMatchProfileFields(MatchProfile matchProfile, Boolean makeDefault) {
@@ -136,7 +134,7 @@ public class MatchProfileService {
         }
         MatchProfile profile = matchProfileRepo.save(matchProfile);
         profile.setScore(null); //Hide score in response
-        return createMatchProfileResponse(true, new ArrayList<>(Arrays.asList(profile)), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return createMatchProfileResponse(true, Arrays.asList(profile), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     private MatchProfileResponse setMatchProfileFieldsWithQueryResultThenSave(MatchProfile matchProfileForUpdate,
