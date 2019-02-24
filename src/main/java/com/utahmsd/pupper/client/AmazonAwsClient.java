@@ -191,7 +191,7 @@ public class AmazonAwsClient {
         return "user_" + userId + "_" + name.toLowerCase() + "_" + Utils.getIsoFormatTimestampFromDate(new Date(), null);
     }
 
-    public ImageUploadResponse deleteUserProfileImage(Long userId, String authToken) {
+    public void deleteUserProfileImage(Long userId, String authToken) {
         //Use http client to hit GET endpoint in userProfileController to verify userProfile exists
         Object getResponseObj = doGetRequest(userId, null, authToken, "userProfiles");
         UserProfile userProfile = null;
@@ -200,19 +200,16 @@ public class AmazonAwsClient {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (userProfile == null) {
-            return createImageUploadResponse(false, null, NOT_FOUND, INVALID_PATH_VARIABLE);
-        }
-        else if (StringUtils.isNullOrEmpty(userProfile.getProfileImage())) {
-            return createImageUploadResponse(true, null, OK, DEFAULT_DESCRIPTION);
-        }
 
-        deleteProfileImageFromS3Bucket(userProfile.getProfileImage());
+        if (userProfile != null &&
+                userProfile.getProfileImage() != null && StringUtils.hasValue(userProfile.getProfileImage())) {
 
-        return deleteProfileImageUrlFromDatabaseTable(userId, null, authToken);
+            deleteProfileImageFromS3Bucket(userProfile.getProfileImage());
+            LOGGER.info("Successfully deleted user profile image from S3 bucket for userProfileId={}", userId);
+        }
     }
 
-    public ImageUploadResponse deleteMatchProfileImage(Long userId, Long matchProfileId, String authToken) {
+    public void deleteMatchProfileImage(Long userId, Long matchProfileId, String authToken) {
         //Use http client to hit GET endpoint in matchProfileController to verify matchProfile exists
         Object getResponseObject= doGetRequest(userId, matchProfileId, authToken, "matchProfiles");
         MatchProfile matchProfile = null;
@@ -221,37 +218,20 @@ public class AmazonAwsClient {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         if (matchProfile == null || !matchProfile.getUserProfile().getId().equals(userId)) {
             LOGGER.error("Either matchProfileId={} was not found, or userProfileId contained in the matchProfile result " +
                             "corresponding to matchProfileId={} does not match the path userProfileId={}",
                     matchProfileId, matchProfileId, userId);
-
-            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST,
-                    String.format("Error deleting profile image: either matchProfile with id=%d is not a valid matchProfile" +
-                            " or endpoint URL is malformed.", matchProfileId));
         }
-        else if (StringUtils.isNullOrEmpty(matchProfile.getProfileImage())) {
-            return createImageUploadResponse(true, null, OK, DEFAULT_DESCRIPTION);
-        }
-        deleteProfileImageFromS3Bucket(matchProfile.getProfileImage());
+        else if (matchProfile.getProfileImage() != null && StringUtils.hasValue(matchProfile.getProfileImage())) {
 
-        return deleteProfileImageUrlFromDatabaseTable(userId, matchProfileId, authToken);
-    }
+            deleteProfileImageFromS3Bucket(matchProfile.getProfileImage());
 
-    /**
-     * Makes update to corresponding profile controller endpoint to reset the profile image url to an empty string.
-     * @param userId
-     * @param matchProfileId
-     * @param authToken
-     * @return
-     */
-    private ImageUploadResponse deleteProfileImageUrlFromDatabaseTable(Long userId, Long matchProfileId, String authToken) {
-        HttpStatus responseStatus = doPostRequest(userId, matchProfileId, authToken, "");
-        if (responseStatus.isError()) {
-            return createImageUploadResponse(false, null, HttpStatus.BAD_REQUEST,
-                    String.format("Error deleting profile image for matchProfile=%d", matchProfileId));
+            LOGGER.info("Successfully deleted match profile image from S3 bucket for matchProfileId={}, userProfileId={}",
+                    matchProfileId, userId);
+
         }
-        return createImageUploadResponse(true, null, OK, "Profile image successfully deleted.");
     }
 
     private void deleteProfileImageFromS3Bucket(String profileImage) {
