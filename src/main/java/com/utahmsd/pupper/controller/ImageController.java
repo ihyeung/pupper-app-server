@@ -78,28 +78,34 @@ public class ImageController {
     }
 
     /**
-     *  Delete endpoint for deleting a profile image for a given match profile.
+     *  Delete endpoint for deleting a profile image from S3 for a given match profile.
+     *  The only usage of this endpoint will be in the event of a user electing to delete their profile/account data.
+     *  In this case, entire table records in match_profile associated with a given user will be deleted, so this
+     *  endpoint doesn't need to manually delete the profile_image field for the match profile record.
      * @param userId
      * @param matchProfileId
      * @param authToken
      * @return
      */
     @DeleteMapping(path = "/user/{userId}/matchProfile/{matchProfileId}/upload", headers = {"Authorization"})
-    public ImageUploadResponse deleteProfileImageForMatchProfile(@PathVariable("userId") Long userId,
+    public void deleteProfileImageForMatchProfile(@PathVariable("userId") Long userId,
                                                                 @PathVariable("matchProfileId") Long matchProfileId,
                                                                 @RequestHeader("Authorization") String authToken) {
-        return this.amazonClient.deleteMatchProfileImage(userId, matchProfileId, authToken);
+        amazonClient.deleteMatchProfileImage(userId, matchProfileId, authToken);
     }
     /**
-     *  Delete endpoint for deleting a profile image for a given user profile.
+     *  Delete endpoint for deleting a profile image for a given user profile from an S3 bucket.
+     *  The only usage of this endpoint will be in the event of a user electing to delete their profile/account data.
+     *  In this case, entire table record in user_profile associated with a given user will be deleted, so this
+     *  endpoint doesn't need to manually delete the profile_image field for the user profile record.
      * @param userId
      * @param authToken
      * @return
      */
     @DeleteMapping(path = "/user/{userId}/upload", headers = {"Authorization"})
-    public ImageUploadResponse deleteProfileImageForUserProfile(@PathVariable("userId") Long userId,
-                                                                @RequestHeader("Authorization") String authToken) {
-        return this.amazonClient.deleteUserProfileImage(userId, authToken);
+    public void deleteProfileImageForUserProfile(@PathVariable("userId") Long userId,
+                                                @RequestHeader("Authorization") String authToken) {
+        amazonClient.deleteUserProfileImage(userId, authToken);
     }
 }
 
