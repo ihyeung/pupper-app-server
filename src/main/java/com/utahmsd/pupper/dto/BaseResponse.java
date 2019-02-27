@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class BaseResponse {
+public abstract class BaseResponse {
 
     @JsonProperty("isSuccess")
     private boolean success;
@@ -19,30 +21,10 @@ public class BaseResponse {
     @JsonProperty("description")
     private String description;
 
-    public BaseResponse (){}
-//
-//    public static BaseResponse successResponse() {
-//        BaseResponse response = new BaseResponse();
-//        response.setSuccess(true);
-//        response.setStatus(HttpStatus.OK);
-//        response.setResponseCode(HttpStatus.OK.value());
-//        response.setDescription("Success");
-//        return response;
-//    }
-//
-//    public static BaseResponse errorResponse(HttpStatus error, String description) {
-//        BaseResponse response = new BaseResponse();
-//        response.setSuccess(false);
-//        response.setResponseCode(error.value());
-//        response.setStatus(error);
-//        response.setDescription(description);
-//        return response;
-//
-//    }
+    public abstract  <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList,
+                                                               HttpStatus code, String description);
 
-    public boolean isSuccess() {
-        return success;
-    }
+    public boolean isSuccess() { return success; }
 
     public void setSuccess(boolean success) {
         this.success = success;
