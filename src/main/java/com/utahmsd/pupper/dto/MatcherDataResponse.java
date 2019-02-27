@@ -11,39 +11,43 @@ import java.util.List;
 import static com.utahmsd.pupper.dto.pupper.ProfileCard.matchProfileToProfileCardMapper;
 
 
-//TODO: Rename these fields
 public class MatcherDataResponse extends BaseResponse {
 
-    @JsonProperty("playerId")
-    private Long profileIdForPlayer;
+    @JsonProperty("profileId")
+    private Long matchProfileId;
 
-    @JsonProperty("matcherData")
-    private ArrayList<ProfileCard> nextMatcherDataBatch; //Next batch of un-viewed profile/matcher cards to display
+    @JsonProperty("matchProfiles")
+    private ArrayList<ProfileCard> matchProfileBatch; //Next batch of un-viewed profile/matcher cards to display
 
     public static MatcherDataResponse createMatcherDataResponse(boolean success, List<MatchProfile> matchProfiles,
                                                                 HttpStatus code, String description) {
         MatcherDataResponse response = new MatcherDataResponse();
         response.setSuccess(success);
-        response.setNextMatcherDataBatch(matchProfiles == null ? new ArrayList<>() : matchProfileToProfileCardMapper(matchProfiles));
+        response.setMatchProfileBatch(matchProfiles == null ? new ArrayList<>() : matchProfileToProfileCardMapper(matchProfiles));
         response.setStatus(code);
         response.setResponseCode(code.value());
         response.setDescription(description);
         return response;
     }
 
-    public Long getProfileIdForPlayer() {
-        return profileIdForPlayer;
+    public Long getMatchProfileId() {
+        return matchProfileId;
     }
 
-    public void setProfileIdForPlayer(Long profileIdForPlayer) {
-        this.profileIdForPlayer = profileIdForPlayer;
+    public void setMatchProfileId(Long matchProfileId) {
+        this.matchProfileId = matchProfileId;
     }
 
-    public ArrayList<ProfileCard> getNextMatcherDataBatch() {
-        return nextMatcherDataBatch;
+    public ArrayList<ProfileCard> getMatchProfileBatch() {
+        return matchProfileBatch;
     }
 
-    public void setNextMatcherDataBatch(ArrayList<ProfileCard> nextMatcherDataBatch) {
-        this.nextMatcherDataBatch = nextMatcherDataBatch;
+    public void setMatchProfileBatch(ArrayList<ProfileCard> matchProfileBatch) {
+        this.matchProfileBatch = matchProfileBatch;
+    }
+
+    @Override
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
+        return null;
     }
 }
