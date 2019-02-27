@@ -14,6 +14,20 @@ public class UserProfileResponse extends BaseResponse {
 
     public UserProfileResponse() { }
 
+    @Override
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code,
+                                                     String description) {
+        List<UserProfile> userProfiles = (List<UserProfile>)(List<?>)entityList;
+        UserProfileResponse response = new UserProfileResponse();
+        response.setSuccess(success);
+        response.setUserProfileList(userProfiles == null ? new ArrayList<>() : userProfiles);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
+        response.setDescription(description);
+
+        return (T) response;
+    }
+
     public static UserProfileResponse createUserProfileResponse(boolean success,
                                                                 List<UserProfile> users,
                                                                 HttpStatus code,
