@@ -14,6 +14,11 @@ public class MessageResponse extends BaseResponse {
 
     public MessageResponse() {}
 
+    @Override
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
+        return null;
+    }
+
     public static MessageResponse createMessageResponse(boolean success,
                                                         List<PupperMessage> messages,
                                                         HttpStatus code,

@@ -29,29 +29,29 @@ public class MatchPreferenceService {
         List<MatchPreference> results = new ArrayList<>();
         for (MatchPreference matchPreference: matchPreferences) {
             if (!matchProfileId.equals(matchPreference.getMatchProfile().getId())) {
-                return MatchPreferenceResponse.createResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
+                return MatchPreferenceResponse.createMatchPreferenceResponse(false, null, HttpStatus.NOT_FOUND, INVALID_PATH_VARIABLE);
             }
             MatchPreference preference = matchPreferenceRepo.save(matchPreference);
             results.add(preference);
         }
-        return MatchPreferenceResponse.createResponse(true, results, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return MatchPreferenceResponse.createMatchPreferenceResponse(true, results, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public MatchPreferenceResponse getMatchPreferencesByMatchProfileId(Long matchProfileId) {
        List<MatchPreference> matchPreferences = matchPreferenceRepo.findAllByMatchProfile_Id(matchProfileId);
        if (matchPreferences.isEmpty()) {
-           return MatchPreferenceResponse.createResponse(false, null, HttpStatus.NOT_FOUND, NO_QUERY_RESULTS);
+           return MatchPreferenceResponse.createMatchPreferenceResponse(false, null, HttpStatus.NOT_FOUND, NO_QUERY_RESULTS);
        }
-       return MatchPreferenceResponse.createResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
+       return MatchPreferenceResponse.createMatchPreferenceResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public MatchPreferenceResponse getMatchPreferencesByMatchProfileIdFilterByType(Long matchProfileId, String preferenceType) {
         List<MatchPreference> matchPreferences = matchPreferenceRepo.findAllByMatchProfile_IdAndPreferenceType(matchProfileId,
                                                                                     PreferenceType.fromValue(preferenceType));
         if (matchPreferences.isEmpty()) {
-            return MatchPreferenceResponse.createResponse(false, null, HttpStatus.NOT_FOUND, NO_QUERY_RESULTS);
+            return MatchPreferenceResponse.createMatchPreferenceResponse(false, null, HttpStatus.NOT_FOUND, NO_QUERY_RESULTS);
         }
-        return MatchPreferenceResponse.createResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return MatchPreferenceResponse.createMatchPreferenceResponse(true, matchPreferences, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     /**
@@ -77,15 +77,15 @@ public class MatchPreferenceService {
                                                              MatchPreference preference) {
         MatchPreference matchPreference = matchPreferenceRepo.findByMatchProfile_IdAndId(matchProfileId, matchPreferenceId);
         if (matchPreference == null) {
-            return MatchPreferenceResponse.createResponse(false, null, HttpStatus.NOT_FOUND,
+            return MatchPreferenceResponse.createMatchPreferenceResponse(false, null, HttpStatus.NOT_FOUND,
                     INVALID_PATH_VARIABLE);
         }
         matchPreferenceRepo.updateMatchPreference(preference.getPreferenceType(), preference.getMatchingPreference(), matchPreferenceId);
         Optional<MatchPreference> result = matchPreferenceRepo.findById(matchPreferenceId);
         if (result.isPresent()) {
-            return MatchPreferenceResponse.createResponse(true, Arrays.asList(result.get()), HttpStatus.OK, DEFAULT_DESCRIPTION);
+            return MatchPreferenceResponse.createMatchPreferenceResponse(true, Arrays.asList(result.get()), HttpStatus.OK, DEFAULT_DESCRIPTION);
         }
-        return MatchPreferenceResponse.createResponse(false, null, HttpStatus.BAD_REQUEST, INVALID_INPUT);
+        return MatchPreferenceResponse.createMatchPreferenceResponse(false, null, HttpStatus.BAD_REQUEST, INVALID_INPUT);
     }
 
     public void deleteMatchPreferences(Long matchProfileId) {
@@ -98,6 +98,6 @@ public class MatchPreferenceService {
             MatchPreference saved = matchPreferenceRepo.save(each);
             savedRecords.add(saved);
         });
-        return MatchPreferenceResponse.createResponse(true, savedRecords, HttpStatus.OK, DEFAULT_DESCRIPTION);
+        return MatchPreferenceResponse.createMatchPreferenceResponse(true, savedRecords, HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 }

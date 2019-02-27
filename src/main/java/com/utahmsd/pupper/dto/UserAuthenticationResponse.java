@@ -31,4 +31,8 @@ public class UserAuthenticationResponse extends BaseResponse {
         this.users = users;
     }
 
+    @Override
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
+        return null;
+    }
 }

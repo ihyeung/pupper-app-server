@@ -12,10 +12,10 @@ public class MatchPreferenceResponse extends BaseResponse {
     @JsonProperty("matchPreferences")
     private List<MatchPreference> matchPreferenceList;
 
-    public static MatchPreferenceResponse createResponse(boolean success,
-                                                                  List<MatchPreference> matchPreferenceList,
-                                                                  HttpStatus code,
-                                                                  String description) {
+    public static MatchPreferenceResponse createMatchPreferenceResponse(boolean success,
+                                                                        List<MatchPreference> matchPreferenceList,
+                                                                        HttpStatus code,
+                                                                        String description) {
         MatchPreferenceResponse response = new MatchPreferenceResponse();
         response.setSuccess(success);
         response.setMatchPreferenceList(matchPreferenceList == null ? new ArrayList<>() : matchPreferenceList);
@@ -32,5 +32,10 @@ public class MatchPreferenceResponse extends BaseResponse {
 
     public void setMatchPreferenceList(List<MatchPreference> matchPreferenceList) {
         this.matchPreferenceList = matchPreferenceList;
+    }
+
+    @Override
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
+        return null;
     }
 }

@@ -32,4 +32,9 @@ public class MatchProfileResponse extends BaseResponse {
     public void setMatchProfileList(List<MatchProfile> matchProfileList) {
         this.matchProfileList = matchProfileList;
     }
+
+    @Override
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
+        return null;
+    }
 }
