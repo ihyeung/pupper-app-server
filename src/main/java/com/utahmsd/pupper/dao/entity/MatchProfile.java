@@ -2,6 +2,7 @@ package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.utahmsd.pupper.dto.PupperEntity;
 import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.Gender;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
@@ -40,7 +41,7 @@ import static com.utahmsd.pupper.util.Constants.DATE_FORMATTER;
         indexes = {@Index(columnList = "breed_id_fk", name = "breed_id_fk"),
                 @Index(columnList = "user_profile_id_fk", name = "user_id_fk")})
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class MatchProfile implements Serializable {
+public class MatchProfile extends PupperEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
