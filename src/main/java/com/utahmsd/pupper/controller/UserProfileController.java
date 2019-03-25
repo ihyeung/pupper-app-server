@@ -79,4 +79,9 @@ public class UserProfileController {
         userProfileService.deleteUserProfileByEmail(email);
     }
 
+    @PostMapping(path ="/reportAbuse", params = {"userId"})
+    public void reportUser(@RequestParam("userId") Long userId) {
+        //TODO
+    }
+
 }
