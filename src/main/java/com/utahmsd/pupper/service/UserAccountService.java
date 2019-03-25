@@ -127,9 +127,12 @@ public class UserAccountService implements UserDetailsService {
             return createUserAuthResponse(false, null, HttpStatus.NOT_FOUND,
                     String.format(EMAIL_NOT_FOUND, "User account", email));
         }
+
         userAccount.setId(result.getId());
-        userAccountRepo.save(userAccount);
-        return createUserAuthResponse(true, Arrays.asList(userAccount), HttpStatus.OK, DEFAULT_DESCRIPTION);
+        userAccount.setPassword(bCryptPasswordEncoder.encode(userAccount.getPassword()));
+        UserAccount account = userAccountRepo.save(userAccount);
+
+        return createUserAuthResponse(true, Arrays.asList(account), HttpStatus.OK, DEFAULT_DESCRIPTION);
     }
 
     public UserAuthenticationResponse deleteUserAccountById(Long accountId) {
