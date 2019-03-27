@@ -5,8 +5,8 @@ import com.utahmsd.pupper.dao.MatchProfileRepo;
 import com.utahmsd.pupper.dao.MatchResultRepo;
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.MatchResult;
+import com.utahmsd.pupper.dto.BaseResponse;
 import com.utahmsd.pupper.dto.MatcherDataRequest;
-import com.utahmsd.pupper.dto.MatcherDataResponse;
 import com.utahmsd.pupper.dto.pupper.ProfileCard;
 import com.utahmsd.pupper.exception.EmptyMatchProfileBatchException;
 import org.slf4j.Logger;
@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.utahmsd.pupper.client.ZipCodeAPIClient.MAX_RADIUS;
 import static com.utahmsd.pupper.client.ZipCodeAPIClient.MIN_RADIUS;
-import static com.utahmsd.pupper.dto.MatcherDataResponse.createMatcherDataResponse;
 import static com.utahmsd.pupper.dto.pupper.ProfileCard.matchProfileToProfileCardMapper;
 import static com.utahmsd.pupper.util.Constants.DEFAULT_DESCRIPTION;
 import static com.utahmsd.pupper.util.Constants.IDS_MISMATCH;
@@ -199,7 +198,6 @@ public class MatcherService {
                     zipcodesInRange);
         }
         if (matchProfiles.isEmpty()) {
-            LOGGER.error("The next batch of match profiles is empty");
             throw new EmptyMatchProfileBatchException("The next batch of match profiles is empty");
         }
         LOGGER.info("Next match profile batch: {}", matchProfiles.size());
@@ -268,11 +266,12 @@ public class MatcherService {
         matchResultRepo.updateMatchResultRecordIfCompleted(matchResult.getId(), Instant.now());
     }
 
-    public MatcherDataResponse updateMatcherResults (Long matchProfileId, MatcherDataRequest request) {
+    public BaseResponse updateMatcherResults (Long matchProfileId, MatcherDataRequest request) {
 //        LOGGER.info("Request contains {} match_result records to update.", request.getMap().size());
+        BaseResponse response = new BaseResponse();
         AtomicInteger updateCount = new AtomicInteger();
         if (!request.getMatchProfileId().equals(matchProfileId)) {
-            return createMatcherDataResponse(false, null, HttpStatus.BAD_REQUEST, IDS_MISMATCH);
+            return response.createResponse(false, null, HttpStatus.BAD_REQUEST, IDS_MISMATCH);
         }
         request.getMap().forEach((id,isMatch) -> {
             Optional<MatchResult> matchResultRecord = matchResultRepo.getMatchResult(matchProfileId, id);
@@ -284,7 +283,7 @@ public class MatcherService {
             }
         });
         LOGGER.info("{} records were successfully updated", updateCount);
-        return createMatcherDataResponse(true, null, OK, DEFAULT_DESCRIPTION);
+        return response.createResponse(true, null, OK, DEFAULT_DESCRIPTION);
     }
 
     public List<MatchResult> retrieveCompletedMatchResultsForMatchProfile(Long matchProfileId) {
