@@ -80,8 +80,7 @@ public class UserProfileController {
     }
 
     @PostMapping(path ="/reportAbuse", params = {"userId"})
-    public void reportUser(@RequestParam("userId") Long userId) {
-        //TODO
+    public UserProfileResponse reportUser(@RequestParam("userId") Long userId) {
+        return userProfileService.reportUser(userId);
     }
-
 }
