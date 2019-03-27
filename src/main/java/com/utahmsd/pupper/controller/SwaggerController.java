@@ -15,5 +15,4 @@ public class SwaggerController {
     public @ResponseBody String slaHealthCheck() {
         return "<ShouldCall>true</ShouldCall>";
     }
-
 }
