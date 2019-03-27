@@ -1,5 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
+import com.utahmsd.pupper.dto.PupperEntity;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +14,7 @@ import java.util.LinkedHashMap;
  */
 @Entity // reference to table defaults to table_name (i.e., reference database table MyTable using my_table)
 @Table (name = "user_account", indexes = @Index(columnList = "username", name = "user_account_username_uindex"))
-public class UserAccount implements Serializable {
+public class UserAccount extends PupperEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)

@@ -1,6 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.utahmsd.pupper.dto.PupperEntity;
 import com.utahmsd.pupper.dto.pupper.Energy;
 import com.utahmsd.pupper.dto.pupper.Gender;
 import com.utahmsd.pupper.dto.pupper.LifeStage;
@@ -25,7 +26,7 @@ import static com.utahmsd.pupper.util.Constants.DATE_FORMAT;
 @Table(name = "pupper_profile",
        indexes = {@Index(columnList = "breed_id_fk", name = "pupper_profile_ibfk_2"),
                  @Index(columnList = "match_profile_id_fk", name = "pupper_profile_ibfk_4")})
-public class PupperProfile implements Serializable {
+public class PupperProfile extends PupperEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

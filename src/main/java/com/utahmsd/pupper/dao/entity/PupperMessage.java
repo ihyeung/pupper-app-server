@@ -1,6 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.utahmsd.pupper.dto.PupperEntity;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -14,7 +15,7 @@ import static com.utahmsd.pupper.util.Constants.ISO_DATE_FORMAT;
 @Table(name = "pupper_message",
         indexes = {@Index(columnList = "from_match_profile_id_fk", name = "pupper_message_ibfk_1"),
         @Index(columnList = "to_match_profile_id_fk", name = "pupper_message_ibfk_2")})
-public class PupperMessage implements Serializable {
+public class PupperMessage extends PupperEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
