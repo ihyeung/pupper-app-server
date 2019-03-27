@@ -12,12 +12,21 @@ public class PupperProfileResponse extends BaseResponse {
     @JsonProperty("pupperProfiles")
     private List<PupperProfile> pupperProfileList;
 
-    public PupperProfileResponse() {
-    }
+
+    public PupperProfileResponse() { }
 
     @Override
-    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
-        return null;
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code,
+                                                     String description) {
+        List<PupperProfile> pupperProfiles = (List<PupperProfile>)(List<?>)entityList;
+        PupperProfileResponse response = new PupperProfileResponse();
+        response.setSuccess(success);
+        response.setPupperProfileList(pupperProfiles == null ? new ArrayList<>() : pupperProfiles);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
+        response.setDescription(description);
+
+        return (T) response;
     }
 
     public static PupperProfileResponse createPupperProfileResponse(boolean success,
@@ -32,6 +41,7 @@ public class PupperProfileResponse extends BaseResponse {
         response.setDescription(description);
         return response;
     }
+
 
     public List<PupperProfile> getPupperProfileList() {
         return pupperProfileList;

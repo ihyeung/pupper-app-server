@@ -26,16 +26,24 @@ public class MatchPreferenceResponse extends BaseResponse {
         return response;
     }
 
+    @Override
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
+        List<MatchPreference> matchPreferences = (List<MatchPreference>)(List<?>)entityList;
+        MatchPreferenceResponse response = new MatchPreferenceResponse();
+        response.setSuccess(success);
+        response.setMatchPreferenceList(matchPreferences == null ? new ArrayList<>() : matchPreferences);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
+        response.setDescription(description);
+
+        return (T) response;
+    }
+
     public List<MatchPreference> getMatchPreferenceList() {
         return matchPreferenceList;
     }
 
     public void setMatchPreferenceList(List<MatchPreference> matchPreferenceList) {
         this.matchPreferenceList = matchPreferenceList;
-    }
-
-    @Override
-    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
-        return null;
     }
 }
