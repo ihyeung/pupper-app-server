@@ -1,6 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.utahmsd.pupper.dto.PupperEntity;
 import com.utahmsd.pupper.dto.pupper.PreferenceType;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.io.Serializable;
 @Table(name = "match_preference",
         indexes = @Index(columnList = "match_profile_id_fk", name = "match_preference_ibfk_1"))
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class MatchPreference implements Serializable {
+public class MatchPreference extends PupperEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -25,16 +25,24 @@ public class MatchProfileResponse extends BaseResponse {
         return response;
     }
 
+    @Override
+    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
+        List<MatchProfile> matchProfiles = (List<MatchProfile>)(List<?>)entityList;
+        MatchProfileResponse response = new MatchProfileResponse();
+        response.setSuccess(success);
+        response.setMatchProfileList(matchProfiles == null ? new ArrayList<>() : matchProfiles);
+        response.setStatus(code);
+        response.setResponseCode(code.value());
+        response.setDescription(description);
+
+        return (T) response;
+    }
+
     public List<MatchProfile> getMatchProfileList() {
         return matchProfileList;
     }
 
     public void setMatchProfileList(List<MatchProfile> matchProfileList) {
         this.matchProfileList = matchProfileList;
-    }
-
-    @Override
-    public <T extends BaseResponse> T createResponse(boolean success, List<PupperEntity> entityList, HttpStatus code, String description) {
-        return null;
     }
 }

@@ -1,5 +1,7 @@
 package com.utahmsd.pupper.dao.entity;
 
+import com.utahmsd.pupper.dto.PupperEntity;
+
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.ws.rs.DefaultValue;
@@ -14,7 +16,7 @@ import java.time.Instant;
 @Table(name = "match_result",
         indexes = {@Index(columnList = "match_profile_id_fk_1", name = "match_result_ibfk_1"),
         @Index(columnList = "match_profile_id_fk_2", name = "match_result_ibfk_2")})
-public class MatchResult implements Serializable {
+public class MatchResult extends PupperEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)

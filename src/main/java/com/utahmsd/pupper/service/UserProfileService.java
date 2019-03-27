@@ -116,4 +116,15 @@ public class UserProfileService {
     public void deleteUserProfileByEmail(String email) {
         userProfileRepo.deleteByUserAccount_Username(email);
     }
+
+    public UserProfileResponse reportUser(Long userId) {
+        UserProfileResponse response = new UserProfileResponse();
+        Optional<UserProfile> result = userProfileRepo.findById(userId);
+        if (!result.isPresent()) {
+            return response.createResponse( false, null, HttpStatus.NOT_FOUND,
+                    String.format(USER_PROFILE_NOT_FOUND, userId));
+        }
+        //TODO: Document/track this data somehow
+        return response.createResponse(true, null, HttpStatus.OK, DEFAULT_DESCRIPTION);
+    }
 }

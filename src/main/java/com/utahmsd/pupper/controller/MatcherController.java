@@ -2,8 +2,8 @@ package com.utahmsd.pupper.controller;
 
 import com.utahmsd.pupper.dao.entity.MatchProfile;
 import com.utahmsd.pupper.dao.entity.MatchResult;
+import com.utahmsd.pupper.dto.BaseResponse;
 import com.utahmsd.pupper.dto.MatcherDataRequest;
-import com.utahmsd.pupper.dto.MatcherDataResponse;
 import com.utahmsd.pupper.dto.pupper.ProfileCard;
 import com.utahmsd.pupper.service.MatcherService;
 import io.swagger.annotations.Api;
@@ -31,7 +31,7 @@ public class MatcherController {
 
     /**
      * Retrieves next batch of profile cards to display to the user.
-     * @param matchProfileId
+     * @param matchProfileId match profile requesting profile cards batch.
      * @param randomize whether match profile queries should be randomized instead of using a zip code filter via external API call.
      * @param mapZipCodesToDistances boolean flag indicating whether to map profileCard zip codes to distances using additonal external API calls.
      * @return
@@ -46,13 +46,13 @@ public class MatcherController {
     /**
      * Helper endpoint for updating a batch of multiple match result data records for a given matchProfileId.
      * May use this later to batch updates to database to improve performance.
-     * @param matchProfileId
-     * @param matcherRequest
+     * @param matchProfileId match profile submitting matcher data/results.
+     * @param matcherRequest request containing list of matcher results for a given match profile.
      * @return
      */
     @PostMapping(path = "/result/submit", params = {"matchProfileId"})
-    public MatcherDataResponse submitCompletedMatcherResults(@RequestParam("matchProfileId") Long matchProfileId,
-                                                             @RequestBody MatcherDataRequest matcherRequest) {
+    public BaseResponse submitCompletedMatcherResults(@RequestParam("matchProfileId") Long matchProfileId,
+                                                      @RequestBody MatcherDataRequest matcherRequest) {
         return matcherService.updateMatcherResults(matchProfileId, matcherRequest);
     }
 
@@ -74,7 +74,7 @@ public class MatcherController {
      * corresponding to a given matchProfileId.
      * This endpoint will likely be hit together with a call to the delete endpoint in MessageController that deletes all
      * messages sent/received by a given matchProfileId.
-     * @param matchProfileId
+     * @param matchProfileId match profile to delete results for
      * @return
      */
     @DeleteMapping(path = "/result", params = {"matchProfileId"})
@@ -87,7 +87,7 @@ public class MatcherController {
 
     /**
      * Retrieves ALL unseen match profiles for a given matchProfileId.
-     * @param matchProfileId
+     * @param matchProfileId match profile
      * @return
      */
     @GetMapping(path="/all", params = {"matchProfileId"})
@@ -98,8 +98,8 @@ public class MatcherController {
 
     /**
      * Explicit crud endpoint to retrieve a match result record between a pair of match profiles.
-     * @param matchProfileId1
-     * @param matchProfileId2
+     * @param matchProfileId1 one of two match profiles to retrieve match result record for
+     * @param matchProfileId2 second of two match profiles to retrieve match result record for
      * @return
      */
     @GetMapping(path = "/result", params = {"matchProfileId1", "matchProfileId2"})
@@ -148,10 +148,9 @@ public class MatcherController {
     /**
      * Method that queries for the number of match result records that are expired and not completed yet.
      * Used to verify that scheduled delete method for expired records is deleting the right number of records.
-     * @param expired
      */
-    @GetMapping(path = "/result", params = {"expired"})
-    public Integer getExpiredIncompleteRecords(@RequestParam("expired") boolean expired) {
+    @GetMapping(path = "/result/expired/count")
+    public Integer getExpiredIncompleteRecords() {
         return matcherService.retrieveNumberOfExpiredIncompleteRecords();
     }
 
