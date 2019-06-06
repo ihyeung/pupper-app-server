@@ -5,9 +5,7 @@ import com.utahmsd.pupper.dao.entity.Breed;
 import com.utahmsd.pupper.service.filter.PupperProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +33,19 @@ public class UtilityController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @PostMapping(path = "/report/type/{type}", params = {"id1, id2"})
+    public void reportProfile(@PathVariable("type") String profileType, @RequestParam("id1") Long reportId,
+                              @RequestParam("id2") Long fromId) {
+        switch(profileType) {
+            case("user"):
+                break;
+            case("match"):
+                break;
+            default:
+                //Throw exception, invalid profile type
+        }
     }
 
     /*
