@@ -2,6 +2,7 @@ package com.utahmsd.pupper.controller;
 
 import com.utahmsd.pupper.client.ZipCodeAPIClient;
 import com.utahmsd.pupper.dao.entity.Breed;
+import com.utahmsd.pupper.dto.ReportRequest;
 import com.utahmsd.pupper.service.filter.PupperProfileFilterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class UtilityController {
 
     @PostMapping(path = "/report/type/{type}", params = {"id1, id2"})
     public void reportProfile(@PathVariable("type") String profileType, @RequestParam("id1") Long reportId,
-                              @RequestParam("id2") Long fromId) {
+                              @RequestParam("id2") Long fromId, @RequestBody ReportRequest reportRequest) {
         switch(profileType) {
             case("user"):
                 break;
